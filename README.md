@@ -36,11 +36,6 @@ cd day_exam
 
 本项目采用 [GNU Affero General Public License v3.0](LICENSE) 开源许可证。
 
-**AGPL-3.0 的主要特点：**
-- 要求修改后的代码必须开源
-- 如果通过网络提供服务，也必须公开源代码
-- 比 GPL-3.0 更严格，防止"云服务漏洞"
-
 ## 隐私
 
 本应用：
