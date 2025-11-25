@@ -3,13 +3,6 @@ apply plugin: 'kotlin-android'
 apply plugin: 'kotlin-android-extensions'
 apply plugin: 'kotlin-kapt'
 
-// 从本地 local.properties 中读取签名信息，避免在仓库中明文存储密码
-def keystoreProperties = new Properties()
-def keystorePropertiesFile = rootProject.file("local.properties")
-if (keystorePropertiesFile.exists()) {
-    keystoreProperties.load(new FileInputStream(keystorePropertiesFile))
-}
-
 android {
     compileSdkVersion 31
     buildToolsVersion "30.0.3"
@@ -23,27 +16,6 @@ android {
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
     }
 
-
-    signingConfigs {
-        release {
-            v1SigningEnabled true
-            v2SigningEnabled true
-
-            // 从 local.properties 中读取:
-            // DAYEXAM_STORE_FILE, DAYEXAM_STORE_PASSWORD, DAYEXAM_KEY_ALIAS, DAYEXAM_KEY_PASSWORD
-            def storeFilePath = keystoreProperties['DAYEXAM_STORE_FILE']
-            if (storeFilePath != null && !storeFilePath.toString().trim().isEmpty()) {
-                def keystoreFile = rootProject.file(storeFilePath)
-                if (keystoreFile.exists()) {
-                    keyAlias keystoreProperties['DAYEXAM_KEY_ALIAS']
-                    storeFile keystoreFile
-                    storePassword keystoreProperties['DAYEXAM_STORE_PASSWORD']
-                    keyPassword keystoreProperties['DAYEXAM_KEY_PASSWORD']
-                }
-            }
-        }
-    }
-
     buildTypes {
 
         debug {
@@ -51,14 +23,6 @@ android {
         }
 
         release {
-            // Only use signing config if keystore exists
-            def storeFilePath = keystoreProperties['DAYEXAM_STORE_FILE']
-            if (storeFilePath != null && !storeFilePath.toString().trim().isEmpty()) {
-                def keystoreFile = rootProject.file(storeFilePath)
-                if (keystoreFile.exists()) {
-                    signingConfig signingConfigs.release
-                }
-            }
             minifyEnabled true
             proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
         }
