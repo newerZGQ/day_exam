@@ -32,8 +32,6 @@ Builds:
     versionCode: 6
     commit: v1.0.5
     subdir: app
-    gradle:
-      - yes
 
 AutoUpdateMode: Version v%v
 UpdateCheckMode: Tags
