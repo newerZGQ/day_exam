@@ -1,0 +1,41 @@
+<PreferenceScreen
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+
+    <com.gorden.dayexam.ui.settings.preference.CustomSeekBarPreference
+        app:key="@string/max_backup_size_key"
+        app:icon="@drawable/ic_baseline_storage_24"
+        app:showSeekBarValue="true"
+        app:defaultValue="5"
+        app:min="1"
+        app:seekBarIncrement="10"
+        app:title="@string/max_backup_size"/>
+
+    <com.gorden.dayexam.ui.settings.preference.CustomPreference
+        app:key="@string/reverse_backup_key"
+        app:icon="@drawable/ic_baseline_cloud_download_24"
+        app:summary="@string/backup_summary"
+        app:title="@string/reverse_backup"/>
+
+    <com.gorden.dayexam.ui.settings.preference.CustomCheckBoxPreference
+        app:key="@string/keep_screen_light_key"
+        app:allowDividerBelow="true"
+        app:icon="@drawable/ic_outline_lightbulb_24"
+        app:title="@string/keep_screen_light"/>
+    <com.gorden.dayexam.ui.settings.preference.CustomPreference
+        app:key="@string/privacy_and_help_key"
+        app:allowDividerAbove="true"
+        app:summary="@string/privacy_and_help"/>
+    <com.gorden.dayexam.ui.settings.preference.CustomPreference
+        app:key="@string/privacy_key"
+        app:summary="@string/privacy_summary"
+        app:title="@string/privacy_title"/>
+<!--    <com.gorden.dayexam.ui.settings.preference.CustomPreference-->
+<!--        app:key="@string/bilibili_video_help_key"-->
+<!--        app:summary="@string/bilibili_video_help_summary"-->
+<!--        app:title="@string/bilibili_video_help_title"/>-->
+    <com.gorden.dayexam.ui.settings.preference.CustomPreference
+        app:key="@string/demo_template_key"
+        app:summary="@string/demo_template_title"
+        app:title="@string/demo_template_summary"/>
+
+</PreferenceScreen>

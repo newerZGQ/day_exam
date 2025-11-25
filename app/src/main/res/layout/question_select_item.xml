@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:paddingStart="@dimen/screen_margin_left_or_right"
+    android:paddingEnd="@dimen/screen_margin_left_or_right"
+    android:paddingTop="12dp"
+    android:paddingBottom="12dp"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+    <TextView
+        android:id="@+id/question_content"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        android:fontFamily="@font/xwwk"
+        android:maxLines="3"
+        android:textColor="#CCFFFFFF"
+        android:textSize="16sp"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content" />
+    <TextView
+        android:id="@+id/question_tag"
+        android:maxLines="1"
+        android:textSize="12sp"
+        android:textColor="#8FFFFFFF"
+        android:fontFamily="@font/xwwk"
+        app:layout_constraintStart_toStartOf="@id/question_content"
+        app:layout_constraintTop_toBottomOf="@id/question_content"
+        android:layout_marginTop="8dp"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"/>
+</androidx.constraintlayout.widget.ConstraintLayout>

@@ -1,0 +1,127 @@
+package com.gorden.dayexam.ui.home.viewholder
+
+import android.text.TextUtils
+import android.view.View
+import android.widget.LinearLayout
+import androidx.core.view.children
+import com.gorden.dayexam.R
+import com.gorden.dayexam.db.entity.StudyRecord
+import com.gorden.dayexam.repository.model.QuestionWithElement
+import com.gorden.dayexam.repository.model.RealAnswer
+import com.gorden.dayexam.ui.EventKey
+import com.gorden.dayexam.ui.action.EditQuestionContentAction
+import com.gorden.dayexam.ui.widget.ElementViewListener
+import com.gorden.dayexam.ui.widget.OptionCardView
+import com.gorden.dayexam.utils.ScreenUtils
+import com.jeremyliao.liveeventbus.LiveEventBus
+import org.apache.poi.ss.formula.functions.Even
+
+class SingleChoiceViewHolder(itemView: View): BaseQuestionViewHolder(itemView) {
+
+    private val optionContainer: LinearLayout = itemView.findViewById(R.id.options_container)
+
+    override fun genOptionsView(question: QuestionWithElement) {
+        optionContainer.removeAllViews()
+        question.options.forEachIndexed { index, optionItemWithElement ->
+            val optionTag = (index + 'A'.toInt()).toChar().toString()
+            val optionCardView = OptionCardView(itemView.context)
+            optionCardView.setBackgroundColor(itemView.context.getColor(R.color.option_default_color))
+            optionCardView.setContent(optionItemWithElement.element, optionTag, ElementViewListener())
+            val layoutParams = LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT,LinearLayout.LayoutParams.WRAP_CONTENT)
+            layoutParams.topMargin = ScreenUtils.dp2px(8f)
+            optionContainer.addView(optionCardView, layoutParams)
+            optionCardView.setOnClickListener {
+                val realAnswerContent = (index + 'A'.toInt()).toChar().toString()
+                val realAnswer = RealAnswer(realAnswerContent)
+                question.realAnswer = realAnswer
+                setAnsweredStatus(question)
+                val isCorrectTag = getAnswerEventTag(question)
+                LiveEventBus.get(EventKey.ANSWER_EVENT, EventKey.AnswerEventModel::class.java)
+                    .post(EventKey.AnswerEventModel(question.id, realAnswerContent, isCorrectTag))
+            }
+            optionCardView.setOnLongClickListener {
+                EditQuestionContentAction(itemView.context, optionItemWithElement.element).start()
+                return@setOnLongClickListener true
+            }
+        }
+    }
+
+    override fun genAnsweredOptionsView(question: QuestionWithElement) {
+        question.options.forEachIndexed { index, optionItemWithElement ->
+            val context = itemView.context
+            val realAnswer = question.realAnswer?.answer
+            if (realAnswer.isNullOrEmpty()) {
+                return
+            }
+            val optionTag = (index + 'A'.toInt()).toChar().toString()
+            val answer = getAnswer(question)
+            if (realAnswer == optionTag) {
+                if (answer == realAnswer) {
+                    optionContainer.getChildAt(index).setBackgroundColor(context.getColor(R.color.option_select_correct_color))
+                } else {
+                    optionContainer.getChildAt(index).setBackgroundColor(context.getColor(R.color.option_select_incorrect_color))
+                }
+            } else {
+                if (answer == optionTag) {
+                    optionContainer.getChildAt(index).setBackgroundColor(context.getColor(R.color.option_select_correct_color))
+                } else {
+                    optionContainer.getChildAt(index).setBackgroundColor(context.getColor(R.color.option_default_color))
+                }
+            }
+
+        }
+    }
+
+    override fun genRememberOptionsView(question: QuestionWithElement) {
+        optionContainer.removeAllViews()
+        var correctAnswer = ""
+        if ((question.answer?.element?.size ?: 0) > 0) {
+            correctAnswer = question.answer?.element?.get(0)?.content ?: ""
+        }
+        question.options.forEachIndexed { index, optionItemWithElement ->
+            val optionTag = (index + 'A'.toInt()).toChar().toString()
+            val optionCardView = OptionCardView(itemView.context)
+            if (correctAnswer.contains(optionTag)) {
+                optionCardView.setBackgroundColor(itemView.context.getColor(R.color.option_select_correct_color))
+            } else {
+                optionCardView.setBackgroundColor(itemView.context.getColor(R.color.option_default_color))
+            }
+            optionCardView.setContent(optionItemWithElement.element, optionTag, ElementViewListener())
+            val layoutParams = LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT,LinearLayout.LayoutParams.WRAP_CONTENT)
+            layoutParams.topMargin = ScreenUtils.dp2px(8f)
+            optionContainer.addView(optionCardView, layoutParams)
+            optionCardView.setOnLongClickListener {
+                EditQuestionContentAction(itemView.context, optionItemWithElement.element).start()
+                return@setOnLongClickListener true
+            }
+        }
+    }
+
+    override fun genActionView(question: QuestionWithElement) {
+
+    }
+
+    override fun setAnsweredStatus(question: QuestionWithElement) {
+        super.setAnsweredStatus(question)
+        optionContainer.children.forEach {
+            it.setOnClickListener(null)
+        }
+    }
+
+    private fun getAnswerEventTag(question: QuestionWithElement): Int {
+        val answer = question.answer
+        var answerString = ""
+        if (answer.element.isNotEmpty() && answer.element[0].content.isNotEmpty()) {
+            answerString = answer.element[0].content
+        }
+        val realAnswerString = question.realAnswer?.answer
+        return if (answerString.isNotEmpty() && TextUtils.equals(answerString, realAnswerString)) {
+            StudyRecord.CORRECT
+        } else if (answerString.isNotEmpty() && !TextUtils.equals(answerString, realAnswerString)) {
+            StudyRecord.IN_CORRECT
+        } else {
+            StudyRecord.NOT_AVAILABLE
+        }
+    }
+
+}

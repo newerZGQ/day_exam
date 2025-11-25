@@ -1,0 +1,111 @@
+package com.gorden.dayexam.ui.home.viewholder
+
+import android.text.TextUtils
+import android.view.View
+import com.gorden.dayexam.R
+import com.gorden.dayexam.db.entity.StudyRecord
+import com.gorden.dayexam.repository.model.QuestionWithElement
+import com.gorden.dayexam.repository.model.RealAnswer
+import com.gorden.dayexam.ui.EventKey
+import com.jeremyliao.liveeventbus.LiveEventBus
+
+class TrueFalseViewHolder(itemView: View): BaseQuestionViewHolder(itemView) {
+
+    private val correctOption: View = itemView.findViewById(R.id.action_correct)
+    private val inCorrectOption: View = itemView.findViewById(R.id.action_incorrect)
+
+    override fun genOptionsView(question: QuestionWithElement) {
+        val resources = itemView.resources
+        correctOption.setBackgroundColor(resources.getColor(R.color.option_default_color))
+        inCorrectOption.setBackgroundColor(resources.getColor(R.color.option_default_color))
+        correctOption.setOnClickListener {
+            val realAnswerContent = resources.getString(R.string.correct)
+            question.realAnswer = RealAnswer(realAnswerContent)
+            setAnsweredStatus(question)
+            val answerTag = getAnswerEventTag(question)
+            LiveEventBus.get(EventKey.ANSWER_EVENT, EventKey.AnswerEventModel::class.java)
+                .post(EventKey.AnswerEventModel(question.id, realAnswerContent, answerTag))
+        }
+        inCorrectOption.setOnClickListener {
+            val realAnswerContent = resources.getString(R.string.incorrect)
+            question.realAnswer = RealAnswer(realAnswerContent)
+            setAnsweredStatus(question)
+            val answerTag = getAnswerEventTag(question)
+            LiveEventBus.get(EventKey.ANSWER_EVENT, EventKey.AnswerEventModel::class.java)
+                .post(EventKey.AnswerEventModel(question.id, realAnswerContent, answerTag))
+        }
+    }
+
+    override fun setAnsweredStatus(question: QuestionWithElement) {
+        super.setAnsweredStatus(question)
+        correctOption.isClickable = false
+        inCorrectOption.isClickable = false
+    }
+
+    override fun genAnsweredOptionsView(question: QuestionWithElement) {
+        val context = itemView.context
+        val answer = question.answer.element[0].content
+        if (question.realAnswer != null) {
+            if (question?.realAnswer?.answer.equals(answer)){
+                if (answer == context.getString(R.string.correct)) {
+                    correctOption.setBackgroundColor(context.getColor(R.color.option_select_correct_color))
+                    inCorrectOption.setBackgroundColor(context.getColor(R.color.option_default_color))
+                } else {
+                    correctOption.setBackgroundColor(context.getColor(R.color.option_default_color))
+                    inCorrectOption.setBackgroundColor(context.getColor(R.color.option_select_correct_color))
+                }
+            } else {
+                if (answer == context.getString(R.string.correct)) {
+                    correctOption.setBackgroundColor(context.getColor(R.color.option_select_correct_color))
+                    inCorrectOption.setBackgroundColor(context.getColor(R.color.option_select_incorrect_color))
+                } else {
+                    correctOption.setBackgroundColor(context.getColor(R.color.option_select_incorrect_color))
+                    inCorrectOption.setBackgroundColor(context.getColor(R.color.option_select_correct_color))
+                }
+            }
+        }
+    }
+
+    override fun genRememberOptionsView(question: QuestionWithElement) {
+        val answer = question.answer.element[0].content
+        val resources = itemView.resources
+        if (answer.isEmpty()) {
+            return
+        }
+        if (answer == resources.getString(R.string.correct)) {
+            correctOption.setBackgroundColor(resources.getColor(R.color.option_select_correct_color))
+            inCorrectOption.setBackgroundColor(resources.getColor(R.color.option_default_color))
+        } else {
+            correctOption.setBackgroundColor(resources.getColor(R.color.option_default_color))
+            inCorrectOption.setBackgroundColor(resources.getColor(R.color.option_select_correct_color))
+        }
+        correctOption.setOnClickListener(null)
+        inCorrectOption.setOnClickListener(null)
+    }
+
+    override fun genActionView(question: QuestionWithElement) {
+
+    }
+
+    private fun getAnswerEventTag(question: QuestionWithElement): Int {
+        val answer = question.answer
+        var answerString = ""
+        if (answer.element.isNotEmpty() && answer.element[0].content.isNotEmpty()) {
+            val answerContent = answer.element[0].content
+            if (answerContent.trim() == itemView.context.resources.getString(R.string.correct)) {
+                answerString = itemView.context.resources.getString(R.string.correct)
+            } else if (answerContent.trim() == itemView.context.resources.getString(R.string.incorrect)) {
+                answerString = itemView.context.resources.getString(R.string.incorrect)
+            }
+        }
+        val realAnswerString = question.realAnswer?.answer
+        return if (answerString.isNotEmpty() && TextUtils.equals(answerString, realAnswerString)) {
+            StudyRecord.CORRECT
+        } else if (answerString.isNotEmpty() && !TextUtils.equals(answerString, realAnswerString)) {
+            StudyRecord.IN_CORRECT
+        } else {
+            StudyRecord.NOT_AVAILABLE
+        }
+    }
+
+}

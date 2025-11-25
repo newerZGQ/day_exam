@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <item name="float_button_edit_question_item" type="id"></item>
+    <item name="float_button_reset_question_item" type="id"></item>
+    <item name="float_button_list_question_item" type="id"></item>
+    <item name="float_button_favorite_question_item" type="id"></item>
+    <item name="float_button_show_tip_item" type="id"></item>
+</resources>

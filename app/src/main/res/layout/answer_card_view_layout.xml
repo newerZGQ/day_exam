@@ -1,0 +1,71 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:orientation="horizontal"
+    android:background="@color/card_view_background_color"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+    <TextView
+        android:id="@+id/answer_tag"
+        android:fontFamily="@font/xwwk"
+        android:text="@string/answer"
+        android:background="@drawable/tag_round_background"
+        android:textColor="@color/tag_text_color"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        android:layout_marginTop="12dp"
+        android:layout_marginStart="8dp"
+        android:paddingTop="2dp"
+        android:paddingBottom="2dp"
+        android:paddingLeft="4dp"
+        android:paddingRight="4dp"
+        android:textSize="12sp"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"/>
+
+    <com.gorden.dayexam.ui.widget.ElementsView
+        android:id="@+id/answer_content"
+        android:paddingBottom="16dp"
+        app:e_text_size="6sp"
+        app:tag_text_size="4sp"
+        app:layout_constraintTop_toTopOf="@id/answer_tag"
+        app:layout_constraintStart_toEndOf="@id/answer_tag"
+        app:layout_constraintEnd_toEndOf="parent"
+        android:layout_marginEnd="8dp"
+        android:layout_marginStart="8dp"
+        android:layout_width="0dp"
+        android:layout_height="match_parent"/>
+
+    <TextView
+        android:id="@+id/real_answer_tag"
+        android:fontFamily="@font/xwwk"
+        android:text="@string/current_answer"
+        android:textColor="@color/tag_text_color"
+        android:background="@drawable/tag_round_background"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/answer_content"
+        android:layout_marginBottom="8dp"
+        android:layout_marginStart="8dp"
+        android:paddingTop="2dp"
+        android:paddingBottom="2dp"
+        android:paddingLeft="4dp"
+        android:paddingRight="4dp"
+        android:textSize="12sp"
+        android:visibility="gone"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"/>
+
+    <TextView
+        android:id="@+id/real_answer_content"
+        android:fontFamily="@font/xwwk"
+        android:textColor="@color/font_common_color"
+        app:layout_constraintStart_toEndOf="@id/real_answer_tag"
+        app:layout_constraintTop_toBottomOf="@id/answer_content"
+        app:layout_constraintBottom_toBottomOf="parent"
+        android:layout_marginBottom="8dp"
+        android:layout_marginStart="8dp"
+        android:textSize="16sp"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"/>
+</androidx.constraintlayout.widget.ConstraintLayout>

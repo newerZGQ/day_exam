@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:orientation="horizontal"
+    android:background="@color/card_view_background_color"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+    <TextView
+        android:id="@+id/option_tag"
+        android:fontFamily="@font/xwwk"
+        android:text="@string/answer"
+        android:gravity="center"
+        android:background="@drawable/option_tag_round_background"
+        android:textColor="@color/font_common_color"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        android:layout_marginTop="8dp"
+        android:layout_marginStart="8dp"
+        android:textSize="18sp"
+        android:layout_width="30dp"
+        android:layout_height="30dp"/>
+
+    <com.gorden.dayexam.ui.widget.ElementsView
+        android:id="@+id/option_content"
+        android:paddingBottom="16dp"
+        app:e_text_size="6sp"
+        app:tag_text_size="5sp"
+        app:layout_constraintTop_toTopOf="@id/option_tag"
+        app:layout_constraintStart_toEndOf="@id/option_tag"
+        app:layout_constraintEnd_toEndOf="parent"
+        android:layout_marginTop="4dp"
+        android:layout_marginEnd="8dp"
+        android:layout_marginStart="8dp"
+        android:layout_width="0dp"
+        android:layout_height="match_parent"/>
+</androidx.constraintlayout.widget.ConstraintLayout>

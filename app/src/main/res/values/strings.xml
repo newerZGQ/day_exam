@@ -1,0 +1,177 @@
+<resources>
+    <string name="app_name">天天背题</string>
+    <string name="action_settings">Settings</string>
+
+    // 书籍边栏
+    <string name="add_book">添加书籍</string>
+    <string name="menu_home">Home</string>
+    <string name="sort">sort</string>
+
+    <string name="course">课程</string>
+    <string name="book">书籍</string>
+    <string name="fill_blank">填空</string>
+    <string name="true_false">判断</string>
+    <string name="single_choice">单选</string>
+    <string name="multiple_choice">多选</string>
+    <string name="essay_question">问答</string>
+    <string name="answer">答案</string>
+    <string name="current_answer">本次</string>
+    <string name="search">查找</string>
+
+    <string name="dialog_confirm">确认</string>
+    <string name="dialog_cancel">取消</string>
+    <string name="dialog_create_book_title">创建书籍</string>
+    <string name="dialog_create_book_subTitle">书籍</string>
+    <string name="dialog_create_book_hint">请输入书籍名称</string>
+    <string name="dialog_create_course_title">创建课程</string>
+    <string name="dialog_create_course_subTitle">课</string>
+    <string name="dialog_create_course_hint">请输入课程名称</string>
+    <string name="dialog_create_course_sub_hint">请输入课程描述(可不填)</string>
+    <string name="dialog_edit_course_title">编辑课程</string>
+    <string name="dialog_edit_course_subTitle">课程</string>
+    <string name="dialog_delete_course_title">删除课程</string>
+    <string name="dialog_delete_course_subTitle">课程</string>
+    <string name="dialog_edit_course_sub_hint">请输入课程描述(可不填)</string>
+
+    <string name="dialog_create_paper_title">创建试卷</string>
+    <string name="dialog_create_paper_subTitle">试卷</string>
+    <string name="dialog_create_paper_hint">请输入试卷名称</string>
+
+    <string name="dialog_edit_paper_title">编辑试卷</string>
+    <string name="dialog_edit_paper_subTitle">试卷</string>
+
+    <string name="dialog_delete_paper_title">删除试卷</string>
+
+    <string name="dialog_edit_book_title">编辑书籍</string>
+    <string name="dialog_edit_book_subTitle">书</string>
+    <string name="dialog_delete_book_title">删除书籍</string>
+
+    <string name="none_question_desc">还未添加任何试题，您可以从word文件中解析(推荐)，也可以手动添加</string>
+
+    // 移动Paper Dialog
+    <string name="select_target_course">请选择目标课程</string>
+    <string name="select_target_book">请选择目标书籍</string>
+    <string name="select_target_paper">请选择目标试卷</string>
+
+    // 书籍列表的学习信息
+    <string name="last_study_time">上次学习</string>
+    <string name="total">共</string>
+    <string name="short_question">题</string>
+    <string name="has_study">已学习</string>
+    <string name="has_not_start_study">还未开始学习</string>
+    <string name="count">次</string>
+
+    // menu
+    <string name="parse_from_file">从文件解析试题</string>
+    <string name="insert_paper_after">在此之上插入试卷</string>
+    <string name="insert_paper_before">在此之下插入试卷</string>
+    <string name="sort_by_hand">手动排序</string>
+    <string name="delete">删除</string>
+    <string name="edit_paper">编辑试卷</string>
+    <string name="move">移动</string>
+
+    // toast
+    <string name="create_paper_empty_title_msg">试卷标题不能为空</string>
+    <string name="course_empty_title_msg">课程标题不能为空</string>
+    <string name="course_delete_error_msg">当前课程正在学习，无法删除</string>
+    <string name="no_course_found_msg">没有找到课程</string>
+    <string name="no_book_found_msg">没有找到书籍</string>
+    <string name="no_paper_found_msg">该书籍中没有找到试卷</string>
+    <string name="screen_shot_question_success">已保存到系统相册</string>
+    <string name="screen_shot_question_failed">截屏失败</string>
+    <string name="edit_question_no_questionId_error">传入的id异常</string>
+    <string name="current_other_question_editing">当前有段落正在编辑</string>
+    <string name="recover_failed_because_file">请检查备份文件是否存在以及文件后缀是否正确</string>
+    <string name="recover_image_exception">恢复图片备份异常</string>
+    <string name="recover_data_exception">恢复数据库备份异常</string>
+    <string name="backup_success">备份成功</string>
+
+    // 首页
+    <string name="show_answer">看答案</string>
+    <string name="correct">对</string>
+    <string name="incorrect">错</string>
+    <string name="confirm">确认</string>
+    <string name="agree">同意</string>
+    <string name="toast_please_select_option">请选择选项</string>
+    <string name="toast_please_check_answer_content">请检查问题的答案是否存在</string>
+    <string name="privacy_message_dialog">亲爱的用户，您好！\n感谢您使用天天背题。\n天天背题是一款刷题软件，题目来源是用户按照一定规则编辑的word文档，不会搜集任何用户隐私信息。\n天天背题所需权限声明\nsd卡权限\n由于app内刷题内容的来源是用户的word文档，所以需要有读取sd卡文档的权限。 \n由于app有备份的能力，备份位置是sd卡的应用缓存文件夹，所以要有写入sd卡的能力\n网络权限\n由于app需要搜集crash时的日志并上传至微软的appcenter服务器，用于后续app优化，所以要有访问互联网的权限\n软件名称：天天背题\n隐私政策：</string>
+    <string name="privacy_link">http://zgq2015.gitee.io/dayexam_web/</string>
+    // float button
+    <string name="edit_current_question">编辑当前试题</string>
+    <string name="reset_current_question">重置当前试题</string>
+    <string name="list_question">当前试题列表</string>
+    <string name="favorite_question">收藏当前试题</string>
+    <string name="show_tip">展开小贴士</string>
+
+    // 快捷方式
+    <string name="shortcut">快捷</string>
+    <string name="copy_question_content">截屏本题内容</string>
+    <string name="search_question_content">搜索试题/快速跳转</string>
+    <string name="delete_question_content">移动该题到废纸篓</string>
+    <string name="history_question_content">历史记录</string>
+    <string name="remember_question_content">背诵模式</string>
+    <string name="focus_question_content">专注模式</string>
+    <string name="favorite_question_content">只看收藏</string>
+    <string name="sort_by_accuracy_question_content">按照错误率排序</string>
+    <string name="back_up_now">立即备份</string>
+
+    // 搜索
+    <string name="search_tip">提示：换行输入多个关键词进行多词搜索</string>
+    <string name="current_paper">当前试卷</string>
+    <string name="current_book">当前书籍</string>
+    <string name="current_course">当前课程</string>
+    <string name="global">全局搜索</string>
+    <string name="recycle_bin">废纸篓</string>
+
+    // 修改
+    <string name="edit">编辑</string>
+    <string name="body">题干</string>
+    <string name="option">选项</string>
+    <string name="empty_paragraph">&lt;内容为空&gt;</string>
+    <string name="please_input">请输入...</string>
+
+    // 设置
+    <string name="settings">设置</string>
+    <string name="max_backup_size_key">max_backup_size</string>
+    <string name="max_backup_size">最大备份数量</string>
+    <string name="reverse_backup_key">recover_backup</string>
+    <string name="reverse_backup">恢复备份</string>
+    <string name="backup_summary">目前备份功能较为简单，建议保留word文档</string>
+    <string name="keep_screen_light_key">keep_screen_light</string>
+    <string name="keep_screen_light">屏幕常亮</string>
+    <string name="confirm_recover">恢复备份</string>
+    <string name="please_select_backup">请选择备份文件</string>
+    <string name="privacy_key">privacy_key</string>
+    <string name="privacy_title">《隐私政策》</string>
+    <string name="privacy_summary">天天背题不会搜集您的任何隐私信息</string>
+    <string name="privacy_and_help_key">privacy_and_help</string>
+    <string name="privacy_and_help">隐私与帮助</string>
+    <string name="privacy_dialog_title">《隐私政策》</string>
+    <string name="privacy_dialog_content">
+        天天背题隐私政策\n声明\n天天背题仅会查询以下几个信息，这些信息都与您的个人隐私无关：\n1. app的错误日志，app运行时如果出现闪退，我们会将错误日志上传至服务器，错误日志会有您的设备型号，但是不会访问您的隐私\n2. sd卡的文件，天天背题的主要功能是从您的sd卡中读取word文档并解析到数据库，该过程需要您主动选择对应文件。除此之外，天天背题不会主动访问您的sd卡内容
+    </string>
+    <string name="bilibili_video_help_key">bilibili_video_help</string>
+    <string name="bilibili_video_help_title">哔哩哔哩帮助视频</string>
+    <string name="bilibili_video_help_summary">up主: 上帝用左手</string>
+
+    <string name="demo_template_key">demo_template_key</string>
+    <string name="demo_template_title">文档模板</string>
+    <string name="demo_template_summary">用于解析的word文档模板，点击下载</string>
+    <string name="demo_template_link">https://docs.google.com/document/d/1sgdJn-r1nEbq3Ok14oxdm4MEadWQvnoi/edit?usp=sharing&amp;ouid=116258016900543803615&amp;rtpof=true&amp;sd=true</string>
+
+    <string name="letter_for_users">致用户的一封信\n欢迎您使用天天背题，很高兴在这里见到您！\n亲爱的用户，天天背题是一款致力于帮助您考试刷题的app，我们希望打造一个无广告、体验优秀、存储安全的刷题app，给予您考试最大的帮助。\n为了方便试题管理，我们将内容分成课程、书籍、试卷、试题一共四个层级，试题是核心，也是需要您自己在word里编辑好，然后导入到试卷中。\n我们目前支持填空、判断、单选、多选、问答五种题型，每种题型都有学习和记忆两种模式。\n填空题和问答题目前还不支持手动输入答案并比较，你可以在心里默念答案后点击答案按钮进行比对。\n判断题、单选题以及多选题都支持直接选择答案并和准确答案对比。\n除了对各类题型的支持，我们还对您的学习记录做了简单统计，每日学习题目数量会显示在标题栏的右边，方便您规划学习。\n天天背题不仅仅支持文本类的题目，还支持图文混排，您需要做的仅仅是在word文档中插入需要的图片即可。\n为了方便您管理题目，天天背题还设置了废纸篓，您删除的试题会先放在废纸篓中，当您需要找回误删的试题时，可以从废纸篓中恢复。当然，如果您把废纸篓中的题目也删除，那就无法恢复了。\n天天背题同时有备份功能，将您app内某一时刻所有的试题备份在sd卡中，方便后续恢复备份。不过由于您的设备环境以及app版本升级带来的风险，还是希望您保存好word文档，以备不时之需。\n最后，预祝您考试顺利！
+    </string>
+
+    // 默认试卷诗句
+    <string name="default_course_name">天天背题</string>
+    <string name="default_book_for_user_name">给用户的一封信</string>
+    <string name="default_guide_paper_name">教程</string>
+    <string name="default_user_paper_name">用户亲启</string>
+
+    // 描述词
+    <string name="the_type_key">第</string>
+    <string name="short_of_question">题</string>
+    <string name="total_study_times">共学习</string>
+    <string name="times">次</string>
+
+</resources>

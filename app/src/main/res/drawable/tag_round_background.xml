@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="utf-8"?>
+<shape xmlns:android="http://schemas.android.com/apk/res/android">
+    <solid android:color="@color/tag_background_color" />
+    <stroke android:width="0.7dp" android:color="@color/tag_border_color"/>
+    <corners android:radius="5dp" />
+    <padding
+        android:left="4dp"
+        android:top="2dp"
+        android:right="4dp"
+        android:bottom="2dp" />
+</shape>

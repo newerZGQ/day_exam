@@ -1,0 +1,71 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.coordinatorlayout.widget.CoordinatorLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:id="@+id/search_sheet_container"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="#212121">
+
+    <LinearLayout
+        android:minHeight="700dp"
+        android:orientation="vertical"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent">
+            <EditText
+                android:id="@+id/search_key_input"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent"
+                android:focusedByDefault="true"
+                android:layout_marginTop="24dp"
+                android:fontFamily="@font/xwwk"
+                android:hint="@string/search"
+                android:layout_marginStart="16dp"
+                android:layout_marginEnd="16dp"
+                android:backgroundTint="#D0D0D0"
+                android:textColor="@color/font_common_color"
+                android:textColorHint="#63FFFFFF"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"/>
+            <ImageButton
+                android:id="@+id/clear_content"
+                android:src="@drawable/ic_baseline_cancel_24"
+                android:background="@color/colorTransparent"
+                app:layout_constraintEnd_toEndOf="@id/search_key_input"
+                app:layout_constraintBottom_toBottomOf="@id/search_key_input"
+                android:layout_marginBottom="12dp"
+                android:layout_width="24dp"
+                android:layout_height="24dp" />
+            <TextView
+                android:id="@+id/search_tip"
+                android:text="@string/search_tip"
+                android:textSize="14sp"
+                android:visibility="gone"
+                android:fontFamily="@font/xwwk"
+                android:textColor="#63FFFFFF"
+                app:layout_constraintTop_toBottomOf="@id/search_key_input"
+                app:layout_constraintStart_toStartOf="@id/search_key_input"
+                android:layout_marginStart="18dp"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"/>
+            <com.gorden.dayexam.ui.sheet.search.SearchScopeSelectView
+                android:id="@+id/scope_select_view"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="2dp"
+                android:layout_marginStart="16dp"
+                android:layout_marginEnd="16dp"
+                app:layout_constraintStart_toStartOf="@id/search_key_input"
+                app:layout_constraintTop_toBottomOf="@id/search_tip" />
+        </androidx.constraintlayout.widget.ConstraintLayout>
+        <androidx.recyclerview.widget.RecyclerView
+            android:id="@+id/searchQuestionList"
+            android:paddingTop="16dp"
+            android:paddingBottom="10dp"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent" />
+    </LinearLayout>
+
+</androidx.coordinatorlayout.widget.CoordinatorLayout>

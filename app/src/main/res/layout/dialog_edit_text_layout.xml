@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:orientation="vertical"
+    android:paddingLeft="@dimen/screen_margin_left_or_right"
+    android:paddingRight="@dimen/screen_margin_left_or_right"
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content">
+    <TextView
+        android:id="@+id/dialog_title"
+        android:gravity="start"
+        android:layout_marginTop="@dimen/screen_margin_top_or_bottom"
+        android:textSize="@dimen/dialog_title_font_size"
+        android:fontFamily="@font/xwwk"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content" />
+    <TextView
+        android:id="@+id/dialog_sub_title"
+        android:gravity="start"
+        android:layout_marginTop="@dimen/screen_margin_top_or_bottom"
+        android:textSize="@dimen/dialog_sub_title_font_size"
+        android:fontFamily="@font/xwwk"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content" />
+    <EditText
+        android:id="@+id/dialog_content"
+        android:inputType="textEmailAddress"
+        android:fontFamily="@font/xwwk"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="@dimen/screen_margin_top_or_bottom" />
+    <EditText
+        android:id="@+id/dialog_sub_content"
+        android:inputType="textEmailAddress"
+        android:fontFamily="@font/xwwk"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="@dimen/screen_margin_top_or_bottom" />
+</LinearLayout>

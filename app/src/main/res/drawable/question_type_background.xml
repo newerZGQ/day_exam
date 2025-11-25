@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="utf-8"?>
+<shape xmlns:android="http://schemas.android.com/apk/res/android">
+    <!-- 设置蓝色背景色 -->
+    <solid
+        android:color="@color/tag_background_color">
+    </solid>
+    <size
+        android:height="8dp" />
+    <corners android:radius="6dp"/>
+    <padding
+        android:left="3dp"
+        android:right="3dp"/>
+</shape>

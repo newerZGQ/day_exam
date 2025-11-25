@@ -1,0 +1,5 @@
+/build
+/release
+# 签名文件不入库
+*.jks
+*.keystore
