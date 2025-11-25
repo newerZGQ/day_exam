@@ -33,8 +33,7 @@ Builds:
     commit: v1.0.5
     subdir: app
     gradle:
-      - release
-    prebuild: sed -i -e '/signingConfigs/,/}/d' build.gradle
+      - yes
 
 AutoUpdateMode: Version v%v
 UpdateCheckMode: Tags
