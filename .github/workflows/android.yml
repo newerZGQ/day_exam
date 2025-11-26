@@ -45,12 +45,14 @@ jobs:
         run: chmod +x ./gradlew
 
       - name: Build Release APK (signed)
-        run: |
-          ./gradlew clean assembleRelease \
-            -Pandroid.injected.signing.store.file=$PWD/release-keystore.jks \
-            -Pandroid.injected.signing.store.password=$KEYSTORE_PASSWORD \
-            -Pandroid.injected.signing.key.alias=$KEY_ALIAS \
-            -Pandroid.injected.signing.key.password=$KEY_PASSWORD
+        uses: r0adkll/sign-android-release@v1
+        id: sign_app
+        with:
+          releaseDirectory: app/build/outputs/apk/release
+          signingKeyBase64: ${{ secrets.KEYSTORE_BASE64 }}
+          alias: ${{ secrets.KEY_ALIAS }}
+          keyStorePassword: ${{ secrets.KEYSTORE_PASSWORD }}
+          keyPassword: ${{ secrets.KEY_PASSWORD }}
 
       - name: Upload APK to GitHub Release
         uses: softprops/action-gh-release@v2
