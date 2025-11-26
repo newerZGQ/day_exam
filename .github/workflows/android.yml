@@ -37,7 +37,9 @@ jobs:
           cache: gradle
 
       - name: Decode Keystore
-        run: echo "$KEYSTORE_BASE64" | base64 --decode > release-keystore.jks
+        run: |
+          echo "$KEYSTORE_BASE64" | base64 --decode > release-keystore.jks
+          chmod 600 release-keystore.jks
 
       - name: Make gradlew executable
         run: chmod +x ./gradlew
@@ -45,7 +47,7 @@ jobs:
       - name: Build Release APK (signed)
         run: |
           ./gradlew clean assembleRelease \
-            -Pandroid.injected.signing.store.file=$(pwd)/release-keystore.jks \
+            -Pandroid.injected.signing.store.file=$PWD/release-keystore.jks \
             -Pandroid.injected.signing.store.password=$KEYSTORE_PASSWORD \
             -Pandroid.injected.signing.key.alias=$KEY_ALIAS \
             -Pandroid.injected.signing.key.password=$KEY_PASSWORD
