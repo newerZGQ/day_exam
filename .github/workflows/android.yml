@@ -45,13 +45,14 @@ jobs:
       - name: Sign Release APK
         uses: r0adkll/sign-android-release@v1
         id: sign_app
+        env:
+          BUILD_TOOLS_VERSION: 34.0.0
         with:
           releaseDirectory: app/build/outputs/apk/release
           signingKeyBase64: ${{ secrets.KEYSTORE_BASE64 }}
           alias: ${{ secrets.KEY_ALIAS }}
           keyStorePassword: ${{ secrets.KEYSTORE_PASSWORD }}
           keyPassword: ${{ secrets.KEY_PASSWORD }}
-          buildTools: 34.0.0
 
       - name: Upload APK to GitHub Release
         uses: softprops/action-gh-release@v2
