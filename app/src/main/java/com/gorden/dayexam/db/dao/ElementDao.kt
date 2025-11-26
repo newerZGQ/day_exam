@@ -33,6 +33,8 @@ interface ElementDao {
     fun deleteByContentId(contentId: Int)
 
     @Transaction
+    @SuppressWarnings(RoomWarnings.CURSOR_MISMATCH)
+    @RewriteQueriesToDropUnusedColumns
     @Query("SELECT * FROM element, content, question " +
             "WHERE element.parentId = content.contentId " +
             "AND content.questionId = question.id " +
@@ -40,6 +42,8 @@ interface ElementDao {
     fun getByQuestionId(questionId: Int): LiveData<List<ElementWithContentAncestors>>
 
     @Transaction
+    @SuppressWarnings(RoomWarnings.CURSOR_MISMATCH)
+    @RewriteQueriesToDropUnusedColumns
     @Query("SELECT * FROM element, content, question, d_context " +
             "WHERE element.elementType = 0 " +
             "AND element.content LIKE '%' || :key || '%' " +
@@ -49,6 +53,8 @@ interface ElementDao {
     fun searchInPaper(key: String): List<ElementWithContentAncestors>
 
     @Transaction
+    @SuppressWarnings(RoomWarnings.CURSOR_MISMATCH)
+    @RewriteQueriesToDropUnusedColumns
     @Query("SELECT * FROM element, content, question, paper, book, d_context " +
             "WHERE element.parentId = content.contentId " +
             "AND content.questionId = question.id " +
@@ -60,6 +66,8 @@ interface ElementDao {
     fun searchInBook(key: String): List<ElementWithContentAncestors>
 
     @Transaction
+    @SuppressWarnings(RoomWarnings.CURSOR_MISMATCH)
+    @RewriteQueriesToDropUnusedColumns
     @Query("SELECT * FROM element, content, question, paper, book, course, d_context " +
             "WHERE element.parentId = content.contentId " +
             "AND content.questionId = question.id " +
@@ -72,6 +80,8 @@ interface ElementDao {
     fun searchInCourse(key: String): List<ElementWithContentAncestors>
 
     @Transaction
+    @SuppressWarnings(RoomWarnings.CURSOR_MISMATCH)
+    @RewriteQueriesToDropUnusedColumns
     @Query("SELECT * FROM element, content, question, paper, book, course, d_context " +
             "WHERE element.parentId = content.contentId " +
             "AND content.questionId = question.id " +
@@ -84,6 +94,8 @@ interface ElementDao {
     fun searchInRecycleBin(key: String): List<ElementWithContentAncestors>
 
     @Transaction
+    @SuppressWarnings(RoomWarnings.CURSOR_MISMATCH)
+    @RewriteQueriesToDropUnusedColumns
     @Query("SELECT * FROM element, content, question, paper, book, course, d_context " +
             "WHERE element.parentId = content.contentId " +
             "AND content.questionId = question.id " +
