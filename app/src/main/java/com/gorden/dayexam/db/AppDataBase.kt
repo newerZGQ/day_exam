@@ -19,7 +19,8 @@ import com.gorden.dayexam.executor.AppExecutors
     entities = [DContext::class, Course::class, Book::class, Paper::class, Question::class,
         StudyStatus::class, Content::class, Element::class,
                StudyRecord::class, Config::class],
-    version = 1
+    version = 1,
+    exportSchema = false
 )
 @TypeConverters(
     DateConverter::class

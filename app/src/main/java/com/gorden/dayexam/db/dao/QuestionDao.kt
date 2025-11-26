@@ -21,12 +21,14 @@ interface QuestionDao {
     @Query ("SELECT * FROM question WHERE paperId = :paperId")
     fun getEntityByPaperId(paperId: Int): List<Question>
 
+    @Transaction
     @Query ("SELECT * FROM question WHERE paperId = :paperId ORDER BY questionPosition")
     fun getEntityWithContentByPaperId(paperId: Int): List<QuestionWithContent>
 
     @Query ("SELECT * FROM question WHERE id = :id")
     fun getEntityById(id: Int): Question
 
+    @Transaction
     @Query ("SELECT * FROM question WHERE id = :id")
     fun getEntityWithContentById(id: Int): QuestionWithContent
 

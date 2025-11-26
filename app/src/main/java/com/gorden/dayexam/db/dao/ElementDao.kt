@@ -32,12 +32,14 @@ interface ElementDao {
     @Query("DELETE FROM element WHERE parentId = :contentId")
     fun deleteByContentId(contentId: Int)
 
+    @Transaction
     @Query("SELECT * FROM element, content, question " +
             "WHERE element.parentId = content.contentId " +
             "AND content.questionId = question.id " +
             "AND question.id = :questionId")
     fun getByQuestionId(questionId: Int): LiveData<List<ElementWithContentAncestors>>
 
+    @Transaction
     @Query("SELECT * FROM element, content, question, d_context " +
             "WHERE element.elementType = 0 " +
             "AND element.content LIKE '%' || :key || '%' " +
@@ -46,6 +48,7 @@ interface ElementDao {
             "AND question.paperId = d_context.curPaperId ")
     fun searchInPaper(key: String): List<ElementWithContentAncestors>
 
+    @Transaction
     @Query("SELECT * FROM element, content, question, paper, book, d_context " +
             "WHERE element.parentId = content.contentId " +
             "AND content.questionId = question.id " +
@@ -56,6 +59,7 @@ interface ElementDao {
             "AND element.content LIKE '%' || :key || '%' ")
     fun searchInBook(key: String): List<ElementWithContentAncestors>
 
+    @Transaction
     @Query("SELECT * FROM element, content, question, paper, book, course, d_context " +
             "WHERE element.parentId = content.contentId " +
             "AND content.questionId = question.id " +
@@ -67,6 +71,7 @@ interface ElementDao {
             "AND element.content LIKE '%' || :key || '%' ")
     fun searchInCourse(key: String): List<ElementWithContentAncestors>
 
+    @Transaction
     @Query("SELECT * FROM element, content, question, paper, book, course, d_context " +
             "WHERE element.parentId = content.contentId " +
             "AND content.questionId = question.id " +
@@ -78,6 +83,7 @@ interface ElementDao {
             "AND element.content LIKE '%' || :key || '%' ")
     fun searchInRecycleBin(key: String): List<ElementWithContentAncestors>
 
+    @Transaction
     @Query("SELECT * FROM element, content, question, paper, book, course, d_context " +
             "WHERE element.parentId = content.contentId " +
             "AND content.questionId = question.id " +

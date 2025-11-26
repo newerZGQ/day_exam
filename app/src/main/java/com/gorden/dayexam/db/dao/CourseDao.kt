@@ -15,6 +15,7 @@ interface CourseDao {
     @Query("SELECT * FROM course ORDER BY position ASC")
     fun getAllCourse(): LiveData<List<Course>>
 
+    @Transaction
     @Query("SELECT * FROM course ORDER BY position ASC")
     fun getAllCourseWithChildren(): List<CourseWithChildren>
 
