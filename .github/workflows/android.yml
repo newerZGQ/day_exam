@@ -36,19 +36,17 @@ jobs:
           java-version: 11
           cache: gradle
 
-      - name: Decode Keystore
-        run: |
-          echo "$KEYSTORE_BASE64" | base64 --decode > release-keystore.jks
-          chmod 600 release-keystore.jks
-
       - name: Make gradlew executable
         run: chmod +x ./gradlew
 
-      - name: Build Release APK (signed)
+      - name: Build Release APK
+        run: ./gradlew assembleRelease
+
+      - name: Sign Release APK
         uses: r0adkll/sign-android-release@v1
         id: sign_app
         with:
-          releaseDirectory: app/release
+          releaseDirectory: app/build/outputs/apk/release
           signingKeyBase64: ${{ secrets.KEYSTORE_BASE64 }}
           alias: ${{ secrets.KEY_ALIAS }}
           keyStorePassword: ${{ secrets.KEYSTORE_PASSWORD }}
@@ -58,6 +56,6 @@ jobs:
         uses: softprops/action-gh-release@v2
         with:
           tag_name: ${{ steps.vars.outputs.tag }}
-          files: app/build/outputs/apk/release/*.apk
+          files: ${{ steps.sign_app.outputs.signedFile }}
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
