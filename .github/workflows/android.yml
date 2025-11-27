@@ -56,10 +56,14 @@ jobs:
           keyStorePassword: ${{ secrets.KEYSTORE_PASSWORD }}
           keyPassword: ${{ secrets.KEY_PASSWORD }}
 
+      - name: Rename APK
+        run: |
+          mv ${{ steps.sign_app.outputs.signedReleaseFile }} app/build/outputs/apk/release/app-release.apk
+
       - name: Upload APK to GitHub Release
         uses: softprops/action-gh-release@v2
         with:
           tag_name: ${{ steps.vars.outputs.tag }}
-          files: ${{ steps.sign_app.outputs.signedReleaseFile }}
+          files: app/build/outputs/apk/release/app-release.apk
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
