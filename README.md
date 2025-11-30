@@ -55,3 +55,11 @@ cd day_exam
 - Android Jetpack (Room, LiveData, ViewModel)
 - Material Design
 - Apache POI (Excel 文件处理)
+
+## 联系方式
+
+如有问题或建议，欢迎通过微信联系：
+
+<div align="center">
+  <img src="image/image.png" alt="微信二维码" width="200"/>
+</div>
