@@ -17,7 +17,7 @@
 
 ## 下载
 
-- [F-Droid](https://f-droid.org/packages/com.gorden.dayexam/)（即将上线）
+- [F-Droid](https://f-droid.org/packages/com.gorden.dayexam/)
 - [GitHub Releases](https://github.com/newerZGQ/day_exam/releases)
 
 ## 构建
