@@ -1,6 +1,6 @@
 package com.gorden.dayexam.ui.widget
 
-import com.gorden.dayexam.db.entity.question.Element
+import com.gorden.dayexam.repository.model.question.Element
 import com.gorden.dayexam.ui.EventKey
 import com.jeremyliao.liveeventbus.LiveEventBus
 

@@ -7,7 +7,7 @@ import androidx.lifecycle.LifecycleOwner
 import androidx.recyclerview.widget.RecyclerView
 import com.gorden.dayexam.ContextHolder
 import com.gorden.dayexam.R
-import com.gorden.dayexam.db.entity.question.Element
+import com.gorden.dayexam.repository.model.question.Element
 import com.gorden.dayexam.repository.DataRepository
 import com.gorden.dayexam.repository.model.QuestionWithElement
 import com.gorden.dayexam.repository.model.RealAnswer

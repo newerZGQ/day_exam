@@ -6,7 +6,7 @@ import android.view.LayoutInflater
 import android.widget.FrameLayout
 import android.widget.TextView
 import com.gorden.dayexam.R
-import com.gorden.dayexam.db.entity.question.Element
+import com.gorden.dayexam.repository.model.question.Element
 
 class OptionCardView: FrameLayout {
     constructor(context: Context) : super(context)

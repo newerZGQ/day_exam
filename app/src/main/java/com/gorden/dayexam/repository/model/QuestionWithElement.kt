@@ -1,6 +1,6 @@
 package com.gorden.dayexam.repository.model
 
-import com.gorden.dayexam.db.entity.question.Element
+import com.gorden.dayexam.repository.model.question.Element
 
 class QuestionWithElement (
     val id: Int,

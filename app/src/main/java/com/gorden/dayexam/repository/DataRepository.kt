@@ -13,14 +13,17 @@ import com.gorden.dayexam.db.dao.QuestionWithContent
 import com.gorden.dayexam.db.entity.*
 import com.gorden.dayexam.db.entity.Paper
 import com.gorden.dayexam.db.entity.question.*
-import com.gorden.dayexam.db.entity.question.Content.Companion.ANSWER_TYPE
-import com.gorden.dayexam.db.entity.question.Content.Companion.BODY_TYPE
-import com.gorden.dayexam.db.entity.question.Content.Companion.OPTION_TYPE
+import com.gorden.dayexam.repository.model.question.Content.Companion.ANSWER_TYPE
+import com.gorden.dayexam.repository.model.question.Content.Companion.BODY_TYPE
+import com.gorden.dayexam.repository.model.question.Content.Companion.OPTION_TYPE
 import com.gorden.dayexam.executor.AppExecutors
 import com.gorden.dayexam.parser.model.PQuestion
 import com.gorden.dayexam.repository.RepositoryConstants.Companion.DefaultBookName
 import com.gorden.dayexam.repository.RepositoryConstants.Companion.DefaultPaperName
 import com.gorden.dayexam.repository.model.*
+import com.gorden.dayexam.repository.model.question.Content
+import com.gorden.dayexam.repository.model.question.Element
+import com.gorden.dayexam.repository.model.question.Question
 import com.gorden.dayexam.ui.book.BookDetail
 import java.util.*
 

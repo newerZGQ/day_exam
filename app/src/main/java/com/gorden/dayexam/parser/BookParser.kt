@@ -8,6 +8,7 @@ import com.gorden.dayexam.parser.model.PBody
 import com.gorden.dayexam.parser.model.POptionItem
 import com.gorden.dayexam.parser.model.PQuestion
 import com.gorden.dayexam.repository.DataRepository
+import com.gorden.dayexam.repository.model.question.Element
 import com.gorden.dayexam.utils.BookUtils
 import org.apache.poi.xwpf.usermodel.XWPFDocument
 import org.apache.poi.xwpf.usermodel.XWPFParagraph

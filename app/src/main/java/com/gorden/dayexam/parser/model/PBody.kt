@@ -1,6 +1,6 @@
 package com.gorden.dayexam.parser.model
 
-import com.gorden.dayexam.db.entity.question.Element
+import com.gorden.dayexam.repository.model.question.Element
 
 data class PBody (
     val elements: List<Element> )

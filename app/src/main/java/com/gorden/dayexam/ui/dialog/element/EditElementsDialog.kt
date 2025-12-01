@@ -10,7 +10,7 @@ import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.gorden.dayexam.R
-import com.gorden.dayexam.db.entity.question.Element
+import com.gorden.dayexam.repository.model.question.Element
 import com.gorden.dayexam.executor.AppExecutors
 import com.gorden.dayexam.parser.image.ImageCacheManager
 import com.gorden.dayexam.repository.DataRepository

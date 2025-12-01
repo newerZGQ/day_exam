@@ -5,7 +5,7 @@ import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
 import com.gorden.dayexam.R
-import com.gorden.dayexam.db.entity.question.Question
+import com.gorden.dayexam.repository.model.question.Question
 import com.gorden.dayexam.model.QuestionType
 import com.gorden.dayexam.repository.model.QuestionWithElement
 import com.gorden.dayexam.ui.home.viewholder.*
