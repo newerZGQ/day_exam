@@ -12,14 +12,8 @@ interface StudyRecordDao {
     @Insert
     fun insert(studyRecord: StudyRecord): Long
 
-    @Query("SELECT COUNT(id) FROM study_record WHERE questionId = :questionId")
-    fun getQuestionStudyCount(questionId: Int): Long
-
     @Query("SELECT COUNT(id) FROM study_record WHERE paperId = :paperId")
     fun getPaperStudyCount(paperId: Int): Long
-
-    @Query("SELECT * FROM study_record WHERE questionId = :questionId ORDER BY createTime DESC LIMIT 1")
-    fun getLast(questionId: Int): StudyRecord?
 
     @Query("SELECT COUNT(id) FROM study_record WHERE createTime > :date")
     fun getStudyCountAfter(date: String): LiveData<Long>

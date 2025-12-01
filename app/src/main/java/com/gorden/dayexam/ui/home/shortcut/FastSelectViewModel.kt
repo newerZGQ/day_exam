@@ -3,15 +3,13 @@ package com.gorden.dayexam.ui.home.shortcut
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
-import com.gorden.dayexam.repository.DataRepository
-import com.gorden.dayexam.repository.model.SimpleQuestionListWithDetail
+import com.gorden.dayexam.repository.model.QuestionDetail
 
 class FastSelectViewModel: ViewModel() {
 
-    private var questionDetail = MutableLiveData<SimpleQuestionListWithDetail>()
+    private var questionDetail = MutableLiveData<List<QuestionDetail>>()
 
-    fun currentQuestionDetail(paperId: Int): LiveData<SimpleQuestionListWithDetail> {
-        DataRepository.simpleQuestionListWithDetail(paperId, questionDetail)
+    fun currentQuestionDetail(paperId: Int): LiveData<List<QuestionDetail>> {
         return questionDetail
     }
 }

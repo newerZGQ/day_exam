@@ -35,17 +35,6 @@ class HomeFragment : Fragment() {
         initView(root)
         registerActionEvent()
         homeViewModel = ViewModelProvider(this).get(HomeViewModel::class.java)
-        homeViewModel.currentQuestionDetail().observe(viewLifecycleOwner, {
-
-            if (paperId != it.paperId || it.curQuestionId != curQuestionId || it.questions.size != curQuestionCount) {
-                paperId = it.paperId
-                curQuestionId = it.curQuestionId
-                questions = it.questions
-                (questionPager.adapter as QuestionPagerAdapter).setData(it.questions, it.bookTitle, it.paperTitle)
-                val curPosition = getCurPosition(it.curQuestionId, it.questions)
-                questionPager.setCurrentItem(curPosition, false)
-            }
-        })
         registerRememberMode()
         return root
     }
@@ -61,9 +50,7 @@ class HomeFragment : Fragment() {
     private val onPageChangeCallback = object : ViewPager2.OnPageChangeCallback() {
         override fun onPageSelected(position: Int) {
             if (position < questions.size) {
-                val question = questions[position]
-                curQuestionId = question.id
-                DataRepository.updatePaperStatus(paperId, question.id)
+                DataRepository.updatePaperStatus(paperId, position)
             }
         }
     }
@@ -93,22 +80,11 @@ class HomeFragment : Fragment() {
                 DataRepository.insertStudyRecord(
                     StudyRecord(
                         paperId,
-                        it.questionId,
                         it.answer,
                         it.correct
                     )
                 )
             }
-    }
-
-    private fun getCurPosition(questionId: Int, questions: List<QuestionDetail>): Int {
-        var result = 0
-        questions.forEachIndexed { index, questionWithElement ->
-            if (questionId == questionWithElement.id) {
-                result = index
-            }
-        }
-        return result
     }
 
     private fun registerRememberMode() {

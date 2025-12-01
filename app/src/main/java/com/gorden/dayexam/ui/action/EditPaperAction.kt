@@ -17,7 +17,6 @@ class EditPaperAction(val context: Context, val paperInfo: PaperInfo): Action {
                 override fun onConfirmContent(dialog: EditTextDialog, content: String, subContent: String) {
                     paperInfo.title = content
                     DataRepository.updatePaper(paperInfo)
-                    DataRepository.increaseContentVersion()
                 }
             }).show()
     }

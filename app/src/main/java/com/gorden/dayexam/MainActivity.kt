@@ -30,7 +30,6 @@ import com.gorden.dayexam.ui.Constants
 import com.gorden.dayexam.ui.Constants.Companion.HAS_AGREE_PRIVACY_KEY
 import com.gorden.dayexam.ui.EventKey
 import com.gorden.dayexam.ui.book.PaperListFragment
-import com.gorden.dayexam.ui.dialog.element.ImageElementEditCard
 import com.gorden.dayexam.ui.home.HomeFragment
 import com.gorden.dayexam.ui.home.shortcut.FastQuestionSelectActivity
 import com.gorden.dayexam.ui.home.shortcut.FastQuestionSelectActivity.Companion.CURRENT_POSITION
@@ -65,8 +64,6 @@ class MainActivity : BaseActivity() {
     private var isFocusMode = false
 
     private lateinit var todayCount: TextView
-
-    private var photoSelectCallback: ImageElementEditCard.PhotoSelectCallback? = null
 
     companion object {
         const val SELECT_QUESTION_REQUEST_CODE = 201
@@ -200,26 +197,6 @@ class MainActivity : BaseActivity() {
         }
     }
 
-    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
-        super.onActivityResult(requestCode, resultCode, data)
-        if (requestCode == SELECT_QUESTION_REQUEST_CODE && resultCode == SELECT_QUESTION_RESULT_CODE) {
-            val selectPosition =
-                data?.getIntExtra(SimpleQuestionViewHolder.SELECT_POSITION, -1) ?: -1
-            if (selectPosition == -1 || selectPosition == lastHomepagePosition) {
-                return
-            }
-            homeFragment.setCurrentPosition(selectPosition)
-        } else if (requestCode == SELECT_PHOTO_REQUEST_CODE) {
-            val selectedImage = data?.data
-            try {
-                val bitmap = MediaStore.Images.Media.getBitmap(contentResolver, selectedImage)
-                photoSelectCallback?.onSelect(bitmap)
-            } catch (e: IOException) {
-                Log.e("", "")
-            }
-        }
-    }
-
     private fun initFragment() {
         supportFragmentManager
             .beginTransaction()
@@ -253,15 +230,6 @@ class MainActivity : BaseActivity() {
                     supportFragmentManager,
                     "Search"
                 )
-            })
-
-        LiveEventBus.get(
-            EventKey.EDIT_SELECT_PHOTO_CLICK,
-            ImageElementEditCard.PhotoSelectCallback::class.java
-        )
-            .observe(this, {
-                this.photoSelectCallback = it
-                selectPhoto()
             })
         LiveEventBus.get(EventKey.START_PROGRESS_BAR, Int::class.java).observe(this, {
             findViewById<View>(R.id.parsing_progress).visibility = View.VISIBLE

@@ -9,15 +9,7 @@ import com.gorden.dayexam.ui.dialog.EditTextDialog
 
 class DeletePaperAction(val context: Context, val paperInfo: PaperInfo): Action {
     override fun start() {
-        DataRepository.isInRecycleBin(paperInfo, object : IsInRecycleBinCallback {
-            override fun onFinished(isInRecycleBin: Boolean) {
-                if (isInRecycleBin) {
-                    performDeleteRecyclePaper(context, paperInfo)
-                } else {
-                    performDeleteCommonPaper(context, paperInfo)
-                }
-            }
-        })
+        performDeleteCommonPaper(context, paperInfo)
     }
 
     private fun performDeleteCommonPaper(context: Context, paperInfo: PaperInfo) {
@@ -26,20 +18,7 @@ class DeletePaperAction(val context: Context, val paperInfo: PaperInfo): Action 
             "确定要删除" + paperInfo.title + "么?(可从废纸篓找回)",
             editCallBack = object : EditTextDialog.EditCallBack {
                 override fun onConfirmContent(dialog: EditTextDialog, content: String, subContent: String) {
-                    DataRepository.deletePaper(paperInfo, false)
-                    DataRepository.increaseContentVersion()
-                }
-            }).show()
-    }
-
-    private fun performDeleteRecyclePaper(context: Context, paperInfo: PaperInfo) {
-        EditTextDialog(context,
-            context.resources.getString(R.string.dialog_delete_paper_title),
-            "确定要彻底删除" + paperInfo.title + "么?(无法找回)",
-            editCallBack = object : EditTextDialog.EditCallBack {
-                override fun onConfirmContent(dialog: EditTextDialog, content: String, subContent: String) {
-                    DataRepository.deletePaper(paperInfo, true)
-                    DataRepository.increaseContentVersion()
+                    DataRepository.deletePaper(paperInfo)
                 }
             }).show()
     }

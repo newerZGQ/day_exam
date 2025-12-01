@@ -7,4 +7,6 @@ import androidx.room.PrimaryKey
 data class DContext(
     var curPaperId: Int,
     var curQuestionId: Int,
-)
+){
+    @PrimaryKey(autoGenerate = true) var id: Int = 0
+}

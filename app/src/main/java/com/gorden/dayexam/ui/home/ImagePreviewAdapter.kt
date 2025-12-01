@@ -13,8 +13,36 @@ import com.gorden.dayexam.ui.EventKey
 import com.jeremyliao.liveeventbus.LiveEventBus
 
 class ImagePreviewAdapter: RecyclerView.Adapter<ImagePreviewHolder>() {
-// ... (omitted lines)
-class ImagePreviewHolder(itemView: View): RecyclerView.ViewHolder(itemView) {
+
+    private var data = listOf<String>()
+
+    @SuppressLint("NotifyDataSetChanged")
+    fun setData(data: List<String>) {
+        this.data = data
+        this.notifyDataSetChanged()
+    }
+
+    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ImagePreviewHolder {
+        val itemView = LayoutInflater.from(parent.context)
+            .inflate(
+                R.layout.viewpager_image_preview_holder_layout,
+                parent,
+                false)
+        return ImagePreviewHolder(itemView)
+    }
+
+    override fun onBindViewHolder(holder: ImagePreviewHolder, position: Int) {
+        holder.setData(data[position])
+    }
+
+    override fun getItemCount(): Int {
+        return data.size
+    }
+
+
+}
+
+class ImagePreviewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
     fun setData(imageUrl: String) {
         val previewImage = itemView.findViewById<ImageView>(R.id.previewImage)
         previewImage.setOnClickListener {

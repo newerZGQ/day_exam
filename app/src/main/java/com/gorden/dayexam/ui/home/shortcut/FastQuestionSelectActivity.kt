@@ -41,9 +41,9 @@ class FastQuestionSelectActivity: BaseActivity() {
             if (it == null) {
                 return@observe
             }
-            adapter?.setData(it.questions, currentPosition)
+            adapter?.setData(it, currentPosition)
             (recyclerView?.layoutManager as LinearLayoutManager).scrollToPosition(currentPosition)
-            toolbar?.title = it.paperTitle + "(" + it.questions.size +  "题)"
+            toolbar?.title = "要改"
         })
 
     }

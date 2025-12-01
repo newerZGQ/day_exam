@@ -15,25 +15,9 @@ class HomeViewModel : ViewModel() {
     private var courseId = 0
     private var bookId = 0
     private var paperId = 0
-    private var version: Int = 0
-
-    private val currentQuestionDetail = Transformations.switchMap(dContext) {
-        it?.let {
-            if (isQuestionsChanged(it) || isFirstTimeIn() || versionChanged(it)) {
-                DataRepository.currentQuestionDetail(questionDetail)
-            }
-            courseId = it.curCourseId
-            bookId = it.curBookId
-            paperId = it.curPaperId
-            version = it.version
-            questionDetail
-        }
-    }
 
     private fun isQuestionsChanged(dContext: DContext): Boolean {
-        if ((courseId != 0 && courseId != dContext.curCourseId) ||
-            (bookId != 0 && bookId != dContext.curBookId) ||
-            (paperId != 0 && paperId != dContext.curPaperId)) {
+        if (paperId != 0 && paperId != dContext.curPaperId) {
             return true
         }
         return false
@@ -44,14 +28,6 @@ class HomeViewModel : ViewModel() {
             return true
         }
         return false
-    }
-
-    private fun versionChanged(dContext: DContext): Boolean {
-        return version != dContext.version
-    }
-
-    fun currentQuestionDetail(): LiveData<QuestionDetail> {
-        return currentQuestionDetail
     }
 
 }

@@ -36,7 +36,7 @@ class SimpleQuestionViewHolder(itemView: View): RecyclerView.ViewHolder(itemView
     }
 
     private fun getDescription(question: QuestionDetail): String {
-        val textList = question.body.element.filter {
+        val textList = question.body.filter {
             it.elementType == Element.TEXT
         }
         var desc = ""
@@ -52,9 +52,6 @@ class SimpleQuestionViewHolder(itemView: View): RecyclerView.ViewHolder(itemView
         val positionTag = itemView.context.getString(R.string.the_type_key) +
                 (adapterPosition + 1) + itemView.context.getString(R.string.short_of_question)
         val typeTag = BookUtils.getTypeName(question.type)
-        val studyTag = itemView.context.getString(R.string.total_study_times) +
-                question.studyCount +
-                itemView.context.getString(R.string.times)
         return "$positionTag $typeTag"
     }
 }

@@ -30,7 +30,7 @@ class EssayQuestionViewHolder(itemView: View): BaseQuestionViewHolder(itemView) 
             question.realAnswer = RealAnswer()
             showAnswer(question)
             LiveEventBus.get(EventKey.ANSWER_EVENT, EventKey.AnswerEventModel::class.java)
-                .post(EventKey.AnswerEventModel(question.id, "", StudyRecord.NOT_AVAILABLE))
+                .post(EventKey.AnswerEventModel("", StudyRecord.NOT_AVAILABLE))
         }
     }
 

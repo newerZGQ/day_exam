@@ -99,10 +99,6 @@ class PaperListFragment : Fragment() {
         }
     }
 
-    private fun movePaper(paperInfo: PaperInfo) {
-        MovePaperAction(this, requireActivity(), paperInfo.id).start()
-    }
-
     private fun toFileBrowser() {
         val intent = Intent(Intent.ACTION_GET_CONTENT)
         intent.type = "*/*"
@@ -137,17 +133,6 @@ class PaperListFragment : Fragment() {
     }
 
     private fun registerPaperClickedEvent() {
-        LiveEventBus
-            .get(EventKey.PAPER_CONTAINER_CLICKED,
-                EventKey.PaperClickEventModel::class.java)
-            .observe(this, {
-                    DataRepository.updateCourseStatus(
-                        0, // Course ID removed
-                        0, // Book ID removed
-                        it.paperId)
-                (activity as MainActivity).closeDrawerLayout()
-            })
-
         LiveEventBus.get(EventKey.PAPER_MENU_ADD_QUESTION_FROM_FILE, EventKey.QuestionAddEventModel::class.java)
             .observe(this, {
                 targetPaperInfo = it
@@ -161,10 +146,6 @@ class PaperListFragment : Fragment() {
         LiveEventBus.get(EventKey.PAPER_MENU_DELETE_PAPER, PaperInfo::class.java)
             .observe(this, {
                 deletePaper(it)
-            })
-        LiveEventBus.get(EventKey.PAPER_MENU_MOVE_PAPER, PaperInfo::class.java)
-            .observe(this, {
-                movePaper(it)
             })
     }
 

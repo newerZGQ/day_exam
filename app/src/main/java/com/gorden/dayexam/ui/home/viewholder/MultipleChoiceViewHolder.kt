@@ -10,7 +10,6 @@ import com.gorden.dayexam.db.entity.StudyRecord
 import com.gorden.dayexam.repository.model.QuestionDetail
 import com.gorden.dayexam.repository.model.RealAnswer
 import com.gorden.dayexam.ui.EventKey
-import com.gorden.dayexam.ui.action.EditQuestionContentAction
 import com.gorden.dayexam.ui.widget.ElementViewListener
 import com.gorden.dayexam.ui.widget.OptionCardView
 import com.gorden.dayexam.utils.ScreenUtils

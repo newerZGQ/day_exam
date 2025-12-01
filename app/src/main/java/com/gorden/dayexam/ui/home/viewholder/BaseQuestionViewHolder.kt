@@ -11,7 +11,6 @@ import com.gorden.dayexam.repository.model.Element
 import com.gorden.dayexam.repository.DataRepository
 import com.gorden.dayexam.repository.model.QuestionDetail
 import com.gorden.dayexam.ui.EventKey
-import com.gorden.dayexam.ui.action.EditQuestionContentAction
 import com.gorden.dayexam.ui.widget.AnswerCardView
 import com.gorden.dayexam.ui.widget.ElementViewListener
 import com.gorden.dayexam.ui.widget.ElementsView
@@ -58,14 +57,13 @@ abstract class BaseQuestionViewHolder(itemView: View) : RecyclerView.ViewHolder(
     }
 
     open fun setInitStatus(question: QuestionDetail) {
-        genBodyView(question)
         genOptionsView(question)
         genActionView(question)
         hideAnswer(question)
     }
 
     open fun setAnsweredStatus(question: QuestionDetail) {
-//        genBodyView(question)
+        genBodyView(question)
         genAnsweredOptionsView(question)
         genAnswerView(question)
         showAnswer(question)
@@ -76,14 +74,10 @@ abstract class BaseQuestionViewHolder(itemView: View) : RecyclerView.ViewHolder(
         genRememberOptionsView(question)
         showAnswer(question)
     }
-
+    @SuppressLint("NewApi")
     open fun genBodyView(question: QuestionDetail) {
         val body = itemView.findViewById<ElementsView>(R.id.body)
-        body.setElements(question.body.element, BookUtils.getTypeName(question.type), ElementViewListener())
-        body.setOnLongClickListener {
-            EditQuestionContentAction(itemView.context, question.body.element).start()
-            return@setOnLongClickListener true
-        }
+        body.setElements(question.body, BookUtils.getTypeName(question.type), ElementViewListener())
     }
 
     abstract fun genOptionsView(question: QuestionDetail)
@@ -94,14 +88,10 @@ abstract class BaseQuestionViewHolder(itemView: View) : RecyclerView.ViewHolder(
 
     open fun genAnswerView(question: QuestionDetail) {
         val answerCardView = itemView.findViewById<AnswerCardView>(R.id.answer)
-        answerCardView.setElements(question.answer.element,
+        answerCardView.setElements(question.answer,
             "",
             question.realAnswer,
             ElementViewListener())
-        answerCardView.setOnLongClickListener {
-            EditQuestionContentAction(itemView.context, question.answer.element).start()
-            return@setOnLongClickListener true
-        }
     }
 
     abstract fun genActionView(question: QuestionDetail)
@@ -116,9 +106,8 @@ abstract class BaseQuestionViewHolder(itemView: View) : RecyclerView.ViewHolder(
     }
 
     fun getAnswer(question: QuestionDetail): String {
-        if (question.answer?.element?.isNotEmpty() == true
-            && question.answer!!.element[0].elementType == Element.TEXT) {
-            return question.answer.element[0].content
+        if (question.answer.isNotEmpty() && question.answer[0].elementType == Element.TEXT) {
+            return question.answer[0].content
         }
         return ""
     }

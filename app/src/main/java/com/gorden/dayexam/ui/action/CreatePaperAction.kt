@@ -16,8 +16,7 @@ class CreatePaperAction(val context: Context, val bookId: Int): Action {
             editCallBack = object : EditTextDialog.EditCallBack {
                 override fun onConfirmContent(dialog: EditTextDialog, content: String, subContent: String) {
                     if (content.isNotEmpty()) {
-                        DataRepository.insertPaper(content, "", bookId)
-                        DataRepository.increaseContentVersion()
+                        DataRepository.insertPaper(content, "", "", 0)
                     } else {
                         val msg = context.resources.getString(R.string.create_paper_empty_title_msg)
                         Toast.makeText(context, msg, Toast.LENGTH_SHORT).show()

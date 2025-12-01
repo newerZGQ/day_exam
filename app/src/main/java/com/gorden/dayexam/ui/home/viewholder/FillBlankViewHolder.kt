@@ -30,7 +30,7 @@ class FillBlankViewHolder(itemView: View): BaseQuestionViewHolder(itemView) {
             showAnswer(question)
             question.realAnswer = RealAnswer()
             LiveEventBus.get(EventKey.ANSWER_EVENT, EventKey.AnswerEventModel::class.java)
-                .post(EventKey.AnswerEventModel(question.id, "", StudyRecord.NOT_AVAILABLE))
+                .post(EventKey.AnswerEventModel("", StudyRecord.NOT_AVAILABLE))
         }
     }
 

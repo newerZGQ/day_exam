@@ -8,7 +8,6 @@ import java.util.*
 @Entity(tableName = "study_record")
 data class StudyRecord (
     val paperId: Int,
-    val questionId: Int,
     val content: String,
     val correct: Int) {
 

@@ -65,7 +65,6 @@ class EventKey {
     )
 
     data class AnswerEventModel(
-        val questionId: Int,
         val answer: String = "",
         // 0表答错 1表答对 -1表答案生效
         val correct: Int = -1
