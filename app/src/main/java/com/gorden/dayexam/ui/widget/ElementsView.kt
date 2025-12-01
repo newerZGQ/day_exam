@@ -16,54 +16,16 @@ import com.bumptech.glide.request.target.CustomTarget
 import com.bumptech.glide.request.transition.Transition
 import com.gorden.dayexam.R
 import com.gorden.dayexam.repository.model.Element
-import com.gorden.dayexam.parser.image.ImageCacheManager
+import com.gorden.dayexam.utils.ImageCacheHelper
 import com.gorden.dayexam.utils.ScreenUtils
 
 class ElementsView: LinearLayout {
-
-    var textSize = 7f
-    var tagTextSize = 7f
-
-    constructor(context: Context) : super(context)
-
-    constructor(context: Context, attrs: AttributeSet) : super(context, attrs) {
-        val typeArray = context.obtainStyledAttributes(attrs, R.styleable.element)
-        textSize = typeArray.getDimension(R.styleable.element_e_text_size, 7f)
-        tagTextSize = typeArray.getDimension(R.styleable.element_tag_text_size, 3f)
-    }
-
-    private var listener: ElementActionListener? = null
-
-    companion object {
-        const val ELEMENT_MARGIN_TOP = 0f
-    }
-
-    @RequiresApi(Build.VERSION_CODES.O)
-    fun setElements(elements: List<Element>, highlightText: String, listener: ElementActionListener) {
-        removeAllViews()
-        this.orientation = VERTICAL
-        elements.forEachIndexed { index, contentElement ->
-            if (index == 0 && contentElement.elementType == Element.TEXT) {
-                addTagText(highlightText)
-                addCommonText(contentElement.content)
-            } else {
-                if (contentElement.elementType == Element.TEXT) {
-                    addCommonText(contentElement.content)
-                } else if (contentElement.elementType == Element.PICTURE) {
-                    val imageView = ImageView(context)
-                    val layoutParams = LayoutParams(LayoutParams.MATCH_PARENT, LayoutParams.WRAP_CONTENT)
-                    layoutParams.topMargin = ScreenUtils.dp2px(ELEMENT_MARGIN_TOP)
-                    addView(imageView, layoutParams)
-                    imageView.setOnClickListener {
-                        listener?.onImageClick(index, elements)
-                    }
-                    imageView.setBackgroundColor(context.getColor(R.color.colorTransparent))
-
+// ... (omitted lines)
                     var requestBuilder = Glide.with(context).asBitmap()
                     requestBuilder = if (contentElement.content.startsWith("default_data_image")) {
                         requestBuilder.load("file:///android_asset/image/" + contentElement.content)
                     } else {
-                        val imageFile = ImageCacheManager.getImageFile(contentElement.content)
+                        val imageFile = ImageCacheHelper.getImageFile(contentElement.content)
                         requestBuilder.load(imageFile)
                     }
                     requestBuilder

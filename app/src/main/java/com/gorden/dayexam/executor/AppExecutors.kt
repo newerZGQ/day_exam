@@ -3,7 +3,7 @@ package com.gorden.dayexam.executor
 import android.graphics.Bitmap
 import android.os.Handler
 import android.os.Looper
-import com.gorden.dayexam.parser.image.ImageCacheManager
+
 import java.util.concurrent.Executor
 import java.util.concurrent.Executors
 

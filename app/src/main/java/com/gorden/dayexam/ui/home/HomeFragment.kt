@@ -11,7 +11,7 @@ import androidx.viewpager2.widget.ViewPager2
 import androidx.viewpager2.widget.ViewPager2.ORIENTATION_HORIZONTAL
 import com.gorden.dayexam.R
 import com.gorden.dayexam.db.entity.StudyRecord
-import com.gorden.dayexam.parser.image.ImageCacheManager
+
 import com.gorden.dayexam.repository.DataRepository
 import com.gorden.dayexam.repository.model.QuestionDetail
 import com.gorden.dayexam.ui.EventKey
@@ -36,7 +36,7 @@ class HomeFragment : Fragment() {
         registerActionEvent()
         homeViewModel = ViewModelProvider(this).get(HomeViewModel::class.java)
         homeViewModel.currentQuestionDetail().observe(viewLifecycleOwner, {
-            ImageCacheManager.setCacheFolder(it.bookId.toString())
+
             if (paperId != it.paperId || it.curQuestionId != curQuestionId || it.questions.size != curQuestionCount) {
                 paperId = it.paperId
                 curQuestionId = it.curQuestionId

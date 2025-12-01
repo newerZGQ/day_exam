@@ -1,58 +1,68 @@
 package com.gorden.dayexam.parser
 
+import com.gorden.dayexam.db.entity.PaperInfo
 import com.gorden.dayexam.model.QuestionType
-import com.gorden.dayexam.parser.image.ImageCacheManager
-import com.gorden.dayexam.parser.model.PAnswer
-import com.gorden.dayexam.parser.model.PBody
-import com.gorden.dayexam.parser.model.POptionItem
-import com.gorden.dayexam.parser.model.PQuestion
-import com.gorden.dayexam.repository.DataRepository
 import com.gorden.dayexam.repository.model.Element
+import com.gorden.dayexam.repository.model.OptionItems
+import com.gorden.dayexam.repository.model.PaperDetail
+import com.gorden.dayexam.repository.model.PaperStudyInfo
+import com.gorden.dayexam.repository.model.QuestionDetail
 import com.gorden.dayexam.utils.BookUtils
+import com.gorden.dayexam.utils.ImageCacheHelper
 import org.apache.poi.xwpf.usermodel.XWPFDocument
 import org.apache.poi.xwpf.usermodel.XWPFParagraph
-import java.io.InputStream
+import java.io.File
+import java.io.FileInputStream
 import java.lang.StringBuilder
 
 object BookParser {
 
-    private var curPaperId: Int = 1
-    private var curBookId: Int = 0
     private var timeStamp: Long = 0
     private val cacheImageData = mutableMapOf<String, ByteArray>()
+    private var currentPaperFolder: String = ""
 
-    fun parse(inputStream: InputStream, bookId: Int, paperId: Int): List<PQuestion> {
-        setContextValue(paperId, bookId)
+    fun parse(paperInfo: PaperInfo): PaperDetail {
         timeStamp = System.currentTimeMillis()
         cacheImageData.clear()
-        val result = mutableListOf<PQuestion>()
+        val questionDetails = mutableListOf<QuestionDetail>()
+        
+        // Set up image cache folder name for this paper
+        currentPaperFolder = paperInfo.path.hashCode().toString()
+        
         try {
-            val document = XWPFDocument(inputStream)
-            val splitTitleSeparatorResult = splitByTitleSeparator(document.paragraphs)
-            splitTitleSeparatorResult.forEach { questionParas ->
-                val questionUnits = splitBySeparator(questionParas)
-                val question = parseParagraphToQuestion(questionUnits)
-                question?.let {
-                    result.add(question)
+            val file = File(paperInfo.path)
+            FileInputStream(file).use { inputStream ->
+                val document = XWPFDocument(inputStream)
+                val splitTitleSeparatorResult = splitByTitleSeparator(document.paragraphs)
+                splitTitleSeparatorResult.forEach { questionParas ->
+                    val questionUnits = splitBySeparator(questionParas)
+                    val question = parseParagraphToQuestion(questionUnits)
+                    question?.let {
+                        questionDetails.add(question)
+                    }
                 }
             }
         } catch (e: Exception) {
-
+            // Handle exception - could log or throw
         }
-        DataRepository.insertPQuestion(result, curPaperId)
-        DataRepository.increaseContentVersion()
-        cacheImageData.forEach { (s, bytes) ->
-            ImageCacheManager.save(s, bytes)
+        
+        // Save cached images using ImageCacheHelper
+        cacheImageData.forEach { (relativePath, bytes) ->
+            ImageCacheHelper.save(relativePath, bytes)
         }
-        return result
-    }
-
-    private fun setContextValue(paperId: Int, bookId: Int) {
-        this.curPaperId = paperId
-        if (curBookId != bookId) {
-            this.curBookId = bookId
-            ImageCacheManager.setCacheFolder(curBookId.toString())
-        }
+        
+        // Create PaperStudyInfo with default values
+        val studyInfo = PaperStudyInfo(
+            studyCount = 0,
+            lastStudyDate = null
+        )
+        
+        // Return PaperDetail
+        return PaperDetail(
+            paperInfo = paperInfo,
+            studyInfo = studyInfo,
+            question = questionDetails
+        )
     }
 
     // 以`&&填空 &&判断等`为分界
@@ -78,34 +88,40 @@ object BookParser {
         return result
     }
 
-    private fun parseParagraphToQuestion(paras: List<List<XWPFParagraph>>): PQuestion? {
-        var body = PBody(listOf())
-        var options = mutableListOf<POptionItem>()
-        var answer = PAnswer(listOf())
+    private fun parseParagraphToQuestion(paras: List<List<XWPFParagraph>>): QuestionDetail? {
+        var body = listOf<Element>()
+        var options = mutableListOf<OptionItems>()
+        var answer = listOf<Element>()
         var type = QuestionType.ERROR_TYPE
+        
         paras.forEach {
             if (it.isNotEmpty()) {
                 val text = it[0].text
                 when {
                     isQuestionSeparator(text) -> {
                         type = parseType(it)
-                        body = parseBody(it)
+                        body = parseParagraphToElement(it)
                     }
                     text.startsWith(ParserConstants.OPTION_SEPARATOR) ||
                             text.lowercase().startsWith(ParserConstants.OPTION_SEPARATOR_EN) -> {
-                        options.add(parseOption(it))
+                        options.add(OptionItems(parseParagraphToElement(it)))
                     }
                     text.startsWith(ParserConstants.ANSWER_SEPARATOR) ||
                             text.lowercase().startsWith(ParserConstants.ANSWER_SEPARATOR_EN) -> {
-                        answer = parseAnswer(it)
+                        answer = parseParagraphToElement(it)
                     }
                 }
             }
         }
-        return if (curPaperId != -1) {
-            PQuestion(type, body, answer, options)
+        
+        return if (type != QuestionType.ERROR_TYPE) {
+            QuestionDetail(
+                type = type,
+                body = body,
+                options = options,
+                answer = answer
+            )
         } else {
-            // TODO 抛异常告警
             null
         }
     }
@@ -164,18 +180,6 @@ object BookParser {
         return QuestionType.ERROR_TYPE
     }
 
-    private fun parseBody(paras: List<XWPFParagraph>): PBody {
-        return PBody(parseParagraphToElement(paras))
-    }
-
-    private fun parseOption(paras: List<XWPFParagraph>): POptionItem {
-        return POptionItem(parseParagraphToElement(paras))
-    }
-
-    private fun parseAnswer(paras: List<XWPFParagraph>): PAnswer {
-        return PAnswer(parseParagraphToElement(paras))
-    }
-
     private fun parseParagraphToElement(paras: List<XWPFParagraph>): List<Element> {
         val result = mutableListOf<Element>()
         var elementPosition = 1
@@ -195,8 +199,9 @@ object BookParser {
                     }
                     run.embeddedPictures.forEach { picture ->
                         val imageName = BookUtils.generateImageName(picture.pictureData.fileName, timeStamp)
-                        cacheImageData[imageName] = picture.pictureData.data
-                        val element = Element(Element.PICTURE, imageName, 0, elementPosition++)
+                        val relativePath = currentPaperFolder + File.separator + imageName
+                        cacheImageData[relativePath] = picture.pictureData.data
+                        val element = Element(Element.PICTURE, relativePath, 0, elementPosition++)
                         result.add(element)
                     }
                 }
@@ -221,8 +226,6 @@ object BookParser {
                 text.lowercase().startsWith(ParserConstants.SINGLE_CHOICE_SEPARATOR_EN) ||
                 text.lowercase().startsWith(ParserConstants.MULTIPLE_CHOICE_SEPARATOR_EN) ||
                 text.lowercase().startsWith(ParserConstants.ESSAY_QUESTION_SEPARATOR_EN)
-
     }
-
 }
 

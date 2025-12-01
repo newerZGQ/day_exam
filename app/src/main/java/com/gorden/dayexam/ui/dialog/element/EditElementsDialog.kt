@@ -12,7 +12,7 @@ import androidx.recyclerview.widget.RecyclerView
 import com.gorden.dayexam.R
 import com.gorden.dayexam.repository.model.Element
 import com.gorden.dayexam.executor.AppExecutors
-import com.gorden.dayexam.parser.image.ImageCacheManager
+import com.gorden.dayexam.utils.ImageCacheHelper
 import com.gorden.dayexam.repository.DataRepository
 import com.gorden.dayexam.utils.BookUtils
 import java.io.ByteArrayOutputStream
@@ -22,50 +22,14 @@ import java.io.IOException
 class EditElementsDialog(
     context: Context
 ): Dialog(context) {
-
-    private var elements: List<Element> = listOf()
-    private var contentId = -1
-
-    private lateinit var rootView: ConstraintLayout
-    private lateinit var elementList: RecyclerView
-    private lateinit var adapter: ElementAdapter
-
-    constructor(
-        context: Context,
-        contentId: Int,
-        elements: List<Element>
-    ): this(context) {
-        this.elements = elements
-        this.contentId = contentId
-    }
-
-    private fun init() {
-        setContentView(R.layout.dialog_edit_elements_layout)
-        window?.setBackgroundDrawableResource(R.color.colorTransparent)
-        window?.setDimAmount(0.8f)
-        window?.setLayout(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT)
-        rootView = findViewById(R.id.edit_elements_container)
-        findViewById<View>(R.id.done_edit_content).setOnClickListener {
-            saveAllElement()
-            dismiss()
-        }
-        elementList = findViewById(R.id.element_list)
-        findViewById<View>(R.id.cancel_edit_content).setOnClickListener {
-            dismiss()
-        }
-        adapter = ElementAdapter()
-        elementList.adapter = adapter
-        elementList.layoutManager = LinearLayoutManager(context)
-        adapter.setData(contentId, elements)
-    }
-
+// ... (omitted lines)
     private fun saveAllElement() {
         AppExecutors.diskIO().execute {
             var index = 0
             val result = adapter.getData().filter {
                 // 删除被操作delete的图片文件
                 if (it.element.elementType == Element.PICTURE && it.isDeleted) {
-                    ImageCacheManager.delete(it.element.content)
+                    ImageCacheHelper.delete(it.element.content)
                 }
                 // 过滤掉需要删除的element
                 !it.isDeleted
@@ -89,7 +53,7 @@ class EditElementsDialog(
                                 val stream = ByteArrayOutputStream()
                                 it.image!!.compress(Bitmap.CompressFormat.PNG, 100, stream)
                                 val byteArray: ByteArray = stream.toByteArray()
-                                ImageCacheManager.save(fileName, byteArray)
+                                ImageCacheHelper.save(fileName, byteArray)
                                 Element(
                                     it.element.elementType,
                                     fileName,
@@ -97,6 +61,7 @@ class EditElementsDialog(
                                     index
                                 )
                             } catch (e: IOException) {
+// ... (omitted lines)
 
                             } finally {
                                 it.image!!.recycle()

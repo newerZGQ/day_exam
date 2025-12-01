@@ -19,7 +19,7 @@ import com.gorden.dayexam.db.entity.Book
 import com.gorden.dayexam.db.entity.PaperInfo
 import com.gorden.dayexam.executor.AppExecutors
 import com.gorden.dayexam.parser.BookParser
-import com.gorden.dayexam.parser.image.ImageCacheManager
+
 import com.gorden.dayexam.repository.DataRepository
 import com.gorden.dayexam.ui.EventKey
 import com.gorden.dayexam.ui.action.*
@@ -220,7 +220,7 @@ class BooksFragment : Fragment() {
                         curCourseId,
                         it.bookId,
                         it.paperId)
-                    ImageCacheManager.setCacheFolder(it.bookId.toString())
+
                 (activity as MainActivity).closeDrawerLayout()
             })
 
