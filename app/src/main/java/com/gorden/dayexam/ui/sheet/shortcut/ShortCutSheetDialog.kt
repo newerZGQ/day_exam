@@ -11,7 +11,6 @@ import androidx.annotation.Nullable
 import androidx.lifecycle.ViewModelProvider
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment
 import com.gorden.dayexam.R
-import com.gorden.dayexam.backup.BackupManager
 import com.gorden.dayexam.db.entity.Config
 import com.gorden.dayexam.repository.DataRepository
 import com.gorden.dayexam.ui.EventKey
@@ -86,10 +85,6 @@ class ShortCutSheetDialog : BottomSheetDialogFragment() {
         }
         sort_by_accuracy_content_container.setOnClickListener {
             sort_by_accuracy_mode_switch.isChecked = !sort_by_accuracy_mode_switch.isChecked
-        }
-        back_up_now_content_container.setOnClickListener {
-            BackupManager.backup()
-            dismiss()
         }
     }
 

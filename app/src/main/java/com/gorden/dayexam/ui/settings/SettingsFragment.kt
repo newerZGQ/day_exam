@@ -9,17 +9,11 @@ import androidx.preference.Preference
 import androidx.preference.PreferenceFragmentCompat
 import com.gorden.dayexam.ContextHolder
 import com.gorden.dayexam.R
-import com.gorden.dayexam.backup.BackupManager
-import com.gorden.dayexam.ui.action.RecoverBackupAction
 import com.gorden.dayexam.ui.dialog.EditTextDialog
 
 class SettingsFragment: PreferenceFragmentCompat() {
     override fun onCreatePreferences(savedInstanceState: Bundle?, rootKey: String?) {
         setPreferencesFromResource(R.xml.settings_preference, rootKey)
-        findPreference<Preference>(resources.getString(R.string.reverse_backup_key))?.setOnPreferenceClickListener {
-            RecoverBackupAction(requireActivity()).start()
-            return@setOnPreferenceClickListener true
-        }
         findPreference<Preference>(resources.getString(R.string.keep_screen_light_key))?.setOnPreferenceChangeListener { preference, newValue ->
             if (newValue == true) {
                 requireActivity().window.addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON)
