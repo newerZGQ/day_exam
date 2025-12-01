@@ -8,7 +8,6 @@ import java.util.*
 data class Paper(
     var title: String,
     var description: String,
-    var bookId: Int,
     var position: Int
 ) {
     @PrimaryKey(autoGenerate = true) var id: Int = 0

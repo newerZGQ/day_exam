@@ -12,12 +12,10 @@ import com.gorden.dayexam.db.converter.*
 import com.gorden.dayexam.db.dao.*
 import com.gorden.dayexam.db.entity.*
 import com.gorden.dayexam.db.entity.Paper
-import com.gorden.dayexam.db.entity.question.*
 import com.gorden.dayexam.executor.AppExecutors
 
 @Database(
-    entities = [DContext::class, Course::class, Book::class, Paper::class, Question::class,
-        StudyStatus::class, Content::class, Element::class,
+    entities = [DContext::class, Paper::class, StudyStatus::class,
                StudyRecord::class, Config::class],
     version = 1,
     exportSchema = false
@@ -28,13 +26,8 @@ import com.gorden.dayexam.executor.AppExecutors
 abstract class AppDatabase : RoomDatabase() {
 
     abstract fun dContextDao(): DContextDao
-    abstract fun courseDao(): CourseDao
-    abstract fun bookDao(): BookDao
     abstract fun paperDao(): PaperDao
-    abstract fun questionDao(): QuestionDao
     abstract fun studyStatusDao(): StudyStatusDao
-    abstract fun elementDao(): ElementDao
-    abstract fun contentDao(): ContentDao
     abstract fun studyRecordDao(): StudyRecordDao
     abstract fun configDao(): ConfigDao
 
