@@ -7,24 +7,19 @@ import androidx.sqlite.db.SimpleSQLiteQuery
 import com.gorden.dayexam.db.AppDatabase
 import com.gorden.dayexam.db.DefaultDataGenerator
 import com.gorden.dayexam.db.converter.DateConverter
-import com.gorden.dayexam.db.dao.CourseWithChildren
 import com.gorden.dayexam.db.dao.ElementWithContentAncestors
 import com.gorden.dayexam.db.dao.QuestionWithContent
 import com.gorden.dayexam.db.entity.*
-import com.gorden.dayexam.db.entity.Paper
+import com.gorden.dayexam.db.entity.PaperInfo
 import com.gorden.dayexam.db.entity.question.*
 import com.gorden.dayexam.repository.model.question.Content.Companion.ANSWER_TYPE
 import com.gorden.dayexam.repository.model.question.Content.Companion.BODY_TYPE
 import com.gorden.dayexam.repository.model.question.Content.Companion.OPTION_TYPE
 import com.gorden.dayexam.executor.AppExecutors
 import com.gorden.dayexam.parser.model.PQuestion
-import com.gorden.dayexam.repository.RepositoryConstants.Companion.DefaultBookName
-import com.gorden.dayexam.repository.RepositoryConstants.Companion.DefaultPaperName
 import com.gorden.dayexam.repository.model.*
 import com.gorden.dayexam.repository.model.question.Content
-import com.gorden.dayexam.repository.model.question.Element
 import com.gorden.dayexam.repository.model.question.Question
-import com.gorden.dayexam.ui.book.BookDetail
 import java.util.*
 
 object DataRepository {
@@ -112,83 +107,11 @@ object DataRepository {
         mDatabase.dContextDao().checkpoint(SimpleSQLiteQuery("pragma wal_checkpoint(full)"))
     }
 
-    /**
-     * Course 相关
-     */
-    fun insertCourse(title: String, desc: String) {
-        AppExecutors.diskIO().execute {
-            mDatabase.runInTransaction {
-                val courseMaxOrder = mDatabase.courseDao().getMaxOrder()
-                val course = Course(title, desc, courseMaxOrder + 1)
-                val id = mDatabase.courseDao().insert(course)
-                val bookId = mDatabase.bookDao().insert(Book(DefaultBookName, "", id.toInt(), 1))
-                val courseStatus = StudyStatus(CourseStatus, id.toInt(), bookId.toInt())
-                mDatabase.studyStatusDao().insert(courseStatus)
-                val paper = Paper(DefaultPaperName, "", bookId.toInt(), 1)
-                val paperId = mDatabase.paperDao().insert(paper)
-                val bookStatus = StudyStatus(BookStatus, bookId.toInt(), paperId.toInt())
-                mDatabase.studyStatusDao().insert(bookStatus)
-                val paperStatus = StudyStatus(PaperStatus, paperId.toInt(), 0)
-                mDatabase.studyStatusDao().insert(paperStatus)
-            }
-        }
-    }
 
-    fun updateCourse(id: Int, title: String, desc: String) {
-        AppExecutors.diskIO().execute {
-            val course = mDatabase.courseDao().getCourseEntity(id)
-            course?.let {
-                it.title = title
-                it.description = desc
-                it.editTime = Date()
-                mDatabase.courseDao().update(it)
-            }
-        }
-    }
-
-    fun deleteCourse(id: Int) {
-        AppExecutors.diskIO().execute {
-            mDatabase.courseDao().getCourseEntity(id)?.let { course ->
-                val books = mDatabase.bookDao().getBookEntitiesByCourseId(course.id)
-                deleteBooks(books)
-                mDatabase.courseDao().delete(course)
-                mDatabase.studyStatusDao().delete(CourseStatus, course.id)
-            }
-        }
-    }
-
-    fun getAllCourseExcludeRecycleBin(courses: MutableLiveData<List<Course>>) {
-        AppExecutors.diskIO().execute {
-            mDatabase.runInTransaction {
-                val courseEntities = mDatabase.courseDao().getAllCourseEntity()
-                val recycleBinId = mDatabase.dContextDao().getDContextEntity().recycleBinId
-                val result = courseEntities.filter {
-                    it.id != recycleBinId
-                }
-                AppExecutors.mainThread().execute {
-                    courses.value = result
-                }
-            }
-        }
-    }
-
-    fun getAllCourse():LiveData<List<Course>> {
-        return mDatabase.courseDao().getAllCourse()
-    }
-
-    fun currentCourse(): LiveData<Course> {
-        val dContext = mDatabase.dContextDao().getDContext()
-        return Transformations.switchMap(dContext) {
-            dContext.value?.let {
-                mDatabase.courseDao().getCourse(it.curCourseId)
-            }
-        }
-    }
-
-    private fun deletePapers(papers: List<Paper>) {
+    private fun deletePapers(paperInfos: List<PaperInfo>) {
         val dContext = mDatabase.dContextDao().getDContextEntity()
         val recycleMaxPaperPosition = mDatabase.paperDao().getMaxPosition(dContext.recycleBookId)
-        papers.forEachIndexed { index, paper ->
+        paperInfos.forEachIndexed { index, paper ->
             val questionCount = mDatabase.questionDao().getCountWithPaperId(paper.id)
             if (questionCount > 0) {
                 paper.bookId = dContext.recycleBookId
@@ -203,47 +126,6 @@ object DataRepository {
         }
     }
 
-    private fun deleteBooks(books: List<Book>) {
-        books.forEach { book ->
-            val papers = mDatabase.paperDao().getEntityByBookIdOrderByPosition(book.id)
-            deletePapers(papers)
-            mDatabase.bookDao().delete(book)
-            mDatabase.studyStatusDao().delete(BookStatus, book.id)
-        }
-    }
-
-    fun getAllCourseWithChildren(): List<CourseWithChildren> {
-        return mDatabase.courseDao().getAllCourseWithChildren()
-    }
-
-    /**
-     * 将书籍的状态更新为当前试卷为bookId, 当前书籍为courseId
-     * courseId: 要变更的试卷组
-     * bookId;
-     */
-    fun updateCourseStatus(courseId: Int, bookId: Int, paperId: Int) {
-        AppExecutors.diskIO().execute {
-            mDatabase.runInTransaction {
-                val courseStatus = mDatabase.studyStatusDao().queryEntityByTypeAndContentId(
-                    CourseStatus, courseId)
-                courseStatus.curChild = bookId
-                mDatabase.studyStatusDao().update(courseStatus)
-                val bookStatus = mDatabase.studyStatusDao().queryEntityByTypeAndContentId(
-                    BookStatus, bookId)
-                bookStatus.curChild = paperId
-                mDatabase.studyStatusDao().update(bookStatus)
-                val paperStatus = mDatabase.studyStatusDao().queryEntityByTypeAndContentId(
-                    PaperStatus, paperId
-                )
-                val dContext = mDatabase.dContextDao().getDContextEntity()
-                dContext.curBookId = bookId
-                dContext.curPaperId = paperId
-                dContext.curQuestionId = paperStatus.curChild
-                mDatabase.dContextDao().update(dContext)
-            }
-        }
-    }
-
     /**
      * study status相关
      */
@@ -253,151 +135,19 @@ object DataRepository {
     }
 
     /**
-     * book相关
-     */
-
-    fun insertBook(title: String, courseId: Int) {
-        AppExecutors.diskIO().execute {
-            mDatabase.runInTransaction {
-                val maxBookOrder = mDatabase.bookDao().getMaxOrder(courseId)
-                val bookId = mDatabase.bookDao().insert(Book(title, "", courseId, maxBookOrder + 1)).toInt()
-                val paper = Paper(DefaultPaperName, "", bookId, 1)
-                val paperId = mDatabase.paperDao().insert(paper).toInt()
-                val bookStatus = StudyStatus(BookStatus, bookId, paperId)
-                mDatabase.studyStatusDao().insert(bookStatus)
-                val paperStatus = StudyStatus(PaperStatus, paperId, 0)
-                mDatabase.studyStatusDao().insert(paperStatus)
-            }
-        }
-    }
-
-    fun deleteBook(book: Book) {
-        AppExecutors.diskIO().execute {
-            mDatabase.runInTransaction {
-                val dContext = mDatabase.dContextDao().getDContextEntity()
-                val courseStatus = mDatabase.studyStatusDao().queryEntityByTypeAndContentId(
-                    CourseStatus, book.courseId)
-                if (courseStatus.curChild != book.id) {
-                    innerDeleteBook(book)
-                    return@runInTransaction
-                } else {
-                    val books = mDatabase.bookDao().getBookEntitiesByCourseId(book.courseId)
-                    if (books.size == 1 ) {
-                        courseStatus.curChild = 0
-                        mDatabase.studyStatusDao().update(courseStatus)
-
-                        if (dContext.curBookId == book.id) {
-                            dContext.curBookId = 0
-                            mDatabase.dContextDao().update(dContext)
-                        }
-
-                        innerDeleteBook(book)
-                    } else if (books.size > 1) {
-                        val newCurBook = books.filter {
-                            it.id != book.id
-                        }[0]
-
-                        courseStatus.curChild = newCurBook.id
-                        mDatabase.studyStatusDao().update(courseStatus)
-
-                        if (dContext.curBookId == book.id) {
-                            dContext.curBookId = newCurBook.id
-                            mDatabase.dContextDao().update(dContext)
-                        }
-
-                        innerDeleteBook(book)
-                    }
-                }
-            }
-        }
-    }
-
-    private fun innerDeleteBook(book: Book) {
-        deletePapers(mDatabase.paperDao().getEntityByBookIdOrderByPosition(book.id))
-        mDatabase.bookDao().delete(book)
-    }
-
-    fun updateBooks(books: List<Book>) {
-        AppExecutors.diskIO().execute {
-            mDatabase.bookDao().update(books)
-        }
-    }
-
-    fun updateBook(book: Book) {
-        AppExecutors.diskIO().execute {
-            mDatabase.bookDao().update(book)
-        }
-    }
-
-    // 获取当前需要显示的所有书籍（可能是废纸篓里的），并包含详细的试卷以及每个试卷当前试题的信息
-    fun currentBookDetail(bookDetail: MutableLiveData<BookDetail>) {
-        AppExecutors.diskIO().execute {
-            mDatabase.runInTransaction {
-                val curBookDetail = innerGetBookDetail()
-                AppExecutors.mainThread().execute {
-                    bookDetail.value = curBookDetail
-                }
-            }
-        }
-    }
-
-    // 获取当前课程的所有书籍，并包含详细的试卷以及每个试卷当前试题的信息
-    private fun innerGetBookDetail(): BookDetail {
-        val dContext = mDatabase.dContextDao().getDContextEntity()
-        val course = mDatabase.courseDao().getCourseEntity(dContext.curCourseId)
-            ?: return BookDetail(0, "", 0, 0, false, listOf())
-        val isRecycleBin = course.id == dContext.recycleBinId
-        val curBookId = mDatabase.bookDao().getEntity(dContext.curBookId)?.id?: 0
-        val curPaperId = mDatabase.paperDao().getEntityById(dContext.curPaperId)?.id?: 0
-
-        var books = mDatabase.bookDao().getBookEntitiesByCourseId(course.id)
-        val bookWithPapers = mutableListOf<BookWithPaper>()
-        books.forEach { book ->
-            val papers = if (isRecycleBin){
-                mDatabase.paperDao().getEntityByBookIdOrderByEditTime(book.id)
-            } else {
-                mDatabase.paperDao().getEntityByBookIdOrderByPosition(book.id)
-            }
-            val paperWithQuestions = mutableListOf<PaperWithQuestion>()
-            papers.forEach { paper ->
-                val paperStatus = mDatabase.studyStatusDao().queryEntityByTypeAndContentId(PaperStatus, paper.id)
-                val question = mDatabase.questionDao().getEntityWithContentById(paperStatus.curChild)
-                val questionCount = mDatabase.questionDao().getCountWithPaperId(paper.id)
-                val questionWithElement = toQuestionElement(question)
-                val studyInfo = getStudyRecordInfo(paper.id)
-                paperWithQuestions.add(PaperWithQuestion(paper, paperStatus.curChild,
-                    questionCount.toInt(), studyInfo, questionWithElement))
-            }
-            val bookWithPaper = BookWithPaper(book, paperWithQuestions)
-            bookWithPapers.add(bookWithPaper)
-        }
-        return BookDetail(
-            course.id,
-            course.title,
-            curBookId,
-            curPaperId,
-            isRecycleBin,
-            bookWithPapers)
-    }
-
-    fun getAllBooks(courseId: Int): LiveData<List<Book>> {
-        return mDatabase.bookDao().getBookByCourseId(courseId)
-    }
-
-    /**
      * paper相关
      */
     fun insertPaper(title: String, desc: String, bookId: Int) {
         AppExecutors.diskIO().execute {
             val maxOrder = mDatabase.paperDao().getMaxPosition(bookId)
-            val paper = Paper(title, desc, bookId, maxOrder + 1)
-            val paperId = mDatabase.paperDao().insert(paper).toInt()
+            val paperInfo = PaperInfo(title, desc, bookId, maxOrder + 1)
+            val paperId = mDatabase.paperDao().insert(paperInfo).toInt()
             val paperStatus = StudyStatus(PaperStatus, paperId, 0)
             mDatabase.studyStatusDao().insert(paperStatus)
         }
     }
 
-    fun currentPaper(): LiveData<Paper> {
+    fun currentPaper(): LiveData<PaperInfo> {
         val dContext = mDatabase.dContextDao().getDContext()
         return Transformations.switchMap(dContext) {
             dContext.value?.let {
@@ -406,63 +156,63 @@ object DataRepository {
         }
     }
 
-    fun updatePapers(papers: List<Paper>) {
+    fun updatePapers(paperInfos: List<PaperInfo>) {
         AppExecutors.diskIO().execute {
-            mDatabase.paperDao().update(papers)
+            mDatabase.paperDao().update(paperInfos)
         }
     }
 
-    fun updatePaper(paper: Paper) {
+    fun updatePaper(paperInfo: PaperInfo) {
         AppExecutors.diskIO().execute {
-            mDatabase.paperDao().update(paper)
+            mDatabase.paperDao().update(paperInfo)
         }
     }
 
-    fun deletePaper(paper: Paper, clearUp: Boolean) {
+    fun deletePaper(paperInfo: PaperInfo, clearUp: Boolean) {
         AppExecutors.diskIO().execute {
             mDatabase.runInTransaction {
                 val dContext = mDatabase.dContextDao().getDContextEntity()
                 val recycleBookId = dContext.recycleBookId
-                val bookStatus = mDatabase.studyStatusDao().queryEntityByTypeAndContentId(BookStatus, paper.bookId)
-                if (bookStatus.curChild == paper.id) {
-                    val papers = mDatabase.paperDao().getEntityByBookIdOrderByPosition(paper.bookId)
+                val bookStatus = mDatabase.studyStatusDao().queryEntityByTypeAndContentId(BookStatus, paperInfo.bookId)
+                if (bookStatus.curChild == paperInfo.id) {
+                    val papers = mDatabase.paperDao().getEntityByBookIdOrderByPosition(paperInfo.bookId)
                     if (papers.size == 1 ) {
                         bookStatus.curChild = 0
                         mDatabase.studyStatusDao().update(bookStatus)
 
-                        if (dContext.curPaperId == paper.id) {
+                        if (dContext.curPaperId == paperInfo.id) {
                             dContext.curPaperId = 0
                             dContext.curQuestionId = 0
                             mDatabase.dContextDao().update(dContext)
                         }
                     } else if (papers.size > 1) {
                         val newCurPaper = papers.filter {
-                            it.id != paper.id
+                            it.id != paperInfo.id
                         }[0]
 
                         bookStatus.curChild = newCurPaper.id
                         mDatabase.studyStatusDao().update(bookStatus)
 
-                        if (dContext.curPaperId == paper.id) {
+                        if (dContext.curPaperId == paperInfo.id) {
                             dContext.curPaperId = newCurPaper.id
                             mDatabase.dContextDao().update(dContext)
                         }
                     }
                 }
                 if (clearUp) {
-                    clearUpPaper(paper)
+                    clearUpPaper(paperInfo)
                 } else {
-                    paper.bookId = recycleBookId
-                    paper.title = "从" + paper.title + "删除"
-                    paper.editTime = Date()
-                    mDatabase.paperDao().update(paper)
+                    paperInfo.bookId = recycleBookId
+                    paperInfo.title = "从" + paperInfo.title + "删除"
+                    paperInfo.editTime = Date()
+                    mDatabase.paperDao().update(paperInfo)
                 }
             }
         }
     }
 
-    private fun clearUpPaper(paper: Paper) {
-        val questions = mDatabase.questionDao().getEntityByPaperId(paper.id)
+    private fun clearUpPaper(paperInfo: PaperInfo) {
+        val questions = mDatabase.questionDao().getEntityByPaperId(paperInfo.id)
         questions.forEach { question ->
             // 删除body
             val body = mDatabase.contentDao().getBodyEntity(question.id)
@@ -479,8 +229,8 @@ object DataRepository {
             mDatabase.elementDao().delete(answer.contentId)
         }
         mDatabase.questionDao().delete(questions)
-        mDatabase.studyStatusDao().delete(PaperStatus, paper.id)
-        mDatabase.paperDao().delete(paper)
+        mDatabase.studyStatusDao().delete(PaperStatus, paperInfo.id)
+        mDatabase.paperDao().delete(paperInfo)
     }
 
     // 将paperFrom的所有试题转移至paperTo, 然后删除paperFrom
@@ -497,11 +247,11 @@ object DataRepository {
         }
     }
 
-    fun isInRecycleBin(paper: Paper, callback: IsInRecycleBinCallback) {
+    fun isInRecycleBin(paperInfo: PaperInfo, callback: IsInRecycleBinCallback) {
         AppExecutors.diskIO().execute {
             mDatabase.runInTransaction {
                 val dContext = mDatabase.dContextDao().getDContextEntity()
-                val isInRecycleBin = paper.bookId == dContext.recycleBookId
+                val isInRecycleBin = paperInfo.bookId == dContext.recycleBookId
                 AppExecutors.mainThread().execute {
                     callback.onFinished(isInRecycleBin)
                 }
@@ -575,7 +325,7 @@ object DataRepository {
                 toQuestionElement(it)
             }
             val questionDetailEntity = QuestionDetail(course.title, book.title, book.id,
-                paper.title, paper.id, dContext.curQuestionId, questionWithElements as List<QuestionWithElement>
+                paper.title, paper.id, dContext.curQuestionId, questionWithElements as List<QuestionDetail>
             )
             AppExecutors.mainThread().execute {
                 questionDetail.value = questionDetailEntity
@@ -603,7 +353,7 @@ object DataRepository {
 
             val paperStatus = mDatabase.studyStatusDao().queryEntityByTypeAndContentId(PaperStatus, paper.id)
             val questionDetailEntity = SimpleQuestionListWithDetail(
-                paper.title, paper.id, paperStatus.curChild, questionWithElements as List<QuestionWithElement>
+                paper.title, paper.id, paperStatus.curChild, questionWithElements as List<QuestionDetail>
             )
             AppExecutors.mainThread().execute {
                 questionDetail.value = questionDetailEntity
@@ -611,77 +361,29 @@ object DataRepository {
         }
     }
 
-    private fun toQuestionElement(question: QuestionWithContent): QuestionWithElement? {
+    private fun toQuestionElement(question: QuestionWithContent): QuestionDetail? {
         if (question == null) {
             return null
         }
         val realQuestion = question.question
-        var bodyWithElement = BodyWithElement(realQuestion.id, listOf())
-        var optionWithElement: MutableList<OptionItemWithElement> = mutableListOf()
+        var questionBody = QuestionBody(realQuestion.id, listOf())
+        var optionWithElement: MutableList<OptionItems> = mutableListOf()
         var answerWithElement = AnswerWithElement(realQuestion.id, listOf())
 
         question.contents.forEach { content ->
             content.elements = content.elements.sortedBy { it.position }
             if (content.content.contentType == BODY_TYPE) {
-                bodyWithElement = BodyWithElement(content.content.contentId, content.elements)
+                questionBody = QuestionBody(content.content.contentId, content.elements)
             } else if (content.content.contentType == OPTION_TYPE) {
-                optionWithElement.add(OptionItemWithElement(content.content.contentId, content.elements))
+                optionWithElement.add(OptionItems(content.content.contentId, content.elements))
             } else if (content.content.contentType == ANSWER_TYPE) {
                 answerWithElement = AnswerWithElement(content.content.contentId, content.elements)
             }
         }
-        return QuestionWithElement(question.question.id, question.question.questionType, bodyWithElement, optionWithElement, answerWithElement)
+        return QuestionDetail(question.question.id, question.question.questionType, questionBody, optionWithElement, answerWithElement)
     }
 
-    fun deleteCurrentQuestion(callback: DeleteQuestionCallback) {
-        AppExecutors.diskIO().execute {
-            mDatabase.runInTransaction {
-                val dContext = mDatabase.dContextDao().getDContextEntity()
-                val question = mDatabase.questionDao().getEntityById(dContext.curQuestionId)
-                if (question == null) {
-                    AppExecutors.mainThread().execute {
-                        callback.onFinished(false, "当前没有试题")
-                    }
-                    return@runInTransaction
-                }
-                val paperId = question.paperId
-                val position = question.questionPosition
-                val paperStatus = mDatabase.studyStatusDao().queryEntityByTypeAndContentId(
-                    PaperStatus, question.paperId)
-                if (question.id == dContext.curQuestionId) {
-                    var nextStudyQuestion = mDatabase.questionDao().getPrePositionQuestion(paperId, position)
-                    if (nextStudyQuestion == null) {
-                        nextStudyQuestion = mDatabase.questionDao().getNextPositionQuestion(paperId, position)
-                    }
-                    if (nextStudyQuestion == null) {
-                        dContext.curQuestionId = 0
-                        mDatabase.dContextDao().update(dContext)
-                        paperStatus.curChild = 0
-                        mDatabase.studyStatusDao().update(paperStatus)
-                    } else {
-                        dContext.curQuestionId = nextStudyQuestion.id
-                        mDatabase.dContextDao().update(dContext)
-                        paperStatus.curChild = nextStudyQuestion.id
-                        mDatabase.studyStatusDao().update(paperStatus)
-                    }
-                }
-                val paper = mDatabase.paperDao().getEntityById(question.paperId)
-                val maxPosition = mDatabase.paperDao().getMaxPosition(dContext.recycleBookId)
-                val recyclePaper = Paper("从" + paper?.title + "删除", "", dContext.recycleBookId, maxPosition + 1)
-                val recyclePaperId = mDatabase.paperDao().insert(recyclePaper).toInt()
-                question.editTime = Date()
-                question.paperId = recyclePaperId
-                mDatabase.questionDao().update(question)
-                val recyclePaperStatus = StudyStatus(PaperStatus, recyclePaperId, question.id)
-                mDatabase.studyStatusDao().insert(recyclePaperStatus)
-                AppExecutors.mainThread().execute {
-                    callback.onFinished(true, "已放入废纸篓")
-                }
-            }
-        }
-    }
-
-    fun getPapersByBookId(bookId: Int): LiveData<List<Paper>> {
+    fun getPapersByBookId(bookId: Int): LiveData<List<PaperInfo>> {
         return mDatabase.paperDao().getByBookId(bookId)
     }
 
@@ -755,19 +457,6 @@ object DataRepository {
                 val config = mDatabase.configDao().getEntity()
                 config.sortByAccuracy = opened
                 mDatabase.configDao().update(config)
-            }
-        }
-    }
-
-    /**
-     * element相关
-     */
-
-    fun updateElementsByContentId(contentId: Int, elements: List<Element>) {
-        AppExecutors.diskIO().execute {
-            mDatabase.runInTransaction {
-                mDatabase.elementDao().deleteByContentId(contentId)
-                mDatabase.elementDao().insert(elements)
             }
         }
     }

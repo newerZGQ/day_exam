@@ -13,7 +13,7 @@ import com.gorden.dayexam.R
 import com.gorden.dayexam.db.entity.StudyRecord
 import com.gorden.dayexam.parser.image.ImageCacheManager
 import com.gorden.dayexam.repository.DataRepository
-import com.gorden.dayexam.repository.model.QuestionWithElement
+import com.gorden.dayexam.repository.model.QuestionDetail
 import com.gorden.dayexam.ui.EventKey
 import com.jeremyliao.liveeventbus.LiveEventBus
 
@@ -21,7 +21,7 @@ class HomeFragment : Fragment() {
 
     private lateinit var homeViewModel: HomeViewModel
     private lateinit var questionPager: ViewPager2
-    private var questions: List<QuestionWithElement> = listOf()
+    private var questions: List<QuestionDetail> = listOf()
     private var paperId = 0
     private var curQuestionId = 0
     private var curQuestionCount = 0
@@ -101,7 +101,7 @@ class HomeFragment : Fragment() {
             }
     }
 
-    private fun getCurPosition(questionId: Int, questions: List<QuestionWithElement>): Int {
+    private fun getCurPosition(questionId: Int, questions: List<QuestionDetail>): Int {
         var result = 0
         questions.forEachIndexed { index, questionWithElement ->
             if (questionId == questionWithElement.id) {

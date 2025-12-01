@@ -4,11 +4,11 @@ import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
 import com.gorden.dayexam.R
-import com.gorden.dayexam.repository.model.QuestionWithElement
+import com.gorden.dayexam.repository.model.QuestionDetail
 
 class QuestionListAdapter: RecyclerView.Adapter<SimpleQuestionViewHolder>() {
 
-    private var data: List<QuestionWithElement> = listOf()
+    private var data: List<QuestionDetail> = listOf()
     private var target = 0
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): SimpleQuestionViewHolder {
         val itemView = LayoutInflater.from(parent.context)
@@ -28,7 +28,7 @@ class QuestionListAdapter: RecyclerView.Adapter<SimpleQuestionViewHolder>() {
         return data.size
     }
 
-    fun setData(questionList: List<QuestionWithElement>, target: Int) {
+    fun setData(questionList: List<QuestionDetail>, target: Int) {
         this.data = questionList
         this.target = target
         notifyDataSetChanged()

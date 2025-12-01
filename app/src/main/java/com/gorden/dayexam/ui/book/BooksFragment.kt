@@ -16,7 +16,7 @@ import androidx.recyclerview.widget.RecyclerView
 import com.gorden.dayexam.MainActivity
 import com.gorden.dayexam.R
 import com.gorden.dayexam.db.entity.Book
-import com.gorden.dayexam.db.entity.Paper
+import com.gorden.dayexam.db.entity.PaperInfo
 import com.gorden.dayexam.executor.AppExecutors
 import com.gorden.dayexam.parser.BookParser
 import com.gorden.dayexam.parser.image.ImageCacheManager
@@ -142,20 +142,20 @@ class BooksFragment : Fragment() {
         }
     }
 
-    private fun editPaper(paper: Paper) {
+    private fun editPaper(paperInfo: PaperInfo) {
         activity?.let {
-            EditPaperAction(it, paper).start()
+            EditPaperAction(it, paperInfo).start()
         }
     }
 
-    private fun deletePaper(paper: Paper) {
+    private fun deletePaper(paperInfo: PaperInfo) {
         activity?.let {
-            DeletePaperAction(it, paper).start()
+            DeletePaperAction(it, paperInfo).start()
         }
     }
 
-    private fun movePaper(paper: Paper) {
-        MovePaperAction(this, requireActivity(), paper.id).start()
+    private fun movePaper(paperInfo: PaperInfo) {
+        MovePaperAction(this, requireActivity(), paperInfo.id).start()
     }
 
     private fun createBook() {
@@ -230,11 +230,11 @@ class BooksFragment : Fragment() {
                 toFileBrowser()
             })
         // paper操作
-        LiveEventBus.get(EventKey.PAPER_MENU_EDIT_PAPER, Paper::class.java)
+        LiveEventBus.get(EventKey.PAPER_MENU_EDIT_PAPER, PaperInfo::class.java)
             .observe(this, {
                 editPaper(it)
             })
-        LiveEventBus.get(EventKey.PAPER_MENU_DELETE_PAPER, Paper::class.java)
+        LiveEventBus.get(EventKey.PAPER_MENU_DELETE_PAPER, PaperInfo::class.java)
             .observe(this, {
                 deletePaper(it)
             })
@@ -251,7 +251,7 @@ class BooksFragment : Fragment() {
             .observe(this, {
                 editBook(it)
             })
-        LiveEventBus.get(EventKey.PAPER_MENU_MOVE_PAPER, Paper::class.java)
+        LiveEventBus.get(EventKey.PAPER_MENU_MOVE_PAPER, PaperInfo::class.java)
             .observe(this, {
                 movePaper(it)
             })

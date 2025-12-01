@@ -5,10 +5,8 @@ import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.Transformations
 import androidx.lifecycle.ViewModel
 import com.gorden.dayexam.db.entity.DContext
-import com.gorden.dayexam.repository.model.question.Question
 import com.gorden.dayexam.repository.DataRepository
 import com.gorden.dayexam.repository.model.QuestionDetail
-import com.gorden.dayexam.repository.model.QuestionWithElement
 
 class HomeViewModel : ViewModel() {
 

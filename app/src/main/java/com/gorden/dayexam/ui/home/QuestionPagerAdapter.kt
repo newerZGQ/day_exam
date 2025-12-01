@@ -5,20 +5,19 @@ import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
 import com.gorden.dayexam.R
-import com.gorden.dayexam.repository.model.question.Question
 import com.gorden.dayexam.model.QuestionType
-import com.gorden.dayexam.repository.model.QuestionWithElement
+import com.gorden.dayexam.repository.model.QuestionDetail
 import com.gorden.dayexam.ui.home.viewholder.*
 
 class QuestionPagerAdapter: RecyclerView.Adapter<BaseQuestionViewHolder>() {
 
-    private var data = listOf<QuestionWithElement>()
+    private var data = listOf<QuestionDetail>()
     private var bookTitle: String = ""
     private var paperTitle: String = ""
     private var isRememberMode: Boolean = false
 
     @SuppressLint("NotifyDataSetChanged")
-    fun setData(data: List<QuestionWithElement>, bookTitle: String, paperTitle: String) {
+    fun setData(data: List<QuestionDetail>, bookTitle: String, paperTitle: String) {
         this.data = data
         this.bookTitle = bookTitle
         this.paperTitle = paperTitle

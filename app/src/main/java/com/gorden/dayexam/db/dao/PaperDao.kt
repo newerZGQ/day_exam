@@ -2,47 +2,47 @@ package com.gorden.dayexam.db.dao
 
 import androidx.lifecycle.LiveData
 import androidx.room.*
-import com.gorden.dayexam.db.entity.Paper
+import com.gorden.dayexam.db.entity.PaperInfo
 
 @Dao
 interface PaperDao {
 
     @Insert
-    fun insert(papers: List<Paper>)
+    fun insert(paperInfos: List<PaperInfo>)
 
     @Insert
-    fun insert(paper: Paper): Long
+    fun insert(paperInfo: PaperInfo): Long
 
     @Update
-    fun update(papers: List<Paper>)
+    fun update(paperInfos: List<PaperInfo>)
 
     @Delete
-    fun delete(papers: List<Paper>)
+    fun delete(paperInfos: List<PaperInfo>)
 
     @Update
-    fun update(paper: Paper)
+    fun update(paperInfo: PaperInfo)
 
     @Delete
-    fun delete(paper: Paper)
+    fun delete(paperInfo: PaperInfo)
 
     @Query("DELETE FROM paper WHERE id = :id")
     fun delete(id: Int)
 
     @Query("SELECT * FROM paper WHERE id = :id")
-    fun getById(id: Int): LiveData<Paper>
+    fun getById(id: Int): LiveData<PaperInfo>
 
     @Query("SELECT * FROM paper WHERE id = :id")
-    fun getEntityById(id: Int): Paper?
+    fun getEntityById(id: Int): PaperInfo?
 
     @Query("SELECT * FROM paper WHERE bookId = :bookId ORDER BY position ASC")
-    fun getEntityByBookIdOrderByPosition(bookId: Int): List<Paper>
+    fun getEntityByBookIdOrderByPosition(bookId: Int): List<PaperInfo>
 
     @Query("SELECT * FROM paper WHERE bookId = :bookId ORDER BY editTime DESC")
-    fun getEntityByBookIdOrderByEditTime(bookId: Int): List<Paper>
+    fun getEntityByBookIdOrderByEditTime(bookId: Int): List<PaperInfo>
 
     @Query("SELECT position FROM paper WHERE bookId = :bookId ORDER BY position DESC LIMIT 1")
     fun getMaxPosition(bookId: Int): Int
 
     @Query("SELECT * FROM paper WHERE bookId = :bookId ORDER BY position ASC")
-    fun getByBookId(bookId: Int): LiveData<List<Paper>>
+    fun getByBookId(bookId: Int): LiveData<List<PaperInfo>>
 }

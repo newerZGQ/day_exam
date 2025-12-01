@@ -7,7 +7,7 @@ import android.widget.Toast
 import androidx.core.view.children
 import com.gorden.dayexam.R
 import com.gorden.dayexam.db.entity.StudyRecord
-import com.gorden.dayexam.repository.model.QuestionWithElement
+import com.gorden.dayexam.repository.model.QuestionDetail
 import com.gorden.dayexam.repository.model.RealAnswer
 import com.gorden.dayexam.ui.EventKey
 import com.gorden.dayexam.ui.action.EditQuestionContentAction
@@ -20,7 +20,7 @@ class MultipleChoiceViewHolder(itemView: View): BaseQuestionViewHolder(itemView)
 
     private val optionContainer: LinearLayout = itemView.findViewById(R.id.options_container)
 
-    override fun genOptionsView(question: QuestionWithElement) {
+    override fun genOptionsView(question: QuestionDetail) {
         optionContainer.removeAllViews()
         question.options.forEachIndexed { index, optionItemWithElement ->
             val optionTag = (index + 'A'.toInt()).toChar()
@@ -56,12 +56,12 @@ class MultipleChoiceViewHolder(itemView: View): BaseQuestionViewHolder(itemView)
         }
     }
 
-    override fun setInitStatus(question: QuestionWithElement) {
+    override fun setInitStatus(question: QuestionDetail) {
         super.setInitStatus(question)
         question.realAnswer = null
     }
 
-    override fun genAnsweredOptionsView(question: QuestionWithElement) {
+    override fun genAnsweredOptionsView(question: QuestionDetail) {
         val selectedOptions = question.realAnswer?.answer?.toCharArray()
         if (selectedOptions == null || selectedOptions?.size == 0) {
             return
@@ -96,7 +96,7 @@ class MultipleChoiceViewHolder(itemView: View): BaseQuestionViewHolder(itemView)
         }
     }
 
-    override fun genRememberOptionsView(question: QuestionWithElement) {
+    override fun genRememberOptionsView(question: QuestionDetail) {
         optionContainer.removeAllViews()
         var correctAnswer = ""
         if ((question.answer?.element?.size ?: 0) > 0) {
@@ -123,7 +123,7 @@ class MultipleChoiceViewHolder(itemView: View): BaseQuestionViewHolder(itemView)
         }
     }
 
-    override fun genActionView(question: QuestionWithElement) {
+    override fun genActionView(question: QuestionDetail) {
         val action = itemView.findViewById<View>(R.id.action)
         action.visibility = View.VISIBLE
         val context = itemView.context
@@ -146,7 +146,7 @@ class MultipleChoiceViewHolder(itemView: View): BaseQuestionViewHolder(itemView)
         }
     }
 
-    private fun isCorrect(question: QuestionWithElement): Boolean {
+    private fun isCorrect(question: QuestionDetail): Boolean {
         if (question.answer == null || question.answer.element == null || question.answer.element.size == 0) {
             return false
         }
@@ -157,7 +157,7 @@ class MultipleChoiceViewHolder(itemView: View): BaseQuestionViewHolder(itemView)
         return TextUtils.equals(standardAnswer, realAnswer)
     }
 
-    override fun setAnsweredStatus(question: QuestionWithElement) {
+    override fun setAnsweredStatus(question: QuestionDetail) {
         super.setAnsweredStatus(question)
         optionContainer.children.forEach {
             it.setOnClickListener(null)

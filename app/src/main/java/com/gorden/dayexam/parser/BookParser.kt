@@ -1,6 +1,5 @@
 package com.gorden.dayexam.parser
 
-import com.gorden.dayexam.db.entity.question.*
 import com.gorden.dayexam.model.QuestionType
 import com.gorden.dayexam.parser.image.ImageCacheManager
 import com.gorden.dayexam.parser.model.PAnswer
@@ -8,7 +7,7 @@ import com.gorden.dayexam.parser.model.PBody
 import com.gorden.dayexam.parser.model.POptionItem
 import com.gorden.dayexam.parser.model.PQuestion
 import com.gorden.dayexam.repository.DataRepository
-import com.gorden.dayexam.repository.model.question.Element
+import com.gorden.dayexam.repository.model.Element
 import com.gorden.dayexam.utils.BookUtils
 import org.apache.poi.xwpf.usermodel.XWPFDocument
 import org.apache.poi.xwpf.usermodel.XWPFParagraph

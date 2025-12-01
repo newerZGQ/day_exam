@@ -7,15 +7,15 @@ import androidx.recyclerview.widget.ItemTouchHelper
 import androidx.recyclerview.widget.RecyclerView
 import com.gorden.dayexam.R
 import com.gorden.dayexam.db.entity.Book
-import com.gorden.dayexam.db.entity.Paper
-import com.gorden.dayexam.repository.model.PaperWithQuestion
+import com.gorden.dayexam.db.entity.PaperInfo
+import com.gorden.dayexam.repository.model.PaperDetail
 import com.gorden.dayexam.repository.DataRepository
 import com.gorden.dayexam.ui.book.DragCallback
 import java.util.*
 
 class PaperAdapter: RecyclerView.Adapter<PaperViewHolder>(),
     DragCallback.OnItemTouchListener {
-    private var papers = listOf<PaperWithQuestion>()
+    private var papers = listOf<PaperDetail>()
     var selectPosition = -1
     private var curBookId = -1
     private var book: Book? = null
@@ -51,11 +51,11 @@ class PaperAdapter: RecyclerView.Adapter<PaperViewHolder>(),
     }
 
     @SuppressLint("NotifyDataSetChanged")
-    fun setData(papers: List<PaperWithQuestion>, curPaperId: Int, curBookId: Int, book: Book, isRecycleBin: Boolean) {
+    fun setData(papers: List<PaperDetail>, curPaperId: Int, curBookId: Int, book: Book, isRecycleBin: Boolean) {
         this.papers = papers
         this.isRecycleBin = isRecycleBin
         papers.forEachIndexed { index, paperWithQuestion ->
-            if (paperWithQuestion.paper.id == curPaperId) {
+            if (paperWithQuestion.paperInfo.id == curPaperId) {
                 this.selectPosition = index
             }
         }
@@ -77,8 +77,8 @@ class PaperAdapter: RecyclerView.Adapter<PaperViewHolder>(),
     }
 
     override fun onMove(fromPosition: Int, toPosition: Int) {
-        papers[fromPosition].paper.position = toPosition + 1
-        papers[toPosition].paper.position = fromPosition + 1
+        papers[fromPosition].paperInfo.position = toPosition + 1
+        papers[toPosition].paperInfo.position = fromPosition + 1
         Collections.swap(papers, fromPosition, toPosition)
         notifyItemMoved(fromPosition, toPosition)
     }
@@ -88,11 +88,11 @@ class PaperAdapter: RecyclerView.Adapter<PaperViewHolder>(),
     }
 
     override fun clearView() {
-        val tPapers = mutableListOf<Paper>()
+        val tPaperInfos = mutableListOf<PaperInfo>()
         papers.forEach {
-            tPapers.add(it.paper)
+            tPaperInfos.add(it.paperInfo)
         }
-        DataRepository.updatePapers(tPapers)
+        DataRepository.updatePapers(tPaperInfos)
         DataRepository.increaseContentVersion()
     }
 }

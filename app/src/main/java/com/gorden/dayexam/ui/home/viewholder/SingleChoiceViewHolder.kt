@@ -6,7 +6,7 @@ import android.widget.LinearLayout
 import androidx.core.view.children
 import com.gorden.dayexam.R
 import com.gorden.dayexam.db.entity.StudyRecord
-import com.gorden.dayexam.repository.model.QuestionWithElement
+import com.gorden.dayexam.repository.model.QuestionDetail
 import com.gorden.dayexam.repository.model.RealAnswer
 import com.gorden.dayexam.ui.EventKey
 import com.gorden.dayexam.ui.action.EditQuestionContentAction
@@ -14,13 +14,12 @@ import com.gorden.dayexam.ui.widget.ElementViewListener
 import com.gorden.dayexam.ui.widget.OptionCardView
 import com.gorden.dayexam.utils.ScreenUtils
 import com.jeremyliao.liveeventbus.LiveEventBus
-import org.apache.poi.ss.formula.functions.Even
 
 class SingleChoiceViewHolder(itemView: View): BaseQuestionViewHolder(itemView) {
 
     private val optionContainer: LinearLayout = itemView.findViewById(R.id.options_container)
 
-    override fun genOptionsView(question: QuestionWithElement) {
+    override fun genOptionsView(question: QuestionDetail) {
         optionContainer.removeAllViews()
         question.options.forEachIndexed { index, optionItemWithElement ->
             val optionTag = (index + 'A'.toInt()).toChar().toString()
@@ -46,7 +45,7 @@ class SingleChoiceViewHolder(itemView: View): BaseQuestionViewHolder(itemView) {
         }
     }
 
-    override fun genAnsweredOptionsView(question: QuestionWithElement) {
+    override fun genAnsweredOptionsView(question: QuestionDetail) {
         question.options.forEachIndexed { index, optionItemWithElement ->
             val context = itemView.context
             val realAnswer = question.realAnswer?.answer
@@ -72,7 +71,7 @@ class SingleChoiceViewHolder(itemView: View): BaseQuestionViewHolder(itemView) {
         }
     }
 
-    override fun genRememberOptionsView(question: QuestionWithElement) {
+    override fun genRememberOptionsView(question: QuestionDetail) {
         optionContainer.removeAllViews()
         var correctAnswer = ""
         if ((question.answer?.element?.size ?: 0) > 0) {
@@ -97,18 +96,18 @@ class SingleChoiceViewHolder(itemView: View): BaseQuestionViewHolder(itemView) {
         }
     }
 
-    override fun genActionView(question: QuestionWithElement) {
+    override fun genActionView(question: QuestionDetail) {
 
     }
 
-    override fun setAnsweredStatus(question: QuestionWithElement) {
+    override fun setAnsweredStatus(question: QuestionDetail) {
         super.setAnsweredStatus(question)
         optionContainer.children.forEach {
             it.setOnClickListener(null)
         }
     }
 
-    private fun getAnswerEventTag(question: QuestionWithElement): Int {
+    private fun getAnswerEventTag(question: QuestionDetail): Int {
         val answer = question.answer
         var answerString = ""
         if (answer.element.isNotEmpty() && answer.element[0].content.isNotEmpty()) {

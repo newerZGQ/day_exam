@@ -3,9 +3,7 @@ package com.gorden.dayexam.utils
 import com.gorden.dayexam.ContextHolder
 import com.gorden.dayexam.R
 import com.gorden.dayexam.repository.model.question.Content
-import com.gorden.dayexam.repository.model.question.Element
 import com.gorden.dayexam.model.QuestionType
-import java.util.*
 
 object BookUtils {
     fun getTypeName(type: Int): String {

@@ -9,7 +9,7 @@ import androidx.lifecycle.MutableLiveData
 import com.gorden.dayexam.R
 import com.gorden.dayexam.db.entity.Book
 import com.gorden.dayexam.db.entity.Course
-import com.gorden.dayexam.db.entity.Paper
+import com.gorden.dayexam.db.entity.PaperInfo
 import com.gorden.dayexam.repository.DataRepository
 
 
@@ -17,7 +17,7 @@ class MovePaperAction(private val owner: LifecycleOwner, val context: Context, v
 
     private val courses = MutableLiveData<List<Course>>()
     private var books: LiveData<List<Book>>? = null
-    private var papers: LiveData<List<Paper>>? = null
+    private var papers: LiveData<List<PaperInfo>>? = null
 
     override fun start() {
         selectCourse()

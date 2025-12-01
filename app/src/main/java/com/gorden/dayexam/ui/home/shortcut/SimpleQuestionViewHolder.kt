@@ -4,8 +4,8 @@ import android.view.View
 import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
 import com.gorden.dayexam.R
-import com.gorden.dayexam.repository.model.question.Element
-import com.gorden.dayexam.repository.model.QuestionWithElement
+import com.gorden.dayexam.repository.model.Element
+import com.gorden.dayexam.repository.model.QuestionDetail
 import com.gorden.dayexam.ui.EventKey
 import com.gorden.dayexam.utils.BookUtils
 import com.jeremyliao.liveeventbus.LiveEventBus
@@ -19,7 +19,7 @@ class SimpleQuestionViewHolder(itemView: View): RecyclerView.ViewHolder(itemView
         const val SELECT_POSITION = "select_position"
     }
 
-    fun setData(question: QuestionWithElement, target: Int) {
+    fun setData(question: QuestionDetail, target: Int) {
         val content = getDescription(question)
         contentView.text = content
         val tag = getTag(question)
@@ -35,7 +35,7 @@ class SimpleQuestionViewHolder(itemView: View): RecyclerView.ViewHolder(itemView
         }
     }
 
-    private fun getDescription(question: QuestionWithElement): String {
+    private fun getDescription(question: QuestionDetail): String {
         val textList = question.body.element.filter {
             it.elementType == Element.TEXT
         }
@@ -48,7 +48,7 @@ class SimpleQuestionViewHolder(itemView: View): RecyclerView.ViewHolder(itemView
         return desc
     }
 
-    private fun getTag(question: QuestionWithElement): String {
+    private fun getTag(question: QuestionDetail): String {
         val positionTag = itemView.context.getString(R.string.the_type_key) +
                 (adapterPosition + 1) + itemView.context.getString(R.string.short_of_question)
         val typeTag = BookUtils.getTypeName(question.type)

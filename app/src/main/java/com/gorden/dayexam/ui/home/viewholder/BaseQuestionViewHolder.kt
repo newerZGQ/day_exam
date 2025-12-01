@@ -7,10 +7,9 @@ import androidx.lifecycle.LifecycleOwner
 import androidx.recyclerview.widget.RecyclerView
 import com.gorden.dayexam.ContextHolder
 import com.gorden.dayexam.R
-import com.gorden.dayexam.repository.model.question.Element
+import com.gorden.dayexam.repository.model.Element
 import com.gorden.dayexam.repository.DataRepository
-import com.gorden.dayexam.repository.model.QuestionWithElement
-import com.gorden.dayexam.repository.model.RealAnswer
+import com.gorden.dayexam.repository.model.QuestionDetail
 import com.gorden.dayexam.ui.EventKey
 import com.gorden.dayexam.ui.action.EditQuestionContentAction
 import com.gorden.dayexam.ui.widget.AnswerCardView
@@ -29,7 +28,7 @@ abstract class BaseQuestionViewHolder(itemView: View) : RecyclerView.ViewHolder(
         }
     }
 
-    open fun setData(question: QuestionWithElement, bookTitle: String, paperTitle: String, isRememberMode: Boolean) {
+    open fun setData(question: QuestionDetail, bookTitle: String, paperTitle: String, isRememberMode: Boolean) {
         genHeadView(question, bookTitle, paperTitle)
         if (isRememberMode) {
             setRememberStatus(question)
@@ -53,32 +52,32 @@ abstract class BaseQuestionViewHolder(itemView: View) : RecyclerView.ViewHolder(
     }
 
     @SuppressLint("SetTextI18n")
-    open fun genHeadView(question: QuestionWithElement, bookTitle: String, paperTitle: String) {
+    open fun genHeadView(question: QuestionDetail, bookTitle: String, paperTitle: String) {
         val headView = itemView.findViewById<TextView>(R.id.question_info)
         headView.text = "$bookTitle-$paperTitle" + " 第" + (adapterPosition + 1) + "题"
     }
 
-    open fun setInitStatus(question: QuestionWithElement) {
+    open fun setInitStatus(question: QuestionDetail) {
         genBodyView(question)
         genOptionsView(question)
         genActionView(question)
         hideAnswer(question)
     }
 
-    open fun setAnsweredStatus(question: QuestionWithElement) {
+    open fun setAnsweredStatus(question: QuestionDetail) {
 //        genBodyView(question)
         genAnsweredOptionsView(question)
         genAnswerView(question)
         showAnswer(question)
     }
 
-    open fun setRememberStatus(question: QuestionWithElement) {
+    open fun setRememberStatus(question: QuestionDetail) {
         genBodyView(question)
         genRememberOptionsView(question)
         showAnswer(question)
     }
 
-    open fun genBodyView(question: QuestionWithElement) {
+    open fun genBodyView(question: QuestionDetail) {
         val body = itemView.findViewById<ElementsView>(R.id.body)
         body.setElements(question.body.element, BookUtils.getTypeName(question.type), ElementViewListener())
         body.setOnLongClickListener {
@@ -87,13 +86,13 @@ abstract class BaseQuestionViewHolder(itemView: View) : RecyclerView.ViewHolder(
         }
     }
 
-    abstract fun genOptionsView(question: QuestionWithElement)
+    abstract fun genOptionsView(question: QuestionDetail)
 
-    abstract fun genAnsweredOptionsView(question: QuestionWithElement)
+    abstract fun genAnsweredOptionsView(question: QuestionDetail)
 
-    abstract fun genRememberOptionsView(question: QuestionWithElement)
+    abstract fun genRememberOptionsView(question: QuestionDetail)
 
-    open fun genAnswerView(question: QuestionWithElement) {
+    open fun genAnswerView(question: QuestionDetail) {
         val answerCardView = itemView.findViewById<AnswerCardView>(R.id.answer)
         answerCardView.setElements(question.answer.element,
             "",
@@ -105,18 +104,18 @@ abstract class BaseQuestionViewHolder(itemView: View) : RecyclerView.ViewHolder(
         }
     }
 
-    abstract fun genActionView(question: QuestionWithElement)
+    abstract fun genActionView(question: QuestionDetail)
 
-    open fun showAnswer(question: QuestionWithElement) {
+    open fun showAnswer(question: QuestionDetail) {
         genAnswerView(question)
         itemView.findViewById<View>(R.id.answer_container).visibility = View.VISIBLE
     }
 
-    open fun hideAnswer(question: QuestionWithElement) {
+    open fun hideAnswer(question: QuestionDetail) {
         itemView.findViewById<View>(R.id.answer_container).visibility = View.GONE
     }
 
-    fun getAnswer(question: QuestionWithElement): String {
+    fun getAnswer(question: QuestionDetail): String {
         if (question.answer?.element?.isNotEmpty() == true
             && question.answer!!.element[0].elementType == Element.TEXT) {
             return question.answer.element[0].content

@@ -4,7 +4,7 @@ import android.text.TextUtils
 import android.view.View
 import com.gorden.dayexam.R
 import com.gorden.dayexam.db.entity.StudyRecord
-import com.gorden.dayexam.repository.model.QuestionWithElement
+import com.gorden.dayexam.repository.model.QuestionDetail
 import com.gorden.dayexam.repository.model.RealAnswer
 import com.gorden.dayexam.ui.EventKey
 import com.jeremyliao.liveeventbus.LiveEventBus
@@ -14,7 +14,7 @@ class TrueFalseViewHolder(itemView: View): BaseQuestionViewHolder(itemView) {
     private val correctOption: View = itemView.findViewById(R.id.action_correct)
     private val inCorrectOption: View = itemView.findViewById(R.id.action_incorrect)
 
-    override fun genOptionsView(question: QuestionWithElement) {
+    override fun genOptionsView(question: QuestionDetail) {
         val resources = itemView.resources
         correctOption.setBackgroundColor(resources.getColor(R.color.option_default_color))
         inCorrectOption.setBackgroundColor(resources.getColor(R.color.option_default_color))
@@ -36,13 +36,13 @@ class TrueFalseViewHolder(itemView: View): BaseQuestionViewHolder(itemView) {
         }
     }
 
-    override fun setAnsweredStatus(question: QuestionWithElement) {
+    override fun setAnsweredStatus(question: QuestionDetail) {
         super.setAnsweredStatus(question)
         correctOption.isClickable = false
         inCorrectOption.isClickable = false
     }
 
-    override fun genAnsweredOptionsView(question: QuestionWithElement) {
+    override fun genAnsweredOptionsView(question: QuestionDetail) {
         val context = itemView.context
         val answer = question.answer.element[0].content
         if (question.realAnswer != null) {
@@ -66,7 +66,7 @@ class TrueFalseViewHolder(itemView: View): BaseQuestionViewHolder(itemView) {
         }
     }
 
-    override fun genRememberOptionsView(question: QuestionWithElement) {
+    override fun genRememberOptionsView(question: QuestionDetail) {
         val answer = question.answer.element[0].content
         val resources = itemView.resources
         if (answer.isEmpty()) {
@@ -83,11 +83,11 @@ class TrueFalseViewHolder(itemView: View): BaseQuestionViewHolder(itemView) {
         inCorrectOption.setOnClickListener(null)
     }
 
-    override fun genActionView(question: QuestionWithElement) {
+    override fun genActionView(question: QuestionDetail) {
 
     }
 
-    private fun getAnswerEventTag(question: QuestionWithElement): Int {
+    private fun getAnswerEventTag(question: QuestionDetail): Int {
         val answer = question.answer
         var answerString = ""
         if (answer.element.isNotEmpty() && answer.element[0].content.isNotEmpty()) {

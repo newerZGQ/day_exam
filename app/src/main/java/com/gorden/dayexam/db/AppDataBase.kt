@@ -11,11 +11,11 @@ import androidx.sqlite.db.SupportSQLiteDatabase
 import com.gorden.dayexam.db.converter.*
 import com.gorden.dayexam.db.dao.*
 import com.gorden.dayexam.db.entity.*
-import com.gorden.dayexam.db.entity.Paper
+import com.gorden.dayexam.db.entity.PaperInfo
 import com.gorden.dayexam.executor.AppExecutors
 
 @Database(
-    entities = [DContext::class, Paper::class, StudyStatus::class,
+    entities = [DContext::class, PaperInfo::class, StudyStatus::class,
                StudyRecord::class, Config::class],
     version = 1,
     exportSchema = false

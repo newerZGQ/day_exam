@@ -12,8 +12,8 @@ import androidx.recyclerview.widget.RecyclerView
 import com.gorden.dayexam.ContextHolder
 import com.gorden.dayexam.R
 import com.gorden.dayexam.db.entity.Book
-import com.gorden.dayexam.db.entity.Paper
-import com.gorden.dayexam.repository.model.PaperWithQuestion
+import com.gorden.dayexam.db.entity.PaperInfo
+import com.gorden.dayexam.repository.model.PaperDetail
 import com.gorden.dayexam.ui.EventKey
 import com.gorden.dayexam.utils.ScreenUtils
 import com.jeremyliao.liveeventbus.LiveEventBus
@@ -29,16 +29,16 @@ class PaperViewHolder(itemView: View): RecyclerView.ViewHolder(itemView)  {
     private val lastTouchDownXY = arrayOf(0f, 0f)
 
     @SuppressLint("ClickableViewAccessibility")
-    fun onBind(paperWithQuestion: PaperWithQuestion, book: Book,curBookId: Int, adapter: PaperAdapter, isRecycleBin: Boolean) {
+    fun onBind(paperDetail: PaperDetail, book: Book, curBookId: Int, adapter: PaperAdapter, isRecycleBin: Boolean) {
         val resources = itemView.context.resources
         if (adapter.isSortMode) {
             itemView.findViewById<View>(R.id.paper_drag_handle).visibility = View.VISIBLE
         } else {
             itemView.findViewById<View>(R.id.paper_drag_handle).visibility = View.GONE
         }
-        title.text = paperWithQuestion.paper.title
-        desc.text = generateDesc(paperWithQuestion)
-        record.text = generateStudyRecordInfo(paperWithQuestion)
+        title.text = paperDetail.paperInfo.title
+        desc.text = generateDesc(paperDetail)
+        record.text = generateStudyRecordInfo(paperDetail)
         if (adapterPosition == adapter.selectPosition && curBookId == book.id) {
             container.setBackgroundColor(resources.getColor(R.color.colorPrimaryDark))
         } else {
@@ -53,13 +53,13 @@ class PaperViewHolder(itemView: View): RecyclerView.ViewHolder(itemView)  {
             LiveEventBus.get(
                 EventKey.PAPER_CONTAINER_CLICKED,
                 EventKey.PaperClickEventModel::class.java)
-                .post(EventKey.PaperClickEventModel(book.id, paperWithQuestion.paper.id))
+                .post(EventKey.PaperClickEventModel(book.id, paperDetail.paperInfo.id))
         }
         rippleContainer.setOnLongClickListener {
             if (adapter.isSortMode) {
                 return@setOnLongClickListener true
             } else {
-                popMenu(adapter, paperWithQuestion, isRecycleBin)
+                popMenu(adapter, paperDetail, isRecycleBin)
             }
             true
         }
@@ -72,7 +72,7 @@ class PaperViewHolder(itemView: View): RecyclerView.ViewHolder(itemView)  {
         }
     }
 
-    private fun popMenu(adapter: PaperAdapter, paperWithQuestion: PaperWithQuestion, isRecycleBin: Boolean) {
+    private fun popMenu(adapter: PaperAdapter, paperDetail: PaperDetail, isRecycleBin: Boolean) {
         var menuLayoutId = R.layout.paper_item_menu_layout
         if (isRecycleBin) {
             menuLayoutId = R.layout.recycle_bin_paper_item_menu_layout
@@ -97,17 +97,17 @@ class PaperViewHolder(itemView: View): RecyclerView.ViewHolder(itemView)  {
         }
         menuView.findViewById<View>(R.id.add_question_from_file)?.setOnClickListener {
             LiveEventBus.get(EventKey.PAPER_MENU_ADD_QUESTION_FROM_FILE, EventKey.QuestionAddEventModel::class.java)
-                .post(EventKey.QuestionAddEventModel(paperWithQuestion.paper.bookId, paperWithQuestion.paper.id))
+                .post(EventKey.QuestionAddEventModel(paperDetail.paperInfo.bookId, paperDetail.paperInfo.id))
             popupWindow.dismiss()
         }
         menuView.findViewById<View>(R.id.edit_paper)?.setOnClickListener {
-            LiveEventBus.get(EventKey.PAPER_MENU_EDIT_PAPER, Paper::class.java)
-                .post(paperWithQuestion.paper)
+            LiveEventBus.get(EventKey.PAPER_MENU_EDIT_PAPER, PaperInfo::class.java)
+                .post(paperDetail.paperInfo)
             popupWindow.dismiss()
         }
         menuView.findViewById<View>(R.id.delete_paper)?.setOnClickListener {
-            LiveEventBus.get(EventKey.PAPER_MENU_DELETE_PAPER, Paper::class.java)
-                .post(paperWithQuestion.paper)
+            LiveEventBus.get(EventKey.PAPER_MENU_DELETE_PAPER, PaperInfo::class.java)
+                .post(paperDetail.paperInfo)
             popupWindow.dismiss()
         }
         menuView.findViewById<View>(R.id.sortByHand)?.setOnClickListener {
@@ -115,14 +115,14 @@ class PaperViewHolder(itemView: View): RecyclerView.ViewHolder(itemView)  {
             popupWindow.dismiss()
         }
         menuView.findViewById<View>(R.id.move)?.setOnClickListener {
-            LiveEventBus.get(EventKey.PAPER_MENU_MOVE_PAPER, Paper::class.java)
-                .post(paperWithQuestion.paper)
+            LiveEventBus.get(EventKey.PAPER_MENU_MOVE_PAPER, PaperInfo::class.java)
+                .post(paperDetail.paperInfo)
             popupWindow.dismiss()
         }
     }
 
-    private fun generateDesc(paperWithQuestion: PaperWithQuestion): String {
-        val question = paperWithQuestion.question
+    private fun generateDesc(paperDetail: PaperDetail): String {
+        val question = paperDetail.question
         return if (question?.body == null || question.body.element.isEmpty()) {
             ContextHolder.application.resources.getString(R.string.none_question_desc)
         } else {
@@ -131,7 +131,7 @@ class PaperViewHolder(itemView: View): RecyclerView.ViewHolder(itemView)  {
     }
 
     @SuppressLint("SimpleDateFormat")
-    private fun generateStudyRecordInfo(paperWithQuestion: PaperWithQuestion): String {
+    private fun generateStudyRecordInfo(paperDetail: PaperDetail): String {
         val result = StringBuilder()
         val resources = ContextHolder.application.resources
         val lastStudy = resources.getString(R.string.last_study_time)
@@ -140,19 +140,19 @@ class PaperViewHolder(itemView: View): RecyclerView.ViewHolder(itemView)  {
         val shortQuestion = resources.getString(R.string.short_question)
         val count = resources.getString(R.string.count)
         val hasNotStart = resources.getString(R.string.has_not_start_study)
-        if (paperWithQuestion.studyInfo.lastStudyDate != null) {
+        if (paperDetail.studyInfo.lastStudyDate != null) {
             result.append("$lastStudy ")
             val formatter = SimpleDateFormat("MM-dd HH:mm")
-            result.append(formatter.format(paperWithQuestion.studyInfo.lastStudyDate))
+            result.append(formatter.format(paperDetail.studyInfo.lastStudyDate))
             result.append(" ")
         } else {
             result.append("$hasNotStart ")
         }
         result.append(total)
-        result.append(paperWithQuestion.questionCount)
+        result.append(paperDetail.questionCount)
         result.append("$shortQuestion ")
         result.append(hasStudy)
-        result.append(paperWithQuestion.studyInfo.studyCount)
+        result.append(paperDetail.studyInfo.studyCount)
         result.append(count)
         return result.toString()
     }

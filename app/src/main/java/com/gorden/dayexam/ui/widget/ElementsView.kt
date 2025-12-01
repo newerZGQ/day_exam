@@ -15,7 +15,7 @@ import com.bumptech.glide.Glide
 import com.bumptech.glide.request.target.CustomTarget
 import com.bumptech.glide.request.transition.Transition
 import com.gorden.dayexam.R
-import com.gorden.dayexam.repository.model.question.Element
+import com.gorden.dayexam.repository.model.Element
 import com.gorden.dayexam.parser.image.ImageCacheManager
 import com.gorden.dayexam.utils.ScreenUtils
 

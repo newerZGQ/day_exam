@@ -6,7 +6,7 @@ import android.view.ViewGroup
 import android.widget.Toast
 import androidx.recyclerview.widget.RecyclerView
 import com.gorden.dayexam.R
-import com.gorden.dayexam.repository.model.question.Element
+import com.gorden.dayexam.repository.model.Element
 import com.gorden.dayexam.ui.book.DragCallback
 
 class ElementAdapter: RecyclerView.Adapter<EditElementViewHolder>(),
