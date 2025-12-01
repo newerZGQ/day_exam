@@ -45,4 +45,7 @@ interface PaperDao {
 
     @Query("SELECT * FROM paper WHERE bookId = :bookId ORDER BY position ASC")
     fun getByBookId(bookId: Int): LiveData<List<PaperInfo>>
+
+    @Query("SELECT * FROM paper ORDER BY editTime DESC")
+    fun getAllPapers(): LiveData<List<PaperInfo>>
 }

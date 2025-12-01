@@ -387,6 +387,10 @@ object DataRepository {
         return mDatabase.paperDao().getByBookId(bookId)
     }
 
+    fun getAllPapers(): LiveData<List<PaperInfo>> {
+        return mDatabase.paperDao().getAllPapers()
+    }
+
     /**
      * StudyRecord相关
      */

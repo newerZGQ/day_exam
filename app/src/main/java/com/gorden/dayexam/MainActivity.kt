@@ -7,15 +7,10 @@ import android.annotation.SuppressLint
 import android.content.DialogInterface
 import android.content.Intent
 import android.content.pm.PackageManager
-import android.graphics.Color
-import android.graphics.Color.blue
 import android.os.Bundle
 import android.provider.MediaStore
 import android.text.SpannableString
 import android.text.SpannableStringBuilder
-import android.text.style.ClickableSpan
-import android.text.style.ForegroundColorSpan
-import android.text.style.URLSpan
 import android.util.Log
 import android.view.*
 import android.view.animation.AccelerateInterpolator
@@ -30,12 +25,11 @@ import androidx.core.content.ContextCompat
 import androidx.core.content.res.ResourcesCompat
 import androidx.drawerlayout.widget.DrawerLayout
 import androidx.preference.PreferenceManager
-import com.gorden.dayexam.db.DefaultDataGenerator
 import com.gorden.dayexam.repository.DataRepository
 import com.gorden.dayexam.ui.Constants
 import com.gorden.dayexam.ui.Constants.Companion.HAS_AGREE_PRIVACY_KEY
 import com.gorden.dayexam.ui.EventKey
-import com.gorden.dayexam.ui.book.BooksFragment
+import com.gorden.dayexam.ui.book.PaperListFragment
 import com.gorden.dayexam.ui.dialog.element.ImageElementEditCard
 import com.gorden.dayexam.ui.home.HomeFragment
 import com.gorden.dayexam.ui.home.shortcut.FastQuestionSelectActivity
@@ -60,7 +54,7 @@ class MainActivity : BaseActivity() {
     private val shortCutSheet = ShortCutSheetDialog()
     private val searchSheet = SearchSheetDialog()
     private val homeFragment = HomeFragment()
-    private val bookListFragment = BooksFragment()
+    private val paperListFragment = PaperListFragment()
     private var curCourseId = 0
     private var curCourseTitle = ""
     private var curPaperId = 0
@@ -90,8 +84,6 @@ class MainActivity : BaseActivity() {
         initFab()
         initFragment()
         registerEvent()
-        observeDatabase()
-        observeCurrentCourse()
         observeDContext()
         observeConfig()
         observeTodayStudyCount()
@@ -232,7 +224,7 @@ class MainActivity : BaseActivity() {
         supportFragmentManager
             .beginTransaction()
             .add(R.id.fragment_content, homeFragment)
-            .add(R.id.book_list_container, bookListFragment)
+            .add(R.id.book_list_container, paperListFragment)
             .commit()
     }
 
@@ -288,31 +280,6 @@ class MainActivity : BaseActivity() {
             })
     }
 
-    private fun observeDatabase() {
-        DataRepository.isDatabaseCreated().observe(this, {
-            if (it) {
-                DefaultDataGenerator.generate()
-            }
-        })
-    }
-
-    private fun observeCurrentCourse() {
-        DataRepository.currentCourse().observe(this, {
-            if (it == null) {
-                toolbar.findViewById<TextView>(R.id.title).text = ""
-                return@observe
-            }
-            if (it != null && it.id != curCourseId) {
-                toolbar.findViewById<TextView>(R.id.title).text = it.title
-                curCourseId = it.id
-                curCourseTitle = it.title
-            }
-            if (it != null && it.title != curCourseTitle) {
-                toolbar.findViewById<TextView>(R.id.title).text = it.title
-                curCourseTitle = it.title
-            }
-        })
-    }
 
     private fun observeDContext() {
         DataRepository.getDContext().observe(this, {
