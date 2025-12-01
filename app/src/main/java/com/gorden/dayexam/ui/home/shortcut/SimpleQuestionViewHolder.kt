@@ -7,7 +7,7 @@ import com.gorden.dayexam.R
 import com.gorden.dayexam.repository.model.Element
 import com.gorden.dayexam.repository.model.QuestionDetail
 import com.gorden.dayexam.ui.EventKey
-import com.gorden.dayexam.utils.BookUtils
+import com.gorden.dayexam.utils.NameUtils
 import com.jeremyliao.liveeventbus.LiveEventBus
 
 class SimpleQuestionViewHolder(itemView: View): RecyclerView.ViewHolder(itemView) {
@@ -51,7 +51,7 @@ class SimpleQuestionViewHolder(itemView: View): RecyclerView.ViewHolder(itemView
     private fun getTag(question: QuestionDetail): String {
         val positionTag = itemView.context.getString(R.string.the_type_key) +
                 (adapterPosition + 1) + itemView.context.getString(R.string.short_of_question)
-        val typeTag = BookUtils.getTypeName(question.type)
+        val typeTag = NameUtils.getTypeName(question.type)
         return "$positionTag $typeTag"
     }
 }

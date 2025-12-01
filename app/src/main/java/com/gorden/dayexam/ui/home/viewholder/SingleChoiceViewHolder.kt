@@ -9,7 +9,6 @@ import com.gorden.dayexam.db.entity.StudyRecord
 import com.gorden.dayexam.repository.model.QuestionDetail
 import com.gorden.dayexam.repository.model.RealAnswer
 import com.gorden.dayexam.ui.EventKey
-import com.gorden.dayexam.ui.action.EditQuestionContentAction
 import com.gorden.dayexam.ui.widget.ElementViewListener
 import com.gorden.dayexam.ui.widget.OptionCardView
 import com.gorden.dayexam.utils.ScreenUtils
@@ -36,11 +35,7 @@ class SingleChoiceViewHolder(itemView: View): BaseQuestionViewHolder(itemView) {
                 setAnsweredStatus(question)
                 val isCorrectTag = getAnswerEventTag(question)
                 LiveEventBus.get(EventKey.ANSWER_EVENT, EventKey.AnswerEventModel::class.java)
-                    .post(EventKey.AnswerEventModel(question.id, realAnswerContent, isCorrectTag))
-            }
-            optionCardView.setOnLongClickListener {
-                EditQuestionContentAction(itemView.context, optionItemWithElement.element).start()
-                return@setOnLongClickListener true
+                    .post(EventKey.AnswerEventModel(realAnswerContent, isCorrectTag))
             }
         }
     }
@@ -74,8 +69,8 @@ class SingleChoiceViewHolder(itemView: View): BaseQuestionViewHolder(itemView) {
     override fun genRememberOptionsView(question: QuestionDetail) {
         optionContainer.removeAllViews()
         var correctAnswer = ""
-        if ((question.answer?.element?.size ?: 0) > 0) {
-            correctAnswer = question.answer?.element?.get(0)?.content ?: ""
+        if ((question.answer.size) > 0) {
+            correctAnswer = question.answer[0].content
         }
         question.options.forEachIndexed { index, optionItemWithElement ->
             val optionTag = (index + 'A'.toInt()).toChar().toString()
@@ -89,10 +84,6 @@ class SingleChoiceViewHolder(itemView: View): BaseQuestionViewHolder(itemView) {
             val layoutParams = LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT,LinearLayout.LayoutParams.WRAP_CONTENT)
             layoutParams.topMargin = ScreenUtils.dp2px(8f)
             optionContainer.addView(optionCardView, layoutParams)
-            optionCardView.setOnLongClickListener {
-                EditQuestionContentAction(itemView.context, optionItemWithElement.element).start()
-                return@setOnLongClickListener true
-            }
         }
     }
 
@@ -110,8 +101,8 @@ class SingleChoiceViewHolder(itemView: View): BaseQuestionViewHolder(itemView) {
     private fun getAnswerEventTag(question: QuestionDetail): Int {
         val answer = question.answer
         var answerString = ""
-        if (answer.element.isNotEmpty() && answer.element[0].content.isNotEmpty()) {
-            answerString = answer.element[0].content
+        if (answer.isNotEmpty() && answer[0].content.isNotEmpty()) {
+            answerString = answer[0].content
         }
         val realAnswerString = question.realAnswer?.answer
         return if (answerString.isNotEmpty() && TextUtils.equals(answerString, realAnswerString)) {

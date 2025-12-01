@@ -34,8 +34,6 @@ import com.gorden.dayexam.ui.home.HomeFragment
 import com.gorden.dayexam.ui.home.shortcut.FastQuestionSelectActivity
 import com.gorden.dayexam.ui.home.shortcut.FastQuestionSelectActivity.Companion.CURRENT_POSITION
 import com.gorden.dayexam.ui.home.shortcut.FastQuestionSelectActivity.Companion.PAPER_ID_KEY
-import com.gorden.dayexam.ui.home.shortcut.SimpleQuestionViewHolder
-import com.gorden.dayexam.ui.sheet.course.CourseSheetDialog
 import com.gorden.dayexam.ui.sheet.search.SearchSheetDialog
 import com.gorden.dayexam.ui.sheet.shortcut.ShortCutSheetDialog
 import com.gorden.dayexam.utils.SharedPreferenceUtil
@@ -49,7 +47,6 @@ import java.io.IOException
 class MainActivity : BaseActivity() {
 
     private lateinit var drawerLayout: DrawerLayout
-    private val courseSheet = CourseSheetDialog()
     private val shortCutSheet = ShortCutSheetDialog()
     private val searchSheet = SearchSheetDialog()
     private val homeFragment = HomeFragment()
@@ -108,20 +105,7 @@ class MainActivity : BaseActivity() {
         toggle.isDrawerIndicatorEnabled = true
         drawerLayout.addDrawerListener(toggle)
         toggle.syncState()
-        toolbar.findViewById<TextView>(R.id.title).setOnClickListener {
-            showCourseSheet()
-        }
-        toolbar.findViewById<ImageView>(R.id.title_drop_down).setOnClickListener {
-            showCourseSheet()
-        }
         todayCount = toolbar.findViewById(R.id.today_study_count)
-    }
-
-    private fun showCourseSheet() {
-        courseSheet.show(
-            supportFragmentManager,
-            "course"
-        )
     }
 
     private fun initFab() {

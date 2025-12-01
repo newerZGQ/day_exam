@@ -7,7 +7,7 @@ import com.gorden.dayexam.repository.model.OptionItems
 import com.gorden.dayexam.repository.model.PaperDetail
 import com.gorden.dayexam.repository.model.PaperStudyInfo
 import com.gorden.dayexam.repository.model.QuestionDetail
-import com.gorden.dayexam.utils.BookUtils
+import com.gorden.dayexam.utils.NameUtils
 import com.gorden.dayexam.utils.ImageCacheHelper
 import org.apache.poi.xwpf.usermodel.XWPFDocument
 import org.apache.poi.xwpf.usermodel.XWPFParagraph
@@ -198,7 +198,7 @@ object BookParser {
                         builder.clear()
                     }
                     run.embeddedPictures.forEach { picture ->
-                        val imageName = BookUtils.generateImageName(picture.pictureData.fileName, timeStamp)
+                        val imageName = NameUtils.generateImageName(picture.pictureData.fileName, timeStamp)
                         val relativePath = currentPaperFolder + File.separator + imageName
                         cacheImageData[relativePath] = picture.pictureData.data
                         val element = Element(Element.PICTURE, relativePath, 0, elementPosition++)

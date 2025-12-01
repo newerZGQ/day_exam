@@ -14,7 +14,7 @@ import com.gorden.dayexam.ui.EventKey
 import com.gorden.dayexam.ui.widget.AnswerCardView
 import com.gorden.dayexam.ui.widget.ElementViewListener
 import com.gorden.dayexam.ui.widget.ElementsView
-import com.gorden.dayexam.utils.BookUtils
+import com.gorden.dayexam.utils.NameUtils
 import com.jeremyliao.liveeventbus.LiveEventBus
 
 abstract class BaseQuestionViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
@@ -77,7 +77,7 @@ abstract class BaseQuestionViewHolder(itemView: View) : RecyclerView.ViewHolder(
     @SuppressLint("NewApi")
     open fun genBodyView(question: QuestionDetail) {
         val body = itemView.findViewById<ElementsView>(R.id.body)
-        body.setElements(question.body, BookUtils.getTypeName(question.type), ElementViewListener())
+        body.setElements(question.body, NameUtils.getTypeName(question.type), ElementViewListener())
     }
 
     abstract fun genOptionsView(question: QuestionDetail)

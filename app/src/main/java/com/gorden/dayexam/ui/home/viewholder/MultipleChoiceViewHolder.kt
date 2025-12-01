@@ -48,10 +48,6 @@ class MultipleChoiceViewHolder(itemView: View): BaseQuestionViewHolder(itemView)
                     }
                 }
             }
-            optionCardView.setOnLongClickListener {
-                EditQuestionContentAction(itemView.context, optionItemWithElement.element).start()
-                return@setOnLongClickListener true
-            }
         }
     }
 
@@ -98,8 +94,8 @@ class MultipleChoiceViewHolder(itemView: View): BaseQuestionViewHolder(itemView)
     override fun genRememberOptionsView(question: QuestionDetail) {
         optionContainer.removeAllViews()
         var correctAnswer = ""
-        if ((question.answer?.element?.size ?: 0) > 0) {
-            correctAnswer = question.answer?.element?.get(0)?.content ?: ""
+        if (question.answer.isNotEmpty()) {
+            correctAnswer = question.answer[0].content
         }
         question.options.forEachIndexed { index, optionItemWithElement ->
             val optionTag = (index + 'A'.toInt()).toChar()
@@ -115,10 +111,6 @@ class MultipleChoiceViewHolder(itemView: View): BaseQuestionViewHolder(itemView)
                 LinearLayout.LayoutParams.WRAP_CONTENT)
             layoutParams.topMargin = ScreenUtils.dp2px(8f)
             optionContainer.addView(optionCardView, layoutParams)
-            optionCardView.setOnLongClickListener {
-                EditQuestionContentAction(itemView.context, optionItemWithElement.element).start()
-                return@setOnLongClickListener true
-            }
         }
     }
 
@@ -139,17 +131,16 @@ class MultipleChoiceViewHolder(itemView: View): BaseQuestionViewHolder(itemView)
             val isCorrect = isCorrect(question)
             LiveEventBus.get(EventKey.ANSWER_EVENT, EventKey.AnswerEventModel::class.java)
                 .post(EventKey.AnswerEventModel(
-                    question.id,
                     question.realAnswer?.answer ?: "",
                     StudyRecord.parseFromBoolean(isCorrect)))
         }
     }
 
     private fun isCorrect(question: QuestionDetail): Boolean {
-        if (question.answer == null || question.answer.element == null || question.answer.element.size == 0) {
+        if (question.answer.isEmpty()) {
             return false
         }
-        var standardAnswer = question.answer.element[0].content
+        var standardAnswer = question.answer[0].content
         var realAnswer = question.realAnswer?.answer ?: ""
         standardAnswer = standardAnswer.toCharArray().sortedBy { it.toInt() }.toString()
         realAnswer = realAnswer.toCharArray().sortedBy { it.toInt() }.toString()

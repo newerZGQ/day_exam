@@ -24,7 +24,7 @@ class TrueFalseViewHolder(itemView: View): BaseQuestionViewHolder(itemView) {
             setAnsweredStatus(question)
             val answerTag = getAnswerEventTag(question)
             LiveEventBus.get(EventKey.ANSWER_EVENT, EventKey.AnswerEventModel::class.java)
-                .post(EventKey.AnswerEventModel(question.id, realAnswerContent, answerTag))
+                .post(EventKey.AnswerEventModel(realAnswerContent, answerTag))
         }
         inCorrectOption.setOnClickListener {
             val realAnswerContent = resources.getString(R.string.incorrect)
@@ -32,7 +32,7 @@ class TrueFalseViewHolder(itemView: View): BaseQuestionViewHolder(itemView) {
             setAnsweredStatus(question)
             val answerTag = getAnswerEventTag(question)
             LiveEventBus.get(EventKey.ANSWER_EVENT, EventKey.AnswerEventModel::class.java)
-                .post(EventKey.AnswerEventModel(question.id, realAnswerContent, answerTag))
+                .post(EventKey.AnswerEventModel(realAnswerContent, answerTag))
         }
     }
 
@@ -44,7 +44,7 @@ class TrueFalseViewHolder(itemView: View): BaseQuestionViewHolder(itemView) {
 
     override fun genAnsweredOptionsView(question: QuestionDetail) {
         val context = itemView.context
-        val answer = question.answer.element[0].content
+        val answer = question.answer[0].content
         if (question.realAnswer != null) {
             if (question?.realAnswer?.answer.equals(answer)){
                 if (answer == context.getString(R.string.correct)) {
@@ -67,7 +67,7 @@ class TrueFalseViewHolder(itemView: View): BaseQuestionViewHolder(itemView) {
     }
 
     override fun genRememberOptionsView(question: QuestionDetail) {
-        val answer = question.answer.element[0].content
+        val answer = question.answer[0].content
         val resources = itemView.resources
         if (answer.isEmpty()) {
             return
@@ -90,8 +90,8 @@ class TrueFalseViewHolder(itemView: View): BaseQuestionViewHolder(itemView) {
     private fun getAnswerEventTag(question: QuestionDetail): Int {
         val answer = question.answer
         var answerString = ""
-        if (answer.element.isNotEmpty() && answer.element[0].content.isNotEmpty()) {
-            val answerContent = answer.element[0].content
+        if (answer.isNotEmpty() && answer[0].content.isNotEmpty()) {
+            val answerContent = answer[0].content
             if (answerContent.trim() == itemView.context.resources.getString(R.string.correct)) {
                 answerString = itemView.context.resources.getString(R.string.correct)
             } else if (answerContent.trim() == itemView.context.resources.getString(R.string.incorrect)) {

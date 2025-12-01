@@ -6,7 +6,6 @@ import android.content.Context.INPUT_METHOD_SERVICE
 import android.os.Bundle
 import android.text.Editable
 import android.text.TextWatcher
-import android.util.Log
 import android.view.View
 import android.view.ViewGroup
 import android.view.inputmethod.InputMethodManager
@@ -25,10 +24,8 @@ import com.gorden.dayexam.R
 import com.gorden.dayexam.repository.DataRepository
 import com.gorden.dayexam.repository.model.SearchItem
 import com.gorden.dayexam.ui.EventKey
-import com.gorden.dayexam.ui.sheet.course.CourseViewModel
 import com.gorden.dayexam.utils.ScreenUtils
 import com.jeremyliao.liveeventbus.LiveEventBus
-import org.apache.poi.ss.formula.functions.Even
 
 class SearchSheetDialog : BottomSheetDialogFragment(), SearchScopeSelectView.ScopeSelectListener,
     TextWatcher {
@@ -133,8 +130,7 @@ class SearchSheetDialog : BottomSheetDialogFragment(), SearchScopeSelectView.Sco
             .observe(requireActivity(), {
                 hideSoftInput()
                 dismiss()
-                DataRepository.updateDContext(it.courseId, it.bookId, it.paperId, it.questionId)
-                DataRepository.increaseContentVersion()
+                DataRepository.updateDContext(it.paperId, it.questionId)
             })
     }
 

@@ -15,7 +15,6 @@ import com.gorden.dayexam.db.entity.Config
 import com.gorden.dayexam.repository.DataRepository
 import com.gorden.dayexam.ui.EventKey
 import com.gorden.dayexam.ui.action.ScreenShotHomeQuestionAction
-import com.gorden.dayexam.ui.action.DeleteCurrentQuestionAction
 import com.gorden.dayexam.ui.settings.SettingsActivity
 import com.jeremyliao.liveeventbus.LiveEventBus
 import kotlinx.android.synthetic.main.short_cut_sheet_layout.*
@@ -26,8 +25,8 @@ class ShortCutSheetDialog : BottomSheetDialogFragment() {
 
     override fun onCreateView(
         inflater: LayoutInflater,
-        @Nullable container: ViewGroup?,
-        @Nullable savedInstanceState: Bundle?
+        container: ViewGroup?,
+        savedInstanceState: Bundle?
     ): View {
         rootView = inflater.inflate(
             R.layout.short_cut_sheet_layout,
@@ -40,15 +39,7 @@ class ShortCutSheetDialog : BottomSheetDialogFragment() {
                 setStudyModeListener()
             }
         })
-        viewModel.getDContext().observe(this, {
-            it?.let {
-                if (it.curCourseId == it.recycleBinId) {
-                    disableDeleteAction()
-                }
-            }
-        })
         initCopyQuestion()
-        initDeleteCurQuestion()
         initSearchAction()
         return rootView
     }
@@ -99,13 +90,6 @@ class ShortCutSheetDialog : BottomSheetDialogFragment() {
     private fun initCopyQuestion() {
         rootView.findViewById<View>(R.id.copy_content_container).setOnClickListener {
             ScreenShotHomeQuestionAction(requireActivity()).start()
-            dismiss()
-        }
-    }
-
-    private fun initDeleteCurQuestion() {
-        rootView.findViewById<View>(R.id.delete_content_container).setOnClickListener {
-            DeleteCurrentQuestionAction(requireActivity()).start()
             dismiss()
         }
     }
