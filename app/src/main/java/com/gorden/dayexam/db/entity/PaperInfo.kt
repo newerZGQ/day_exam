@@ -12,6 +12,7 @@ data class PaperInfo(
     var position: Int,
     val lastStudyPosition: Int = 0,
     val questionCount: Int = 0,
+    var hash: String
 ) {
     var createTime = Date()
     @PrimaryKey(autoGenerate = true) var id: Int = 0

@@ -64,6 +64,25 @@ object DataRepository {
                 title = title,
                 description = desc,
                 path = path,
+                hash = "",
+                position = maxOrder + 1,
+                lastStudyPosition = 0,
+                questionCount = questionCount
+            )
+            val paperId = mDatabase.paperDao().insert(paperInfo).toInt()
+            val paperStatus = StudyStatus(PaperStatus, paperId, 0)
+            mDatabase.studyStatusDao().insert(paperStatus)
+        }
+    }
+
+    fun insertPaperWithHash(title: String, desc: String, path: String, hash: String, questionCount: Int) {
+        AppExecutors.diskIO().execute {
+            val maxOrder = mDatabase.paperDao().getMaxPosition()
+            val paperInfo = PaperInfo(
+                title = title,
+                description = desc,
+                path = path,
+                hash = hash,
                 position = maxOrder + 1,
                 lastStudyPosition = 0,
                 questionCount = questionCount

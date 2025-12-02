@@ -1,7 +1,9 @@
 package com.gorden.dayexam.parser
 
+import com.gorden.dayexam.ContextHolder
 import com.gorden.dayexam.db.entity.PaperInfo
 import com.gorden.dayexam.model.QuestionType
+import com.gorden.dayexam.repository.DataRepository
 import com.gorden.dayexam.repository.model.Element
 import com.gorden.dayexam.repository.model.OptionItems
 import com.gorden.dayexam.repository.model.PaperDetail
@@ -9,60 +11,116 @@ import com.gorden.dayexam.repository.model.PaperStudyInfo
 import com.gorden.dayexam.repository.model.QuestionDetail
 import com.gorden.dayexam.utils.NameUtils
 import com.gorden.dayexam.utils.ImageCacheHelper
+import com.google.gson.Gson
 import org.apache.poi.xwpf.usermodel.XWPFDocument
 import org.apache.poi.xwpf.usermodel.XWPFParagraph
 import java.io.File
 import java.io.FileInputStream
+import java.io.FileOutputStream
 import java.lang.StringBuilder
+import java.security.MessageDigest
 
-object BookParser {
+object PaperParser {
 
-    private var timeStamp: Long = 0
-    private val cacheImageData = mutableMapOf<String, ByteArray>()
-    private var currentPaperFolder: String = ""
+    /**
+     * Parse a file from the given path, save PaperInfo to database,
+     * and cache questions as JSON with images in a hash-based folder structure.
+     * 
+     * @param filePath The absolute path to the document file to parse
+     */
+    fun parseFromFile(filePath: String) {
+        val file = File(filePath)
+        if (!file.exists()) {
+            throw IllegalArgumentException("File does not exist: $filePath")
+        }
+        
+        // Generate hash from file path
+        val fileHash = generateHash(filePath)
+        
+        // Parse the document to get questions and image data
+        val (questionDetails, imageHashToData) = parseDocument(filePath)
+        
+        // Save all data after parsing is complete
+        // 1. Save cached images with proper path structure
+        imageHashToData.forEach { (imageHash, bytes) ->
+            val relativePath = "$fileHash/image/$imageHash"
+            ImageCacheHelper.save(relativePath, bytes)
+        }
+        
+        // 2. Save PaperInfo to database
+        DataRepository.insertPaperWithHash(
+            title = file.nameWithoutExtension,
+            desc = "",
+            path = filePath,
+            hash = fileHash,
+            questionCount = questionDetails.size
+        )
+        
+        // 3. Save questions to JSON file
+        saveQuestionsToCache(fileHash, questionDetails)
+    }
 
-    fun parse(paperInfo: PaperInfo): PaperDetail {
-        timeStamp = System.currentTimeMillis()
-        cacheImageData.clear()
+    /**
+     * Parse a document file and return questions with image data.
+     * This is a pure parsing method that doesn't perform any save operations.
+     * 
+     * @param filePath The absolute path to the document file
+     * @return Pair of (questions list, image hash to data map)
+     */
+    private fun parseDocument(filePath: String): Pair<List<QuestionDetail>, Map<String, ByteArray>> {
+        val timeStamp = System.currentTimeMillis()
+        val imageHashToData = mutableMapOf<String, ByteArray>()
         val questionDetails = mutableListOf<QuestionDetail>()
         
-        // Set up image cache folder name for this paper
-        currentPaperFolder = paperInfo.path.hashCode().toString()
-        
         try {
-            val file = File(paperInfo.path)
-            FileInputStream(file).use { inputStream ->
+            FileInputStream(File(filePath)).use { inputStream ->
                 val document = XWPFDocument(inputStream)
                 val splitTitleSeparatorResult = splitByTitleSeparator(document.paragraphs)
                 splitTitleSeparatorResult.forEach { questionParas ->
                     val questionUnits = splitBySeparator(questionParas)
-                    val question = parseParagraphToQuestion(questionUnits)
+                    val question = parseParagraphToQuestion(questionUnits, timeStamp, imageHashToData)
                     question?.let {
                         questionDetails.add(question)
                     }
                 }
             }
         } catch (e: Exception) {
-            // Handle exception - could log or throw
+            e.printStackTrace()
+            throw RuntimeException("Failed to parse file: ${e.message}", e)
         }
         
-        // Save cached images using ImageCacheHelper
-        cacheImageData.forEach { (relativePath, bytes) ->
-            ImageCacheHelper.save(relativePath, bytes)
+        return Pair(questionDetails, imageHashToData)
+    }
+
+    /**
+     * Generate a hash string from the input string
+     */
+    private fun generateHash(input: String): String {
+        val md = MessageDigest.getInstance("MD5")
+        val digest = md.digest(input.toByteArray())
+        return digest.joinToString("") { "%02x".format(it) }
+    }
+
+    /**
+     * Save questions list to JSON file in cache directory
+     */
+    private fun saveQuestionsToCache(fileHash: String, questions: List<QuestionDetail>) {
+        try {
+            val cacheDir = File(ContextHolder.application.cacheDir, "parsed_image")
+            val paperFolder = File(cacheDir, fileHash)
+            paperFolder.mkdirs()
+            
+            val questionsFile = File(paperFolder, "questions.json")
+            val gson = Gson()
+            val json = gson.toJson(questions)
+            
+            FileOutputStream(questionsFile).use { outputStream ->
+                outputStream.write(json.toByteArray())
+            }
+        } catch (e: Exception) {
+            e.printStackTrace()
+            throw RuntimeException("Failed to save questions to cache: ${e.message}", e)
         }
-        
-        // Create PaperStudyInfo with default values
-        val studyInfo = PaperStudyInfo(
-            studyCount = 0,
-            lastStudyDate = null
-        )
-        
-        // Return PaperDetail
-        return PaperDetail(
-            paperInfo = paperInfo,
-            studyInfo = studyInfo,
-            question = questionDetails
-        )
     }
 
     // 以`&&填空 &&判断等`为分界
@@ -88,7 +146,11 @@ object BookParser {
         return result
     }
 
-    private fun parseParagraphToQuestion(paras: List<List<XWPFParagraph>>): QuestionDetail? {
+    private fun parseParagraphToQuestion(
+        paras: List<List<XWPFParagraph>>,
+        timeStamp: Long,
+        imageHashToData: MutableMap<String, ByteArray>
+    ): QuestionDetail? {
         var body = listOf<Element>()
         var options = mutableListOf<OptionItems>()
         var answer = listOf<Element>()
@@ -100,15 +162,15 @@ object BookParser {
                 when {
                     isQuestionSeparator(text) -> {
                         type = parseType(it)
-                        body = parseParagraphToElement(it)
+                        body = parseParagraphToElement(it, timeStamp, imageHashToData)
                     }
                     text.startsWith(ParserConstants.OPTION_SEPARATOR) ||
                             text.lowercase().startsWith(ParserConstants.OPTION_SEPARATOR_EN) -> {
-                        options.add(OptionItems(parseParagraphToElement(it)))
+                        options.add(OptionItems(parseParagraphToElement(it, timeStamp, imageHashToData)))
                     }
                     text.startsWith(ParserConstants.ANSWER_SEPARATOR) ||
                             text.lowercase().startsWith(ParserConstants.ANSWER_SEPARATOR_EN) -> {
-                        answer = parseParagraphToElement(it)
+                        answer = parseParagraphToElement(it, timeStamp, imageHashToData)
                     }
                 }
             }
@@ -180,7 +242,11 @@ object BookParser {
         return QuestionType.ERROR_TYPE
     }
 
-    private fun parseParagraphToElement(paras: List<XWPFParagraph>): List<Element> {
+    private fun parseParagraphToElement(
+        paras: List<XWPFParagraph>,
+        timeStamp: Long,
+        imageHashToData: MutableMap<String, ByteArray>
+    ): List<Element> {
         val result = mutableListOf<Element>()
         var elementPosition = 1
         paras.filter {
@@ -198,10 +264,10 @@ object BookParser {
                         builder.clear()
                     }
                     run.embeddedPictures.forEach { picture ->
-                        val imageName = NameUtils.generateImageName(picture.pictureData.fileName, timeStamp)
-                        val relativePath = currentPaperFolder + File.separator + imageName
-                        cacheImageData[relativePath] = picture.pictureData.data
-                        val element = Element(Element.PICTURE, relativePath, 0, elementPosition++)
+                        val imageHash = NameUtils.generateImageName(picture.pictureData.fileName, timeStamp)
+                        imageHashToData[imageHash] = picture.pictureData.data
+                        // Store just the hash in content, path will be constructed when saving
+                        val element = Element(Element.PICTURE, imageHash, 0, elementPosition++, imageHash)
                         result.add(element)
                     }
                 }
