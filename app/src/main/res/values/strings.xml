@@ -3,12 +3,11 @@
     <string name="action_settings">Settings</string>
 
     // 书籍边栏
-    <string name="add_book">添加书籍</string>
+
     <string name="menu_home">Home</string>
     <string name="sort">sort</string>
 
-    <string name="course">课程</string>
-    <string name="book">书籍</string>
+
     <string name="fill_blank">填空</string>
     <string name="true_false">判断</string>
     <string name="single_choice">单选</string>
@@ -20,18 +19,7 @@
 
     <string name="dialog_confirm">确认</string>
     <string name="dialog_cancel">取消</string>
-    <string name="dialog_create_book_title">创建书籍</string>
-    <string name="dialog_create_book_subTitle">书籍</string>
-    <string name="dialog_create_book_hint">请输入书籍名称</string>
-    <string name="dialog_create_course_title">创建课程</string>
-    <string name="dialog_create_course_subTitle">课</string>
-    <string name="dialog_create_course_hint">请输入课程名称</string>
-    <string name="dialog_create_course_sub_hint">请输入课程描述(可不填)</string>
-    <string name="dialog_edit_course_title">编辑课程</string>
-    <string name="dialog_edit_course_subTitle">课程</string>
-    <string name="dialog_delete_course_title">删除课程</string>
-    <string name="dialog_delete_course_subTitle">课程</string>
-    <string name="dialog_edit_course_sub_hint">请输入课程描述(可不填)</string>
+
 
     <string name="dialog_create_paper_title">创建试卷</string>
     <string name="dialog_create_paper_subTitle">试卷</string>
@@ -42,15 +30,12 @@
 
     <string name="dialog_delete_paper_title">删除试卷</string>
 
-    <string name="dialog_edit_book_title">编辑书籍</string>
-    <string name="dialog_edit_book_subTitle">书</string>
-    <string name="dialog_delete_book_title">删除书籍</string>
+
 
     <string name="none_question_desc">还未添加任何试题，您可以从word文件中解析(推荐)，也可以手动添加</string>
 
     // 移动Paper Dialog
-    <string name="select_target_course">请选择目标课程</string>
-    <string name="select_target_book">请选择目标书籍</string>
+
     <string name="select_target_paper">请选择目标试卷</string>
 
     // 书籍列表的学习信息
@@ -72,10 +57,7 @@
 
     // toast
     <string name="create_paper_empty_title_msg">试卷标题不能为空</string>
-    <string name="course_empty_title_msg">课程标题不能为空</string>
-    <string name="course_delete_error_msg">当前课程正在学习，无法删除</string>
-    <string name="no_course_found_msg">没有找到课程</string>
-    <string name="no_book_found_msg">没有找到书籍</string>
+
     <string name="no_paper_found_msg">该书籍中没有找到试卷</string>
     <string name="screen_shot_question_success">已保存到系统相册</string>
     <string name="screen_shot_question_failed">截屏失败</string>
@@ -118,8 +100,7 @@
     // 搜索
     <string name="search_tip">提示：换行输入多个关键词进行多词搜索</string>
     <string name="current_paper">当前试卷</string>
-    <string name="current_book">当前书籍</string>
-    <string name="current_course">当前课程</string>
+
     <string name="global">全局搜索</string>
     <string name="recycle_bin">废纸篓</string>
 
@@ -163,8 +144,7 @@
     </string>
 
     // 默认试卷诗句
-    <string name="default_course_name">天天背题</string>
-    <string name="default_book_for_user_name">给用户的一封信</string>
+
     <string name="default_guide_paper_name">教程</string>
     <string name="default_user_paper_name">用户亲启</string>
 

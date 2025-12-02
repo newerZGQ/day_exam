@@ -3,12 +3,11 @@
     <string name="action_settings">Settings</string>
 
     // 书籍边栏
-    <string name="add_book">Add Book</string>
+
     <string name="menu_home">Home</string>
     <string name="sort">sort</string>
 
-    <string name="course">Course</string>
-    <string name="book">Book</string>
+
     <string name="fill_blank">Completion</string>
     <string name="true_false">True False</string>
     <string name="single_choice">Single Answer</string>
@@ -20,18 +19,7 @@
 
     <string name="dialog_confirm">Confirm</string>
     <string name="dialog_cancel">Cancel</string>
-    <string name="dialog_create_book_title">Create Book</string>
-    <string name="dialog_create_book_subTitle">Book</string>
-    <string name="dialog_create_book_hint">book name</string>
-    <string name="dialog_create_course_title">Create Course</string>
-    <string name="dialog_create_course_subTitle">course</string>
-    <string name="dialog_create_course_hint">course name</string>
-    <string name="dialog_create_course_sub_hint">course description(not required)</string>
-    <string name="dialog_edit_course_title">Edit Course</string>
-    <string name="dialog_edit_course_subTitle">Course</string>
-    <string name="dialog_delete_course_title">Delete Course</string>
-    <string name="dialog_delete_course_subTitle">Course</string>
-    <string name="dialog_edit_course_sub_hint">course description(not required)</string>
+
 
     <string name="dialog_create_paper_title">Create Exam Paper</string>
     <string name="dialog_create_paper_subTitle">Exam Paper</string>
@@ -42,15 +30,12 @@
 
     <string name="dialog_delete_paper_title">Delete</string>
 
-    <string name="dialog_edit_book_title">Edit Book</string>
-    <string name="dialog_edit_book_subTitle">Book</string>
-    <string name="dialog_delete_book_title">Delete Book</string>
+
 
     <string name="none_question_desc">Exam paper is Empty, you can parse questions from a doc file(recommend)，or you can add question by hand</string>
 
     // 移动Paper Dialog
-    <string name="select_target_course">Select Course</string>
-    <string name="select_target_book">Select Book</string>
+
     <string name="select_target_paper">Select Exam Paper</string>
 
     // 书籍列表的学习信息
@@ -72,10 +57,7 @@
 
     // toast
     <string name="create_paper_empty_title_msg">Title can not be empty</string>
-    <string name="course_empty_title_msg">Title can not be empty</string>
-    <string name="course_delete_error_msg">Learning this course, can not delete</string>
-    <string name="no_course_found_msg">No Course</string>
-    <string name="no_book_found_msg">No Book</string>
+
     <string name="no_paper_found_msg">No Paper</string>
     <string name="screen_shot_question_success">ScreenShot Saved</string>
     <string name="screen_shot_question_failed">ScreenShot Failed</string>
@@ -118,8 +100,7 @@
     // 搜索
     <string name="search_tip"></string>
     <string name="current_paper">Current Exam</string>
-    <string name="current_book">Current Book</string>
-    <string name="current_course">Current Course</string>
+
     <string name="global">Global</string>
     <string name="recycle_bin">Trash</string>
 
@@ -173,8 +154,7 @@
     </string>
 
     // 默认试卷诗句
-    <string name="default_course_name">DayExam</string>
-    <string name="default_book_for_user_name">Letter To Users</string>
+
     <string name="default_guide_paper_name">Guide</string>
     <string name="default_user_paper_name">To Users</string>
 

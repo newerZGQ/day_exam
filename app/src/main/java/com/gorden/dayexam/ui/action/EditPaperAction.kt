@@ -12,7 +12,7 @@ class EditPaperAction(val context: Context, val paperInfo: PaperInfo): Action {
             context.resources.getString(R.string.dialog_edit_paper_title),
             context.resources.getString(R.string.dialog_edit_paper_subTitle),
             paperInfo.title,
-            context.resources.getString(R.string.dialog_create_book_hint),
+            context.resources.getString(R.string.dialog_create_paper_hint),
             editCallBack = object : EditTextDialog.EditCallBack {
                 override fun onConfirmContent(dialog: EditTextDialog, content: String, subContent: String) {
                     paperInfo.title = content

@@ -18,7 +18,7 @@ class QuestionsSheetDialog: BottomSheetDialogFragment() {
         @Nullable savedInstanceState: Bundle?
     ): View {
         rootView = inflater.inflate(
-            R.layout.course_sheet_layout,
+            R.layout.questions_sheet_layout,
             container, false
         )
         return rootView

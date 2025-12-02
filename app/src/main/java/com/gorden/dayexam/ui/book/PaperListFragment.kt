@@ -10,12 +10,9 @@ import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
-import com.gorden.dayexam.MainActivity
 import com.gorden.dayexam.R
 import com.gorden.dayexam.db.entity.PaperInfo
 import com.gorden.dayexam.executor.AppExecutors
-import com.gorden.dayexam.parser.BookParser
-import com.gorden.dayexam.repository.DataRepository
 import com.gorden.dayexam.ui.EventKey
 import com.gorden.dayexam.ui.action.*
 import com.jeremyliao.liveeventbus.LiveEventBus
@@ -30,10 +27,6 @@ class PaperListFragment : Fragment() {
     private var curPaperId: Int = 0
     private var isRecycleBin: Boolean = false
 
-    private lateinit var moreMenu: ImageButton
-    private lateinit var openSort: ImageButton
-    private lateinit var openSearch: ImageButton
-    private lateinit var courseTitle: TextView
     private lateinit var paperList: RecyclerView
 
     private var targetPaperInfo: EventKey.QuestionAddEventModel? = null
@@ -45,7 +38,7 @@ class PaperListFragment : Fragment() {
     ): View? {
         val root = inflater.inflate(R.layout.fragment_book_list_layout, container, false)
         initPaperList(root)
-        initActionBar(root)
+
         return root
     }
 
@@ -56,36 +49,21 @@ class PaperListFragment : Fragment() {
         paperList.layoutManager = LinearLayoutManager(this.context)
 
         paperListViewModel = ViewModelProvider(this).get(PaperListViewModel::class.java)
-        paperListViewModel.getAllPapers().observe(viewLifecycleOwner, {
+        paperListViewModel.getAllPapers().observe(viewLifecycleOwner) {
             if (it == null) {
                 curPaperId = 0
                 adapter.setData(listOf(), curPaperId, false)
-                val bookString = context?.resources?.getString(R.string.book)
-                courseTitle.text = bookString
+
             } else {
                 // TODO: Get current paper ID from somewhere else if needed, or remove highlighting
                 adapter.setData(it, curPaperId, isRecycleBin)
-                val bookString = context?.resources?.getString(R.string.book)
-                courseTitle.text = "" + bookString + "(" + it.size + ")"
+
             }
-        })
+        }
         registerPaperClickedEvent()
     }
 
-    private fun initActionBar(root: View) {
-        moreMenu = root.findViewById(R.id.moreMenu)
-        moreMenu.visibility = View.GONE // Hide more menu for now as book creation is removed
-        
-        courseTitle = root.findViewById(R.id.courseTitle)
-        openSort = root.findViewById(R.id.openSort)
-        openSort.visibility = View.GONE // Hide sort for now
 
-        openSearch = root.findViewById(R.id.openSearch)
-        openSearch.setOnClickListener {
-            LiveEventBus.get(EventKey.SEARCH_CLICKED, Int::class.java)
-                .post(0)
-        }
-    }
 
     private fun editPaper(paperInfo: PaperInfo) {
         activity?.let {
