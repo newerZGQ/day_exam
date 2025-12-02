@@ -33,18 +33,11 @@
                     android:textSize="20sp"
                     android:maxWidth="130dp"
                     android:maxLines="1"
+                    android:text="@string/app_name"
                     android:gravity="center_vertical"
                     android:textColor="@color/action_bar_font_color"
                     android:layout_width="wrap_content"
                     android:layout_height="match_parent"/>
-                <ImageView
-                    android:id="@+id/title_drop_down"
-                    app:layout_constraintStart_toEndOf="@id/title"
-                    app:layout_constraintTop_toTopOf="parent"
-                    style="@style/SelectableItemBackground"
-                    android:src="@drawable/ic_baseline_arrow_drop_down_24"
-                    android:layout_width="24dp"
-                    android:layout_height="24dp"/>
                 <TextView
                     android:id="@+id/today_study_count"
                     app:layout_constraintEnd_toEndOf="parent"
