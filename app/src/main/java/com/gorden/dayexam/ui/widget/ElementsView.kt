@@ -16,7 +16,7 @@ import com.bumptech.glide.request.target.CustomTarget
 import com.bumptech.glide.request.transition.Transition
 import com.gorden.dayexam.R
 import com.gorden.dayexam.repository.model.Element
-import com.gorden.dayexam.utils.ImageCacheHelper
+import com.gorden.dayexam.utils.PaperContext
 import com.gorden.dayexam.utils.ScreenUtils
 
 class ElementsView: LinearLayout {
@@ -62,7 +62,7 @@ class ElementsView: LinearLayout {
                     requestBuilder = if (contentElement.content.startsWith("default_data_image")) {
                         requestBuilder.load("file:///android_asset/image/" + contentElement.content)
                     } else {
-                        val imageFile = ImageCacheHelper.getImageFile(contentElement.content)
+                        val imageFile = PaperContext.getImageFile(contentElement.content)
                         requestBuilder.load(imageFile)
                     }
                     requestBuilder

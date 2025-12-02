@@ -1,4 +1,4 @@
-package com.gorden.dayexam.model
+package com.gorden.dayexam.repository.model
 
 class QuestionType {
     companion object {

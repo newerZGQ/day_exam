@@ -2,7 +2,7 @@ package com.gorden.dayexam.utils
 
 import com.gorden.dayexam.ContextHolder
 import com.gorden.dayexam.R
-import com.gorden.dayexam.model.QuestionType
+import com.gorden.dayexam.repository.model.QuestionType
 
 object NameUtils {
     fun getTypeName(type: Int): String {

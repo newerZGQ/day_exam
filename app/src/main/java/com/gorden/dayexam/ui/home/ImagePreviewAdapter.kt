@@ -8,7 +8,7 @@ import android.widget.ImageView
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
 import com.gorden.dayexam.R
-import com.gorden.dayexam.utils.ImageCacheHelper
+import com.gorden.dayexam.utils.PaperContext
 import com.gorden.dayexam.ui.EventKey
 import com.jeremyliao.liveeventbus.LiveEventBus
 
@@ -53,7 +53,7 @@ class ImagePreviewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
         requestBuilder = if (imageUrl.startsWith("default_data_image")) {
             requestBuilder.load("file:///android_asset/image/" + imageUrl)
         } else {
-            val imageFile = ImageCacheHelper.getImageFile(imageUrl)
+            val imageFile = PaperContext.getImageFile(imageUrl)
             requestBuilder.load(imageFile)
         }
         requestBuilder.into(previewImage)

@@ -1,16 +1,13 @@
 package com.gorden.dayexam.parser
 
 import com.gorden.dayexam.ContextHolder
-import com.gorden.dayexam.db.entity.PaperInfo
-import com.gorden.dayexam.model.QuestionType
+import com.gorden.dayexam.repository.model.QuestionType
 import com.gorden.dayexam.repository.DataRepository
 import com.gorden.dayexam.repository.model.Element
 import com.gorden.dayexam.repository.model.OptionItems
-import com.gorden.dayexam.repository.model.PaperDetail
-import com.gorden.dayexam.repository.model.PaperStudyInfo
 import com.gorden.dayexam.repository.model.QuestionDetail
 import com.gorden.dayexam.utils.NameUtils
-import com.gorden.dayexam.utils.ImageCacheHelper
+import com.gorden.dayexam.utils.PaperContext
 import com.google.gson.Gson
 import org.apache.poi.xwpf.usermodel.XWPFDocument
 import org.apache.poi.xwpf.usermodel.XWPFParagraph
@@ -36,15 +33,14 @@ object PaperParser {
         
         // Generate hash from file path
         val fileHash = generateHash(filePath)
-        
+        ParserContext.prepare(fileHash)
         // Parse the document to get questions and image data
         val (questionDetails, imageHashToData) = parseDocument(filePath)
         
         // Save all data after parsing is complete
         // 1. Save cached images with proper path structure
         imageHashToData.forEach { (imageHash, bytes) ->
-            val relativePath = "$fileHash/image/$imageHash"
-            ImageCacheHelper.save(relativePath, bytes)
+            ParserContext.saveImage(imageHash, bytes)
         }
         
         // 2. Save PaperInfo to database
@@ -57,7 +53,7 @@ object PaperParser {
         )
         
         // 3. Save questions to JSON file
-        saveQuestionsToCache(fileHash, questionDetails)
+        saveQuestionsToCache(questionDetails)
     }
 
     /**
@@ -104,19 +100,10 @@ object PaperParser {
     /**
      * Save questions list to JSON file in cache directory
      */
-    private fun saveQuestionsToCache(fileHash: String, questions: List<QuestionDetail>) {
+    private fun saveQuestionsToCache(questions: List<QuestionDetail>) {
         try {
-            val cacheDir = File(ContextHolder.application.cacheDir, "parsed_image")
-            val paperFolder = File(cacheDir, fileHash)
-            paperFolder.mkdirs()
-            
-            val questionsFile = File(paperFolder, "questions.json")
             val gson = Gson()
-            val json = gson.toJson(questions)
-            
-            FileOutputStream(questionsFile).use { outputStream ->
-                outputStream.write(json.toByteArray())
-            }
+            ParserContext.saveQuestions(gson.toJson(questions))
         } catch (e: Exception) {
             e.printStackTrace()
             throw RuntimeException("Failed to save questions to cache: ${e.message}", e)
@@ -292,6 +279,58 @@ object PaperParser {
                 text.lowercase().startsWith(ParserConstants.SINGLE_CHOICE_SEPARATOR_EN) ||
                 text.lowercase().startsWith(ParserConstants.MULTIPLE_CHOICE_SEPARATOR_EN) ||
                 text.lowercase().startsWith(ParserConstants.ESSAY_QUESTION_SEPARATOR_EN)
+    }
+}
+
+object ParserContext {
+    private const val PARSED_IMAGE_FOLDER = "image"
+    private const val PARSED_QUESTIONS_JSON_FILE = "questions.json"
+
+    private var paperHash: String = ""
+
+    fun prepare(paperHash: String) {
+        val cachePaperFolder = File(ContextHolder.application.cacheDir, paperHash)
+        if (!cachePaperFolder.exists()) {
+            cachePaperFolder.mkdirs()
+        } else {
+            cachePaperFolder.deleteRecursively()
+            cachePaperFolder.mkdirs()
+        }
+        this.paperHash = paperHash
+    }
+
+    private fun getImageFile(relativePath: String): File {
+        val cacheParentFolder = File(ContextHolder.application.cacheDir, paperHash)
+        return File(cacheParentFolder, relativePath)
+    }
+
+    fun saveImage(hash: String, data: ByteArray) {
+        val imageFolder = File(ContextHolder.application.cacheDir, "$paperHash/$PARSED_IMAGE_FOLDER")
+        if (!imageFolder.exists()) {
+            imageFolder.mkdirs()
+        }
+        val imageFile = File(ContextHolder.application.cacheDir, "$paperHash/$PARSED_IMAGE_FOLDER/$hash")
+        try {
+            FileOutputStream(imageFile).use { it.write(data) }
+        } catch (e: Exception) {
+            e.printStackTrace()
+        }
+    }
+
+    fun saveQuestions(data: String) {
+        val jsonFile = File(ContextHolder.application.cacheDir, "$paperHash/$PARSED_QUESTIONS_JSON_FILE")
+        try {
+            FileOutputStream(jsonFile).use { it.write(data.toByteArray()) }
+        } catch (e: Exception) {
+            e.printStackTrace()
+        }
+    }
+
+    fun delete(relativePath: String) {
+        val file = getImageFile(relativePath)
+        if (file.exists()) {
+            file.delete()
+        }
     }
 }
 
