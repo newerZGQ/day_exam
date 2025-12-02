@@ -8,6 +8,7 @@
     <string name="sort">sort</string>
 
 
+    <string name="paper">试卷</string>
     <string name="fill_blank">填空</string>
     <string name="true_false">判断</string>
     <string name="single_choice">单选</string>

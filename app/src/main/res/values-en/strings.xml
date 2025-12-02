@@ -7,7 +7,7 @@
     <string name="menu_home">Home</string>
     <string name="sort">sort</string>
 
-
+    <string name="paper">Paper</string>
     <string name="fill_blank">Completion</string>
     <string name="true_false">True False</string>
     <string name="single_choice">Single Answer</string>
