@@ -51,12 +51,14 @@ class PaperListViewModel(application: Application): AndroidViewModel(application
     suspend fun updatePaperOrder(papers: List<PaperInfo>) {
         withContext(Dispatchers.IO) {
             try {
+                // 查询是 ORDER BY position ASC，所以直接用 index 作为 position
                 papers.forEachIndexed { index, paper ->
                     paper.position = index
                 }
                 DataRepository.updatePapers(papers)
             } catch (e: Exception) {
                 // 排序失败这里先忽略，必要时可以加日志或上报
+                e.printStackTrace()
             }
         }
     }

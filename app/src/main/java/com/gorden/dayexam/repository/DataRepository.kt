@@ -105,9 +105,7 @@ object DataRepository {
     }
 
     fun updatePapers(paperInfos: List<PaperInfo>) {
-        AppExecutors.diskIO().execute {
-            mDatabase.paperDao().update(paperInfos)
-        }
+        mDatabase.paperDao().update(paperInfos)
     }
 
     fun updatePaper(paperInfo: PaperInfo) {
