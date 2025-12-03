@@ -22,9 +22,7 @@ import com.gorden.dayexam.databinding.FragmentPaperListLayoutBinding
 import com.gorden.dayexam.db.entity.PaperInfo
 import com.gorden.dayexam.executor.AppExecutors
 import com.gorden.dayexam.parser.PaperParser
-import com.gorden.dayexam.ui.EventKey
 import com.gorden.dayexam.ui.dialog.EditTextDialog
-import com.jeremyliao.liveeventbus.LiveEventBus
 import kotlinx.coroutines.launch
 import java.io.File
 import java.io.FileOutputStream
@@ -73,9 +71,11 @@ class PaperListFragment : Fragment() {
 
         adapter = PaperListAdapter(object : PaperListAdapter.Listener {
             override fun onItemLongPressed(holder: PaperViewHolder, paperInfo: PaperInfo) {
-                // 进入编辑模式，并开始拖拽
                 enterEditMode()
-                itemTouchHelper.startDrag(holder)
+                // 进入编辑模式，并开始拖拽
+                binding.root.post {
+                    itemTouchHelper.startDrag(holder)
+                }
             }
 
             override fun onItemDeleteClicked(paperInfo: PaperInfo) {
@@ -160,37 +160,6 @@ class PaperListFragment : Fragment() {
     override fun onDestroyView() {
         super.onDestroyView()
         _binding = null
-    }
-
-    private fun editPaper(paperInfo: PaperInfo) {
-        val ctx = context ?: return
-        EditTextDialog(
-            ctx,
-            ctx.resources.getString(R.string.dialog_edit_paper_title),
-            ctx.resources.getString(R.string.dialog_edit_paper_subTitle),
-            paperInfo.title,
-            ctx.resources.getString(R.string.dialog_create_paper_hint),
-            editCallBack = object : EditTextDialog.EditCallBack {
-                override fun onConfirmContent(
-                    dialog: EditTextDialog,
-                    content: String,
-                    subContent: String
-                ) {
-                    viewLifecycleOwner.lifecycleScope.launch {
-                        val success = paperListViewModel.updatePaperTitle(paperInfo, content)
-                        val ctxInner = context ?: return@launch
-                        Toast.makeText(
-                            ctxInner,
-                            ctxInner.getString(
-                                if (success) R.string.toast_edit_paper_success
-                                else R.string.toast_edit_paper_failed
-                            ),
-                            Toast.LENGTH_SHORT
-                        ).show()
-                    }
-                }
-            }
-        ).show()
     }
 
     private fun deletePaper(paperInfo: PaperInfo) {

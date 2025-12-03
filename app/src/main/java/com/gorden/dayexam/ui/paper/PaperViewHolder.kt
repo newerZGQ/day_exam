@@ -24,7 +24,6 @@ class PaperViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
         onDeleteClick: (PaperInfo) -> Unit
     ) {
         val resources = itemView.context.resources
-        itemView.findViewById<View>(R.id.paper_drag_handle).visibility = View.GONE
 
         title.text = paperInfo.title
         record.text = resources.getString(R.string.paper_question_count, paperInfo.questionCount)
