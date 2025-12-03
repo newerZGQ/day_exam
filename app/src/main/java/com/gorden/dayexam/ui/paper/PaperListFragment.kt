@@ -125,7 +125,6 @@ class PaperListFragment : Fragment() {
                 adapter.setData(it, curPaperId)
             }
         }
-        registerPaperClickedEvent()
     }
 
     private fun showProgress() {
@@ -277,18 +276,6 @@ class PaperListFragment : Fragment() {
             }
         }
         return null
-    }
-
-    private fun registerPaperClickedEvent() {
-        // paper操作
-        LiveEventBus.get(EventKey.PAPER_MENU_EDIT_PAPER, PaperInfo::class.java)
-            .observe(this, {
-                editPaper(it)
-            })
-        LiveEventBus.get(EventKey.PAPER_MENU_DELETE_PAPER, PaperInfo::class.java)
-            .observe(this, {
-                deletePaper(it)
-            })
     }
 
 }
