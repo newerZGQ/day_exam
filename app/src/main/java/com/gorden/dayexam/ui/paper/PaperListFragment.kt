@@ -47,12 +47,12 @@ class PaperListFragment : Fragment() {
             if (result.resultCode == Activity.RESULT_OK) {
                 try {
                     result.data?.data?.let { uri ->
-                        LiveEventBus.get(EventKey.START_PROGRESS_BAR, Int::class.java).post(0)
+                        showProgress()
                         importPaperFromUri(uri)
                     }
                 } catch (e: Exception) {
                     // 异常处理（例如 Toast 或日志）
-                    LiveEventBus.get(EventKey.END_PROGRESS_BAR, Int::class.java).post(0)
+                    hideProgress()
                 }
             }
         }
@@ -126,6 +126,16 @@ class PaperListFragment : Fragment() {
             }
         }
         registerPaperClickedEvent()
+    }
+
+    private fun showProgress() {
+        binding.parsingProgress.visibility = View.VISIBLE
+    }
+
+    private fun hideProgress() {
+        binding.root.postDelayed({
+            binding.parsingProgress.visibility = View.GONE
+        }, 1000)
     }
 
     private fun enterEditMode() {
@@ -248,7 +258,7 @@ class PaperListFragment : Fragment() {
                 e.printStackTrace()
             } finally {
                 AppExecutors.mainThread().execute {
-                    LiveEventBus.get(EventKey.END_PROGRESS_BAR, Int::class.java).post(0)
+                    hideProgress()
                 }
             }
         }

@@ -26,6 +26,15 @@
             android:layout_height="wrap_content"
             android:text="@string/paper"
             android:textColor="@color/font_common_color" />
+        <ProgressBar
+            android:id="@+id/parsing_progress"
+            android:layout_width="24dp"
+            android:layout_height="24dp"
+            android:visibility="gone"
+            app:layout_constraintStart_toEndOf="@id/title"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintBottom_toBottomOf="parent"
+            android:layout_marginStart="12dp" />
         <ImageButton
             android:id="@+id/addPaper"
             app:layout_constraintRight_toRightOf="parent"

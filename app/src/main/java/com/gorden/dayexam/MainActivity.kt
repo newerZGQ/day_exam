@@ -205,14 +205,6 @@ class MainActivity : BaseActivity() {
                     "Search"
                 )
             })
-        LiveEventBus.get(EventKey.START_PROGRESS_BAR, Int::class.java).observe(this, {
-            binding.homeMainLayout.parsingProgress.visibility = View.VISIBLE
-        })
-        LiveEventBus.get(EventKey.END_PROGRESS_BAR, Int::class.java).observe(this, {
-            drawerLayout.postDelayed({
-                binding.homeMainLayout.parsingProgress.visibility = View.GONE
-            }, 1000)
-        })
     }
 
 

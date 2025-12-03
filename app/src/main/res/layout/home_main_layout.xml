@@ -48,14 +48,6 @@
                     android:textSize="18sp"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"/>
-                <ProgressBar
-                    android:id="@+id/parsing_progress"
-                    app:layout_constraintEnd_toStartOf="@id/today_study_count"
-                    app:layout_constraintTop_toTopOf="parent"
-                    android:layout_marginEnd="20dp"
-                    android:visibility="gone"
-                    android:layout_width="24dp"
-                    android:layout_height="24dp"/>
             </androidx.constraintlayout.widget.ConstraintLayout>
 
         </androidx.appcompat.widget.Toolbar>
