@@ -11,8 +11,6 @@ class EventKey {
 
         // 试卷列表页试卷被点击
         const val PAPER_CONTAINER_CLICKED = "3"
-        // 试卷列表页，菜单弹窗从文件添加试题被点击
-        const val PAPER_MENU_ADD_QUESTION_FROM_FILE = "4"
         // 试卷列表页，菜单弹窗编辑试卷被点击
         const val PAPER_MENU_EDIT_PAPER = "5"
         // 试卷列表页，菜单弹窗删除试卷被点击

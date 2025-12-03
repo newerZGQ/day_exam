@@ -21,6 +21,7 @@ import com.google.android.material.bottomsheet.BottomSheetBehavior
 import com.google.android.material.bottomsheet.BottomSheetDialog
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment
 import com.gorden.dayexam.R
+import com.gorden.dayexam.databinding.SearchSheetLayoutBinding
 import com.gorden.dayexam.repository.DataRepository
 import com.gorden.dayexam.repository.model.SearchItem
 import com.gorden.dayexam.ui.EventKey
@@ -29,6 +30,9 @@ import com.jeremyliao.liveeventbus.LiveEventBus
 
 class SearchSheetDialog : BottomSheetDialogFragment(), SearchScopeSelectView.ScopeSelectListener,
     TextWatcher {
+
+    private var _binding: SearchSheetLayoutBinding? = null
+    private val binding get() = _binding!!
 
     private lateinit var rootView: View
     private lateinit var parent: View
@@ -45,12 +49,13 @@ class SearchSheetDialog : BottomSheetDialogFragment(), SearchScopeSelectView.Sco
 
     override fun onCreateDialog(savedInstanceState: Bundle?): Dialog {
         val dialog = BottomSheetDialog(requireActivity(), 0)
-        dialog.setContentView(R.layout.search_sheet_layout)
-        rootView = dialog.findViewById(R.id.search_sheet_container)!!
-        searchInput = rootView.findViewById(R.id.search_key_input)
-        clearInputBtn = rootView.findViewById(R.id.clear_content)
-        scopeSelect = rootView.findViewById(R.id.scope_select_view)
-        questionList = rootView.findViewById(R.id.searchQuestionList)
+        _binding = SearchSheetLayoutBinding.inflate(layoutInflater)
+        dialog.setContentView(binding.root)
+        rootView = binding.searchSheetContainer
+        searchInput = binding.searchKeyInput
+        clearInputBtn = binding.clearContent
+        scopeSelect = binding.scopeSelectView
+        questionList = binding.searchQuestionList
         clearInputBtn.setOnClickListener {
             searchInput.text.clear()
         }
@@ -136,12 +141,17 @@ class SearchSheetDialog : BottomSheetDialogFragment(), SearchScopeSelectView.Sco
 
     private fun hideSoftInput() {
         val imm = (requireActivity().getSystemService(INPUT_METHOD_SERVICE) as InputMethodManager)
-        imm.hideSoftInputFromWindow(questionList.windowToken, 0)
+        imm.hideSoftInputFromWindow(binding.searchQuestionList.windowToken, 0)
     }
 
     private fun showSoftInput() {
         val imm = (requireActivity().getSystemService(INPUT_METHOD_SERVICE) as InputMethodManager)
-        imm.showSoftInput(searchInput, InputMethodManager.SHOW_IMPLICIT)
+        imm.showSoftInput(binding.searchKeyInput, InputMethodManager.SHOW_IMPLICIT)
+    }
+
+    override fun onDestroyView() {
+        super.onDestroyView()
+        _binding = null
     }
 
 }

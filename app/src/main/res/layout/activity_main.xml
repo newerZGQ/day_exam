@@ -9,12 +9,13 @@
     tools:openDrawer="start">
 
     <include
-        layout="@layout/app_bar_main"
+        android:id="@+id/home_main_layout"
+        layout="@layout/home_main_layout"
         android:layout_width="match_parent"
         android:layout_height="match_parent" />
 
     <FrameLayout
-        android:id="@+id/book_list_container"
+        android:id="@+id/paper_list_container"
         android:layout_width="350dp"
         android:layout_height="match_parent"
         android:background="@color/colorPrimary"

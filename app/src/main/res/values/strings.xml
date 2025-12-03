@@ -30,6 +30,13 @@
     <string name="dialog_edit_paper_subTitle">试卷</string>
 
     <string name="dialog_delete_paper_title">删除试卷</string>
+    <string name="dialog_delete_paper_message">确定要删除%1$s么?</string>
+
+    <!-- Paper edit/delete result toasts -->
+    <string name="toast_edit_paper_success">试卷已更新</string>
+    <string name="toast_edit_paper_failed">试卷更新失败</string>
+    <string name="toast_delete_paper_success">试卷已删除</string>
+    <string name="toast_delete_paper_failed">试卷删除失败</string>
 
 
 

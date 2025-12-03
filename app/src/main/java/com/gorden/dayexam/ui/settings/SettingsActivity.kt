@@ -3,23 +3,27 @@ package com.gorden.dayexam.ui.settings
 import android.os.Bundle
 import com.gorden.dayexam.BaseActivity
 import com.gorden.dayexam.R
-import kotlinx.android.synthetic.main.app_bar_main.*
+import com.gorden.dayexam.databinding.ActivitySettingsBinding
 
 class SettingsActivity: BaseActivity() {
+
+    private lateinit var binding: ActivitySettingsBinding
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        setContentView(R.layout.activity_settings)
+        binding = ActivitySettingsBinding.inflate(layoutInflater)
+        setContentView(binding.root)
         initToolbar()
         supportFragmentManager.beginTransaction()
-            .add(R.id.fragment_container, SettingsFragment())
+            .add(binding.fragmentContainer.id, SettingsFragment())
             .commit()
     }
 
     private fun initToolbar() {
-        toolbar.setTitleTextAppearance(this, R.style.XWWKBoldTextAppearance)
-        toolbar.setNavigationOnClickListener {
+        binding.toolbar.setTitleTextAppearance(this, R.style.XWWKBoldTextAppearance)
+        binding.toolbar.setNavigationOnClickListener {
             finish()
         }
-        toolbar.title = resources.getString(R.string.settings)
+        binding.toolbar.title = resources.getString(R.string.settings)
     }
 }

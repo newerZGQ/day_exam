@@ -16,6 +16,10 @@ android {
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
     }
 
+    buildFeatures {
+        viewBinding true
+    }
+
     buildTypes {
 
         debug {
@@ -84,6 +88,10 @@ dependencies {
     implementation 'net.lingala.zip4j:zip4j:2.6.0'
     // 设置页面包
     implementation 'androidx.preference:preference:1.1.1'
+
+    // Coroutines
+    implementation "org.jetbrains.kotlinx:kotlinx-coroutines-android:1.5.2"
+    implementation "androidx.lifecycle:lifecycle-runtime-ktx:2.4.0"
 
     // 引导
 }

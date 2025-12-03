@@ -7,7 +7,7 @@ import android.widget.Toast
 import androidx.recyclerview.widget.RecyclerView
 import com.gorden.dayexam.R
 import com.gorden.dayexam.repository.model.Element
-import com.gorden.dayexam.ui.book.DragCallback
+import com.gorden.dayexam.ui.paper.DragCallback
 
 class ElementAdapter: RecyclerView.Adapter<EditElementViewHolder>(),
     DragCallback.OnItemTouchListener  {

@@ -12,14 +12,17 @@ import androidx.lifecycle.ViewModelProvider
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment
 import com.gorden.dayexam.R
 import com.gorden.dayexam.db.entity.Config
+import com.gorden.dayexam.databinding.ShortCutSheetLayoutBinding
 import com.gorden.dayexam.repository.DataRepository
 import com.gorden.dayexam.ui.EventKey
 import com.gorden.dayexam.ui.action.ScreenShotHomeQuestionAction
 import com.gorden.dayexam.ui.settings.SettingsActivity
 import com.jeremyliao.liveeventbus.LiveEventBus
-import kotlinx.android.synthetic.main.short_cut_sheet_layout.*
 
 class ShortCutSheetDialog : BottomSheetDialogFragment() {
+
+    private var _binding: ShortCutSheetLayoutBinding? = null
+    private val binding get() = _binding!!
 
     private lateinit var rootView: View
 
@@ -28,10 +31,8 @@ class ShortCutSheetDialog : BottomSheetDialogFragment() {
         container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View {
-        rootView = inflater.inflate(
-            R.layout.short_cut_sheet_layout,
-            container, false
-        )
+        _binding = ShortCutSheetLayoutBinding.inflate(inflater, container, false)
+        rootView = binding.root
         val viewModel = ViewModelProvider(this).get(ShortCutViewModel::class.java)
         viewModel.getConfig().observe(this, {
             it?.let {
@@ -45,69 +46,69 @@ class ShortCutSheetDialog : BottomSheetDialogFragment() {
     }
 
     private fun setStudyMode(config: Config) {
-        remember_mode_switch.isChecked = config.rememberMode
-        focus_mode_switch.isChecked = config.focusMode
-        favorite_mode_switch.isChecked = config.onlyFavorite
-        sort_by_accuracy_mode_switch.isChecked = config.sortByAccuracy
+        binding.rememberModeSwitch.isChecked = config.rememberMode
+        binding.focusModeSwitch.isChecked = config.focusMode
+        binding.favoriteModeSwitch.isChecked = config.onlyFavorite
+        binding.sortByAccuracyModeSwitch.isChecked = config.sortByAccuracy
     }
 
     private fun setStudyModeListener() {
-        remember_mode_switch.setOnCheckedChangeListener { _, b ->
+        binding.rememberModeSwitch.setOnCheckedChangeListener { _, b ->
             DataRepository.updateRememberMode(b)
         }
-        remember_content_container.setOnClickListener {
-            remember_mode_switch.isChecked = !remember_mode_switch.isChecked
+        binding.rememberContentContainer.setOnClickListener {
+            binding.rememberModeSwitch.isChecked = !binding.rememberModeSwitch.isChecked
         }
-        focus_mode_switch.setOnCheckedChangeListener { _, b ->
+        binding.focusModeSwitch.setOnCheckedChangeListener { _, b ->
             DataRepository.updateFocusMode(b)
             dismiss()
         }
-        focus_content_container.setOnClickListener {
-            focus_mode_switch.isChecked = !focus_mode_switch.isChecked
+        binding.focusContentContainer.setOnClickListener {
+            binding.focusModeSwitch.isChecked = !binding.focusModeSwitch.isChecked
         }
-        favorite_mode_switch.setOnCheckedChangeListener { _, b ->
+        binding.favoriteModeSwitch.setOnCheckedChangeListener { _, b ->
             DataRepository.updateOnlyFavoriteMode(b)
         }
-        favorite_content_container.setOnClickListener {
-            favorite_mode_switch.isChecked = !favorite_mode_switch.isChecked
+        binding.favoriteContentContainer.setOnClickListener {
+            binding.favoriteModeSwitch.isChecked = !binding.favoriteModeSwitch.isChecked
         }
-        sort_by_accuracy_mode_switch.setOnCheckedChangeListener { _, b ->
+        binding.sortByAccuracyModeSwitch.setOnCheckedChangeListener { _, b ->
             DataRepository.updateSortAccuracyMode(b)
         }
-        sort_by_accuracy_content_container.setOnClickListener {
-            sort_by_accuracy_mode_switch.isChecked = !sort_by_accuracy_mode_switch.isChecked
+        binding.sortByAccuracyContentContainer.setOnClickListener {
+            binding.sortByAccuracyModeSwitch.isChecked = !binding.sortByAccuracyModeSwitch.isChecked
         }
     }
 
     private fun disableDeleteAction() {
-        rootView.findViewById<View>(R.id.delete_content_container).setOnClickListener(null)
-        rootView.findViewById<TextView>(R.id.delete_title)
+        binding.deleteContentContainer.setOnClickListener(null)
+        binding.deleteTitle
             .setTextColor(requireActivity().resources.getColor(R.color.short_cut_delete_disable_color))
-        rootView.findViewById<ImageView>(R.id.delete_content_icon)
+        binding.deleteContentIcon
             .setImageDrawable(requireActivity().resources.getDrawable(R.drawable.ic_baseline_delete_outline_half_transparent_24))
     }
 
     private fun initCopyQuestion() {
-        rootView.findViewById<View>(R.id.copy_content_container).setOnClickListener {
+        binding.copyContentContainer.setOnClickListener {
             ScreenShotHomeQuestionAction(requireActivity()).start()
             dismiss()
         }
     }
 
     private fun initSearchAction() {
-        rootView.findViewById<View>(R.id.search_content_container).setOnClickListener {
+        binding.searchContentContainer.setOnClickListener {
             LiveEventBus.get(EventKey.SEARCH_CLICKED, Int::class.java)
                 // 0没有意义
                 .post(0)
             dismiss()
         }
-        rootView.findViewById<View>(R.id.search_icon).setOnClickListener {
+        binding.searchIcon.setOnClickListener {
             LiveEventBus.get(EventKey.SEARCH_CLICKED, Int::class.java)
                 // 0没有意义
                 .post(0)
             dismiss()
         }
-        rootView.findViewById<View>(R.id.toSetting).setOnClickListener {
+        binding.toSetting.setOnClickListener {
             val intent = Intent(requireActivity(), SettingsActivity::class.java)
             startActivity(intent)
             dismiss()
@@ -115,9 +116,14 @@ class ShortCutSheetDialog : BottomSheetDialogFragment() {
     }
 
     private fun initHistoryAction() {
-        rootView.findViewById<View>(R.id.history_content_container).setOnClickListener {
+        binding.historyContentContainer.setOnClickListener {
 
         }
+    }
+
+    override fun onDestroyView() {
+        super.onDestroyView()
+        _binding = null
     }
 
 }

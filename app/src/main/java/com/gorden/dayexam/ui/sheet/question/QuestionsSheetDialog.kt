@@ -6,21 +6,24 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.annotation.Nullable
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment
-import com.gorden.dayexam.R
+import com.gorden.dayexam.databinding.QuestionsSheetLayoutBinding
 
 class QuestionsSheetDialog: BottomSheetDialogFragment() {
 
-    lateinit var rootView: View
+    private var _binding: QuestionsSheetLayoutBinding? = null
+    private val binding get() = _binding!!
 
     override fun onCreateView(
         inflater: LayoutInflater,
         @Nullable container: ViewGroup?,
         @Nullable savedInstanceState: Bundle?
     ): View {
-        rootView = inflater.inflate(
-            R.layout.questions_sheet_layout,
-            container, false
-        )
-        return rootView
+        _binding = QuestionsSheetLayoutBinding.inflate(inflater, container, false)
+        return binding.root
+    }
+
+    override fun onDestroyView() {
+        super.onDestroyView()
+        _binding = null
     }
 }

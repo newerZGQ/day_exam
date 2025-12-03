@@ -9,7 +9,7 @@ import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
 import androidx.viewpager2.widget.ViewPager2
 import androidx.viewpager2.widget.ViewPager2.ORIENTATION_HORIZONTAL
-import com.gorden.dayexam.R
+import com.gorden.dayexam.databinding.FragmentHomeLayoutBinding
 import com.gorden.dayexam.db.entity.StudyRecord
 
 import com.gorden.dayexam.repository.DataRepository
@@ -19,6 +19,9 @@ import com.jeremyliao.liveeventbus.LiveEventBus
 
 class HomeFragment : Fragment() {
 
+    private var _binding: FragmentHomeLayoutBinding? = null
+    private val binding get() = _binding!!
+
     private lateinit var homeViewModel: HomeViewModel
     private lateinit var questionPager: ViewPager2
     private var questions: List<QuestionDetail> = listOf()
@@ -27,16 +30,16 @@ class HomeFragment : Fragment() {
     private var curQuestionCount = 0
 
     override fun onCreateView(
-            inflater: LayoutInflater,
-            container: ViewGroup?,
-            savedInstanceState: Bundle?
-    ): View? {
-        val root = inflater.inflate(R.layout.fragment_home_layout, container, false)
-        initView(root)
+        inflater: LayoutInflater,
+        container: ViewGroup?,
+        savedInstanceState: Bundle?
+    ): View {
+        _binding = FragmentHomeLayoutBinding.inflate(inflater, container, false)
+        initView()
         registerActionEvent()
         homeViewModel = ViewModelProvider(this).get(HomeViewModel::class.java)
         registerRememberMode()
-        return root
+        return binding.root
     }
 
     fun currentPosition(): Int {
@@ -55,12 +58,17 @@ class HomeFragment : Fragment() {
         }
     }
 
-    private fun initView(root: View) {
-        questionPager = root.findViewById(R.id.questionPager)
+    private fun initView() {
+        questionPager = binding.questionPager
         questionPager.adapter = QuestionPagerAdapter()
         questionPager.registerOnPageChangeCallback(onPageChangeCallback)
         // TODO 这里调整问题的滑动方式
         questionPager.orientation = ORIENTATION_HORIZONTAL
+    }
+
+    override fun onDestroyView() {
+        super.onDestroyView()
+        _binding = null
     }
 
     private fun registerActionEvent() {

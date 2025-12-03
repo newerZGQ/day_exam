@@ -1,4 +1,4 @@
-package com.gorden.dayexam.ui.book
+package com.gorden.dayexam.ui.paper
 
 import androidx.recyclerview.widget.ItemTouchHelper
 import androidx.recyclerview.widget.RecyclerView

@@ -6,17 +6,6 @@
     android:elevation="5dp"
     android:layout_width="wrap_content"
     android:layout_height="wrap_content">
-    <TextView
-        android:id="@+id/add_question_from_file"
-        android:text="@string/parse_from_file"
-        android:padding="14dp"
-        android:textSize="18sp"
-        android:fontFamily="@font/xwwk"
-        style="@style/SelectableItemBackground"
-        android:layout_gravity="center_vertical"
-        android:textColor="@color/menu_title_color"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"/>
 
     <TextView
         android:id="@+id/edit_paper"
@@ -43,17 +32,6 @@
     <TextView
         android:id="@+id/sortByHand"
         android:text="@string/sort_by_hand"
-        android:textSize="18sp"
-        android:padding="14dp"
-        android:fontFamily="@font/xwwk"
-        style="@style/SelectableItemBackground"
-        android:layout_gravity="center_vertical"
-        android:textColor="@color/menu_title_color"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"/>
-    <TextView
-        android:id="@+id/move"
-        android:text="@string/move"
         android:textSize="18sp"
         android:padding="14dp"
         android:fontFamily="@font/xwwk"

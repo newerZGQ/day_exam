@@ -1,4 +1,4 @@
-package com.gorden.dayexam.ui.book
+package com.gorden.dayexam.ui.paper
 
 import android.annotation.SuppressLint
 import android.view.LayoutInflater
@@ -11,7 +11,6 @@ class PaperListAdapter: RecyclerView.Adapter<PaperViewHolder>() {
 
     private var papers = listOf<PaperInfo>()
     private var curPaperId = 0
-    private var isRecycleBin = false
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): PaperViewHolder {
         val itemView = LayoutInflater.from(parent.context).inflate(R.layout.paper_item, parent, false)
@@ -19,7 +18,7 @@ class PaperListAdapter: RecyclerView.Adapter<PaperViewHolder>() {
     }
 
     override fun onBindViewHolder(holder: PaperViewHolder, position: Int) {
-        holder.setData(papers[position], curPaperId, isRecycleBin)
+        holder.setData(papers[position], curPaperId)
     }
 
     override fun getItemCount(): Int {
@@ -27,10 +26,9 @@ class PaperListAdapter: RecyclerView.Adapter<PaperViewHolder>() {
     }
 
     @SuppressLint("NotifyDataSetChanged")
-    fun setData(papers: List<PaperInfo>, curPaperId: Int, isRecycleBin: Boolean) {
+    fun setData(papers: List<PaperInfo>, curPaperId: Int) {
         this.papers = papers
         this.curPaperId = curPaperId
-        this.isRecycleBin = isRecycleBin
         notifyDataSetChanged()
     }
 }

@@ -1,4 +1,4 @@
-package com.gorden.dayexam.ui.book
+package com.gorden.dayexam.ui.paper
 
 import android.annotation.SuppressLint
 import android.graphics.drawable.ColorDrawable
@@ -9,14 +9,11 @@ import android.view.ViewGroup
 import android.widget.PopupWindow
 import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
-import com.gorden.dayexam.ContextHolder
 import com.gorden.dayexam.R
 import com.gorden.dayexam.db.entity.PaperInfo
 import com.gorden.dayexam.ui.EventKey
 import com.gorden.dayexam.utils.ScreenUtils
 import com.jeremyliao.liveeventbus.LiveEventBus
-import java.lang.StringBuilder
-import java.text.SimpleDateFormat
 
 class PaperViewHolder(itemView: View): RecyclerView.ViewHolder(itemView)  {
     private val container:View = itemView.findViewById(R.id.paper_item_container)
@@ -27,7 +24,7 @@ class PaperViewHolder(itemView: View): RecyclerView.ViewHolder(itemView)  {
     private val lastTouchDownXY = arrayOf(0f, 0f)
 
     @SuppressLint("ClickableViewAccessibility")
-    fun setData(paperInfo: PaperInfo, curPaperId: Int, isRecycleBin: Boolean) {
+    fun setData(paperInfo: PaperInfo, curPaperId: Int) {
         val resources = itemView.context.resources
         itemView.findViewById<View>(R.id.paper_drag_handle).visibility = View.GONE
         
@@ -47,7 +44,7 @@ class PaperViewHolder(itemView: View): RecyclerView.ViewHolder(itemView)  {
                 .post(EventKey.PaperClickEventModel(0, paperInfo.id))
         }
         rippleContainer.setOnLongClickListener {
-            popMenu(paperInfo, isRecycleBin)
+            popMenu(paperInfo)
             true
         }
         rippleContainer.setOnTouchListener { _, motionEvent ->
@@ -59,11 +56,8 @@ class PaperViewHolder(itemView: View): RecyclerView.ViewHolder(itemView)  {
         }
     }
 
-    private fun popMenu(paperInfo: PaperInfo, isRecycleBin: Boolean) {
-        var menuLayoutId = R.layout.paper_item_menu_layout
-        if (isRecycleBin) {
-            menuLayoutId = R.layout.recycle_bin_paper_item_menu_layout
-        }
+    private fun popMenu(paperInfo: PaperInfo) {
+        val menuLayoutId = R.layout.paper_item_menu_layout
         val resources = itemView.context.resources
         val menuView = LayoutInflater.from(itemView.context)
             .inflate(menuLayoutId, null)
@@ -82,11 +76,6 @@ class PaperViewHolder(itemView: View): RecyclerView.ViewHolder(itemView)  {
             popupWindow.showAsDropDown(itemView, lastTouchDownXY[0].toInt(),
                 -itemView.height / 2)
         }
-        menuView.findViewById<View>(R.id.add_question_from_file)?.setOnClickListener {
-            LiveEventBus.get(EventKey.PAPER_MENU_ADD_QUESTION_FROM_FILE, EventKey.QuestionAddEventModel::class.java)
-                .post(EventKey.QuestionAddEventModel(0, paperInfo.id))
-            popupWindow.dismiss()
-        }
         menuView.findViewById<View>(R.id.edit_paper)?.setOnClickListener {
             LiveEventBus.get(EventKey.PAPER_MENU_EDIT_PAPER, PaperInfo::class.java)
                 .post(paperInfo)
@@ -98,11 +87,5 @@ class PaperViewHolder(itemView: View): RecyclerView.ViewHolder(itemView)  {
             popupWindow.dismiss()
         }
         menuView.findViewById<View>(R.id.sortByHand)?.visibility = View.GONE
-        
-        menuView.findViewById<View>(R.id.move)?.setOnClickListener {
-            LiveEventBus.get(EventKey.PAPER_MENU_MOVE_PAPER, PaperInfo::class.java)
-                .post(paperInfo)
-            popupWindow.dismiss()
-        }
     }
 }

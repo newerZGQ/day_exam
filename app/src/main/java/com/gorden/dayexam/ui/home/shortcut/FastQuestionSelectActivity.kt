@@ -7,14 +7,12 @@ import android.widget.LinearLayout
 import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.DividerItemDecoration
 import androidx.recyclerview.widget.LinearLayoutManager
-import androidx.recyclerview.widget.RecyclerView
 import com.gorden.dayexam.BaseActivity
 import com.gorden.dayexam.MainActivity
 import com.gorden.dayexam.R
+import com.gorden.dayexam.databinding.ActivityFastQuestionSelectBinding
 import com.gorden.dayexam.ui.EventKey
 import com.jeremyliao.liveeventbus.LiveEventBus
-import kotlinx.android.synthetic.main.app_bar_main.*
-import org.apache.poi.ss.formula.functions.Even
 
 class FastQuestionSelectActivity: BaseActivity() {
 
@@ -26,12 +24,13 @@ class FastQuestionSelectActivity: BaseActivity() {
     private var adapter: QuestionListAdapter? = null
     private lateinit var viewModel: FastSelectViewModel
     private var currentPosition = 0
-    private var recyclerView: RecyclerView? = null
+    private lateinit var binding: ActivityFastQuestionSelectBinding
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         viewModel =  ViewModelProvider(this).get(FastSelectViewModel::class.java)
-        setContentView(R.layout.activity_fast_question_select)
+        binding = ActivityFastQuestionSelectBinding.inflate(layoutInflater)
+        setContentView(binding.root)
         initToolbar()
         val paperId = intent.getIntExtra(PAPER_ID_KEY, 0)
         currentPosition = intent.getIntExtra(CURRENT_POSITION, 0)
@@ -42,29 +41,28 @@ class FastQuestionSelectActivity: BaseActivity() {
                 return@observe
             }
             adapter?.setData(it, currentPosition)
-            (recyclerView?.layoutManager as LinearLayoutManager).scrollToPosition(currentPosition)
-            toolbar?.title = "要改"
+            (binding.questionList.layoutManager as LinearLayoutManager).scrollToPosition(currentPosition)
+            binding.toolbar.title = "要改"
         })
 
     }
 
     private fun initToolbar() {
-        toolbar.setTitleTextAppearance(this, R.style.XWWKBoldTextAppearance)
-        toolbar.setNavigationOnClickListener {
+        binding.toolbar.setTitleTextAppearance(this, R.style.XWWKBoldTextAppearance)
+        binding.toolbar.setNavigationOnClickListener {
             finish()
         }
     }
 
     @SuppressLint("UseCompatLoadingForDrawables")
     private fun initList() {
-        recyclerView = findViewById<RecyclerView>(R.id.question_list)
-        recyclerView?.layoutManager = LinearLayoutManager(this)
-        recyclerView?.setHasFixedSize(true)
+        binding.questionList.layoutManager = LinearLayoutManager(this)
+        binding.questionList.setHasFixedSize(true)
         adapter = QuestionListAdapter()
         val divider = DividerItemDecoration(this, LinearLayout.VERTICAL)
         divider.setDrawable(resources.getDrawable(R.drawable.question_group_inset_recyclerview_divider, null))
-        recyclerView?.addItemDecoration(divider)
-        recyclerView?.adapter = adapter
+        binding.questionList.addItemDecoration(divider)
+        binding.questionList.adapter = adapter
     }
 
     private fun registerAction() {

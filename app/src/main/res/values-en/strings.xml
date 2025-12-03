@@ -28,7 +28,14 @@
     <string name="dialog_edit_paper_title">Edit</string>
     <string name="dialog_edit_paper_subTitle">Exam Paper</string>
 
-    <string name="dialog_delete_paper_title">Delete</string>
+    <string name="dialog_delete_paper_title">Delete Paper</string>
+    <string name="dialog_delete_paper_message">Are you sure you want to delete %1$s?</string>
+
+    <!-- Paper edit/delete result toasts -->
+    <string name="toast_edit_paper_success">Paper updated</string>
+    <string name="toast_edit_paper_failed">Failed to update paper</string>
+    <string name="toast_delete_paper_success">Paper deleted</string>
+    <string name="toast_delete_paper_failed">Failed to delete paper</string>
 
 
 
