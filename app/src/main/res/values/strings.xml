@@ -37,6 +37,7 @@
     <string name="toast_edit_paper_failed">试卷更新失败</string>
     <string name="toast_delete_paper_success">试卷已删除</string>
     <string name="toast_delete_paper_failed">试卷删除失败</string>
+    <string name="toast_paper_already_exists">该试卷已存在</string>
 
 
 

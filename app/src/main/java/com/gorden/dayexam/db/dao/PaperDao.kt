@@ -39,4 +39,7 @@ interface PaperDao {
 
     @Query("SELECT position FROM paper ORDER BY position DESC LIMIT 1")
     fun getMaxPosition(): Int
+
+    @Query("SELECT * FROM paper WHERE hash = :hash LIMIT 1")
+    fun getPaperByHash(hash: String): PaperInfo?
 }

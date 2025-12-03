@@ -91,6 +91,10 @@ object DataRepository {
         }
     }
 
+    fun getPaperByHash(hash: String): PaperInfo? {
+        return mDatabase.paperDao().getPaperByHash(hash)
+    }
+
     fun currentPaper(): LiveData<PaperInfo> {
         val dContext = mDatabase.dContextDao().getDContext()
         return Transformations.switchMap(dContext) {

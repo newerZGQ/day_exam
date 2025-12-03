@@ -20,6 +20,24 @@ import java.security.MessageDigest
 object PaperParser {
 
     /**
+     * Check if a paper already exists in the database by its file hash.
+     * 
+     * @param filePath The absolute path to the document file to check
+     * @return true if the paper already exists, false otherwise
+     */
+    fun checkExist(filePath: String): Boolean {
+        val file = File(filePath)
+        if (!file.exists()) {
+            return false
+        }
+        
+        val fileHash = generateHash(filePath)
+        val existingPaper = DataRepository.getPaperByHash(fileHash)
+        
+        return existingPaper != null
+    }
+
+    /**
      * Parse a file from the given path, save PaperInfo to database,
      * and cache questions as JSON with images in a hash-based folder structure.
      * 

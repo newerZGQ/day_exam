@@ -36,6 +36,7 @@
     <string name="toast_edit_paper_failed">Failed to update paper</string>
     <string name="toast_delete_paper_success">Paper deleted</string>
     <string name="toast_delete_paper_failed">Failed to delete paper</string>
+    <string name="toast_paper_already_exists">Paper already exists</string>
 
 
 

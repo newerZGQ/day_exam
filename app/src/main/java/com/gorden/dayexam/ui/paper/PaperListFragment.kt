@@ -23,7 +23,9 @@ import com.gorden.dayexam.db.entity.PaperInfo
 import com.gorden.dayexam.executor.AppExecutors
 import com.gorden.dayexam.parser.PaperParser
 import com.gorden.dayexam.ui.dialog.EditTextDialog
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 import java.io.File
 import java.io.FileOutputStream
 import java.lang.Exception
@@ -204,30 +206,41 @@ class PaperListFragment : Fragment() {
      * 将系统文件选择器返回的 Uri 拷贝到应用缓存目录，再交给 PaperParser 解析
      */
     private fun importPaperFromUri(uri: Uri) {
-        AppExecutors.diskIO().execute {
+        viewLifecycleOwner.lifecycleScope.launch {
             try {
-                val context = requireContext()
-                val fileName = queryDisplayName(uri) ?: "paper_${System.currentTimeMillis()}.docx"
-                val destDir = File(context.cacheDir, "imported_papers")
-                if (!destDir.exists()) {
-                    destDir.mkdirs()
-                }
-                val destFile = File(destDir, fileName)
-
-                context.contentResolver.openInputStream(uri)?.use { input ->
-                    FileOutputStream(destFile).use { output ->
-                        input.copyTo(output)
+                // IO operations in IO dispatcher
+                withContext(Dispatchers.IO) {
+                    val context = requireContext()
+                    val fileName = queryDisplayName(uri) ?: "paper_${System.currentTimeMillis()}.docx"
+                    val destDir = File(context.cacheDir, "imported_papers")
+                    if (!destDir.exists()) {
+                        destDir.mkdirs()
                     }
-                }
+                    val destFile = File(destDir, fileName)
+                    context.contentResolver.openInputStream(uri)?.use { input ->
+                        FileOutputStream(destFile).use { output ->
+                            input.copyTo(output)
+                        }
+                    }
+                    // Check if paper already exists before parsing
+                    if (PaperParser.checkExist(destFile.absolutePath)) {
+                        withContext(Dispatchers.Main) {
+                            Toast.makeText(
+                                context,
+                                context.getString(R.string.toast_paper_already_exists),
+                                Toast.LENGTH_SHORT
+                            ).show()
+                        }
+                        return@withContext
+                    }
 
-                // 使用 PaperParser 解析拷贝到缓存目录的文件
-                PaperParser.parseFromFile(destFile.absolutePath)
+                    // 使用 PaperParser 解析拷贝到缓存目录的文件
+                    PaperParser.parseFromFile(destFile.absolutePath)
+                }
             } catch (e: Exception) {
                 e.printStackTrace()
             } finally {
-                AppExecutors.mainThread().execute {
-                    hideProgress()
-                }
+                hideProgress()
             }
         }
     }
