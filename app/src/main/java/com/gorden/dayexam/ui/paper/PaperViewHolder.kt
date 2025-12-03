@@ -1,7 +1,5 @@
 package com.gorden.dayexam.ui.paper
 
-import android.annotation.SuppressLint
-import android.view.MotionEvent
 import android.view.View
 import android.widget.ImageButton
 import android.widget.TextView
@@ -15,12 +13,9 @@ class PaperViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
     private val container: View = itemView.findViewById(R.id.paper_item_container)
     private val rippleContainer: View = itemView.findViewById(R.id.paper_ripple_item_container)
     private val title: TextView = itemView.findViewById(R.id.PaperTitle)
-    private val desc: TextView = itemView.findViewById(R.id.paper_desc)
     private val record: TextView = itemView.findViewById(R.id.studyRecord)
     private val deleteButton: ImageButton = itemView.findViewById(R.id.paper_delete_button)
-    private val lastTouchDownXY = arrayOf(0f, 0f)
 
-    @SuppressLint("ClickableViewAccessibility")
     fun setData(
         paperInfo: PaperInfo,
         curPaperId: Int,
@@ -32,7 +27,6 @@ class PaperViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
         itemView.findViewById<View>(R.id.paper_drag_handle).visibility = View.GONE
 
         title.text = paperInfo.title
-        desc.text = paperInfo.description
         record.text = resources.getString(R.string.paper_question_count, paperInfo.questionCount)
 
         if (paperInfo.id == curPaperId) {
@@ -46,23 +40,13 @@ class PaperViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
             LiveEventBus.get(
                 EventKey.PAPER_CONTAINER_CLICKED,
                 EventKey.PaperClickEventModel::class.java
-            )
-                .post(EventKey.PaperClickEventModel(0, paperInfo.id))
+            ).post(EventKey.PaperClickEventModel(0, paperInfo.id))
         }
 
         // 长按：进入编辑模式并触发拖拽（由外部回调处理）
         rippleContainer.setOnLongClickListener {
             onLongPress(this, paperInfo)
             true
-        }
-
-        // 记录按下坐标（如果后续还需要基于坐标的行为）
-        rippleContainer.setOnTouchListener { _, motionEvent ->
-            if (motionEvent.actionMasked == MotionEvent.ACTION_DOWN) {
-                this.lastTouchDownXY[0] = motionEvent.rawX
-                this.lastTouchDownXY[1] = motionEvent.rawY
-            }
-            false
         }
 
         // 编辑模式下显示删除按钮

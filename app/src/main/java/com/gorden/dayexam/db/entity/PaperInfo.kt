@@ -7,7 +7,6 @@ import java.util.*
 @Entity (tableName = "paper")
 data class PaperInfo(
     var title: String,
-    var description: String,
     var path: String,
     var position: Int,
     val lastStudyPosition: Int = 0,

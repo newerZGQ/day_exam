@@ -50,22 +50,9 @@
             android:layout_height="wrap_content" />
 
         <TextView
-            android:id="@+id/paper_desc"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="4dp"
-            android:fontFamily="@font/xwwk"
-            android:maxLines="3"
-            android:textColor="#8FFFFFFF"
-            android:textSize="14sp"
-            app:layout_constraintEnd_toStartOf="@+id/paper_delete_button"
-            app:layout_constraintStart_toStartOf="@id/PaperTitle"
-            app:layout_constraintTop_toBottomOf="@id/PaperTitle" />
-
-        <TextView
             android:id="@+id/studyRecord"
             app:layout_constraintStart_toStartOf="@id/PaperTitle"
-            app:layout_constraintTop_toBottomOf="@id/paper_desc"
+            app:layout_constraintTop_toBottomOf="@id/PaperTitle"
             app:layout_constraintEnd_toStartOf="@+id/paper_delete_button"
             android:layout_marginTop="11dp"
             android:fontFamily="@font/xwwk"

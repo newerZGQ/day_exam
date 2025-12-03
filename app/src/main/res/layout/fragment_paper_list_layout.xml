@@ -9,8 +9,8 @@
     <androidx.constraintlayout.widget.ConstraintLayout
         android:id="@+id/header_container"
         android:layout_width="0dp"
-        android:layout_height="@dimen/book_list_course_info_height"
-        android:background="@color/colorPrimary"
+        android:layout_height="@dimen/paper_list_info_height"
+        android:background="?attr/colorPrimaryDark"
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent">
@@ -19,7 +19,7 @@
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent"
             app:layout_constraintBottom_toBottomOf="parent"
-            android:paddingLeft="@dimen/book_title_padding_left"
+            android:paddingStart="@dimen/paper_title_padding_left"
             android:textSize="18sp"
             android:fontFamily="@font/xwwk"
             android:layout_width="wrap_content"

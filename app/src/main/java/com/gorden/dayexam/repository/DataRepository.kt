@@ -62,7 +62,6 @@ object DataRepository {
             val maxOrder = mDatabase.paperDao().getMaxPosition()
             val paperInfo = PaperInfo(
                 title = title,
-                description = desc,
                 path = path,
                 hash = "",
                 position = maxOrder + 1,
@@ -80,7 +79,6 @@ object DataRepository {
             val maxOrder = mDatabase.paperDao().getMaxPosition()
             val paperInfo = PaperInfo(
                 title = title,
-                description = desc,
                 path = path,
                 hash = hash,
                 position = maxOrder + 1,
