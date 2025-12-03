@@ -44,4 +44,20 @@ class PaperListViewModel(application: Application): AndroidViewModel(application
             }
         }
     }
+
+    /**
+     * 根据当前列表顺序更新试卷 position，用于拖拽排序后持久化
+     */
+    suspend fun updatePaperOrder(papers: List<PaperInfo>) {
+        withContext(Dispatchers.IO) {
+            try {
+                papers.forEachIndexed { index, paper ->
+                    paper.position = index
+                }
+                DataRepository.updatePapers(papers)
+            } catch (e: Exception) {
+                // 排序失败这里先忽略，必要时可以加日志或上报
+            }
+        }
+    }
 }

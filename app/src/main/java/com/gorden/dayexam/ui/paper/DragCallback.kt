@@ -25,7 +25,7 @@ class DragCallback : ItemTouchHelper.Callback() {
     }
 
     override fun onSwiped(viewHolder: RecyclerView.ViewHolder, direction: Int) {
-        listener?.onSwiped(viewHolder.adapterPosition)
+        // 不支持滑动删除，留空
     }
 
     override fun clearView(recyclerView: RecyclerView, viewHolder: RecyclerView.ViewHolder) {
@@ -34,7 +34,12 @@ class DragCallback : ItemTouchHelper.Callback() {
     }
 
     override fun isItemViewSwipeEnabled(): Boolean {
-        return true
+        return false
+    }
+
+    override fun isLongPressDragEnabled(): Boolean {
+        // 使用自定义长按回调手动触发 startDrag
+        return false
     }
 
     /**
@@ -43,9 +48,6 @@ class DragCallback : ItemTouchHelper.Callback() {
     interface OnItemTouchListener {
         //拖动Item时调用
         fun onMove(fromPosition: Int, toPosition: Int)
-
-        //滑动Item时调用
-        fun onSwiped(position: Int)
 
         fun clearView()
     }

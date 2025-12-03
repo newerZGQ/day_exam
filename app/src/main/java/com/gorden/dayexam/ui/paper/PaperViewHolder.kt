@@ -1,33 +1,36 @@
 package com.gorden.dayexam.ui.paper
 
 import android.annotation.SuppressLint
-import android.graphics.drawable.ColorDrawable
-import android.view.LayoutInflater
 import android.view.MotionEvent
 import android.view.View
-import android.view.ViewGroup
-import android.widget.PopupWindow
+import android.widget.ImageButton
 import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
 import com.gorden.dayexam.R
 import com.gorden.dayexam.db.entity.PaperInfo
 import com.gorden.dayexam.ui.EventKey
-import com.gorden.dayexam.utils.ScreenUtils
 import com.jeremyliao.liveeventbus.LiveEventBus
 
-class PaperViewHolder(itemView: View): RecyclerView.ViewHolder(itemView)  {
-    private val container:View = itemView.findViewById(R.id.paper_item_container)
-    private val rippleContainer:View = itemView.findViewById(R.id.paper_ripple_item_container)
+class PaperViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
+    private val container: View = itemView.findViewById(R.id.paper_item_container)
+    private val rippleContainer: View = itemView.findViewById(R.id.paper_ripple_item_container)
     private val title: TextView = itemView.findViewById(R.id.PaperTitle)
     private val desc: TextView = itemView.findViewById(R.id.paper_desc)
     private val record: TextView = itemView.findViewById(R.id.studyRecord)
+    private val deleteButton: ImageButton = itemView.findViewById(R.id.paper_delete_button)
     private val lastTouchDownXY = arrayOf(0f, 0f)
 
     @SuppressLint("ClickableViewAccessibility")
-    fun setData(paperInfo: PaperInfo, curPaperId: Int) {
+    fun setData(
+        paperInfo: PaperInfo,
+        curPaperId: Int,
+        isEditMode: Boolean,
+        onLongPress: (PaperViewHolder, PaperInfo) -> Unit,
+        onDeleteClick: (PaperInfo) -> Unit
+    ) {
         val resources = itemView.context.resources
         itemView.findViewById<View>(R.id.paper_drag_handle).visibility = View.GONE
-        
+
         title.text = paperInfo.title
         desc.text = paperInfo.description
         record.text = resources.getString(R.string.paper_question_count, paperInfo.questionCount)
@@ -37,16 +40,23 @@ class PaperViewHolder(itemView: View): RecyclerView.ViewHolder(itemView)  {
         } else {
             container.setBackgroundColor(resources.getColor(R.color.colorPrimary))
         }
+
+        // 点击进入试卷
         rippleContainer.setOnClickListener {
             LiveEventBus.get(
                 EventKey.PAPER_CONTAINER_CLICKED,
-                EventKey.PaperClickEventModel::class.java)
+                EventKey.PaperClickEventModel::class.java
+            )
                 .post(EventKey.PaperClickEventModel(0, paperInfo.id))
         }
+
+        // 长按：进入编辑模式并触发拖拽（由外部回调处理）
         rippleContainer.setOnLongClickListener {
-            popMenu(paperInfo)
+            onLongPress(this, paperInfo)
             true
         }
+
+        // 记录按下坐标（如果后续还需要基于坐标的行为）
         rippleContainer.setOnTouchListener { _, motionEvent ->
             if (motionEvent.actionMasked == MotionEvent.ACTION_DOWN) {
                 this.lastTouchDownXY[0] = motionEvent.rawX
@@ -54,38 +64,11 @@ class PaperViewHolder(itemView: View): RecyclerView.ViewHolder(itemView)  {
             }
             false
         }
-    }
 
-    private fun popMenu(paperInfo: PaperInfo) {
-        val menuLayoutId = R.layout.paper_item_menu_layout
-        val resources = itemView.context.resources
-        val menuView = LayoutInflater.from(itemView.context)
-            .inflate(menuLayoutId, null)
-        menuView.measure(ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT)
-        val measureHeight = menuView.measuredHeight
-        val popupWindow = PopupWindow(menuView, ViewGroup.LayoutParams.WRAP_CONTENT, measureHeight)
-        popupWindow.isFocusable = true
-        // 计算偏移位置
-        val screenHeight = ScreenUtils.screenHeight()
-        popupWindow.setBackgroundDrawable(ColorDrawable(resources.getColor(R.color.colorPrimary)))
-        popupWindow.elevation = 200f
-        if ((screenHeight - lastTouchDownXY[1]) < measureHeight) {
-            popupWindow.showAsDropDown(itemView, lastTouchDownXY[0].toInt(),
-                itemView.height / 2)
-        } else {
-            popupWindow.showAsDropDown(itemView, lastTouchDownXY[0].toInt(),
-                -itemView.height / 2)
+        // 编辑模式下显示删除按钮
+        deleteButton.visibility = if (isEditMode) View.VISIBLE else View.GONE
+        deleteButton.setOnClickListener {
+            onDeleteClick(paperInfo)
         }
-        menuView.findViewById<View>(R.id.edit_paper)?.setOnClickListener {
-            LiveEventBus.get(EventKey.PAPER_MENU_EDIT_PAPER, PaperInfo::class.java)
-                .post(paperInfo)
-            popupWindow.dismiss()
-        }
-        menuView.findViewById<View>(R.id.delete_paper)?.setOnClickListener {
-            LiveEventBus.get(EventKey.PAPER_MENU_DELETE_PAPER, PaperInfo::class.java)
-                .post(paperInfo)
-            popupWindow.dismiss()
-        }
-        menuView.findViewById<View>(R.id.sortByHand)?.visibility = View.GONE
     }
 }

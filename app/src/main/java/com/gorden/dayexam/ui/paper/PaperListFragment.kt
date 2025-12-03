@@ -15,6 +15,7 @@ import androidx.activity.result.contract.ActivityResultContracts
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.lifecycleScope
+import androidx.recyclerview.widget.ItemTouchHelper
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.gorden.dayexam.R
 import com.gorden.dayexam.databinding.FragmentPaperListLayoutBinding
@@ -35,8 +36,11 @@ class PaperListFragment : Fragment() {
     private val binding get() = _binding!!
 
     private lateinit var paperListViewModel: PaperListViewModel
-    val adapter = PaperListAdapter()
+    private lateinit var adapter: PaperListAdapter
+    private lateinit var itemTouchHelper: ItemTouchHelper
+
     private var curPaperId: Int = 0
+    private var isInEditMode: Boolean = false
 
     private val filePickerLauncher =
         registerForActivityResult(ActivityResultContracts.StartActivityForResult()) { result ->
@@ -65,16 +69,51 @@ class PaperListFragment : Fragment() {
 
     @SuppressLint("SetTextI18n")
     private fun initPaperList() {
+        paperListViewModel = ViewModelProvider(this).get(PaperListViewModel::class.java)
+
+        adapter = PaperListAdapter(object : PaperListAdapter.Listener {
+            override fun onItemLongPressed(holder: PaperViewHolder, paperInfo: PaperInfo) {
+                // 进入编辑模式，并开始拖拽
+                enterEditMode()
+                itemTouchHelper.startDrag(holder)
+            }
+
+            override fun onItemDeleteClicked(paperInfo: PaperInfo) {
+                deletePaper(paperInfo)
+            }
+        })
+
         binding.paperList.adapter = adapter
         binding.paperList.layoutManager = LinearLayoutManager(this.context)
 
-        // 顶部布局里的 addPaper 按钮，点击直接打开系统文件选择器
+        // 启用拖拽排序
+        val dragCallback = DragCallback().apply {
+            listener = object : DragCallback.OnItemTouchListener {
+                override fun onMove(fromPosition: Int, toPosition: Int) {
+                    adapter.onItemMove(fromPosition, toPosition)
+                }
+
+                override fun clearView() {
+                    // 拖拽结束后，持久化新的排序
+                    val papers = adapter.getPapers()
+                    viewLifecycleOwner.lifecycleScope.launch {
+                        paperListViewModel.updatePaperOrder(papers)
+                    }
+                }
+            }
+        }
+        itemTouchHelper = ItemTouchHelper(dragCallback)
+        itemTouchHelper.attachToRecyclerView(binding.paperList)
+
+        // 顶部布局里的 addPaper 按钮，普通模式：打开文件选择器；编辑模式：退出编辑模式
         binding.addPaper.setOnClickListener {
             Log.d("PaperListFragment", "click add")
-            toFileBrowser()
+            if (isInEditMode) {
+                exitEditMode()
+            } else {
+                toFileBrowser()
+            }
         }
-
-        paperListViewModel = ViewModelProvider(this).get(PaperListViewModel::class.java)
 
         // 试卷列表
         paperListViewModel.getAllPapers().observe(viewLifecycleOwner) {
@@ -87,6 +126,26 @@ class PaperListFragment : Fragment() {
             }
         }
         registerPaperClickedEvent()
+    }
+
+    private fun enterEditMode() {
+        if (isInEditMode) return
+        isInEditMode = true
+        adapter.setEditMode(true)
+        binding.addPaper.animate()
+            .rotation(45f)
+            .setDuration(200)
+            .start()
+    }
+
+    private fun exitEditMode() {
+        if (!isInEditMode) return
+        isInEditMode = false
+        adapter.setEditMode(false)
+        binding.addPaper.animate()
+            .rotation(0f)
+            .setDuration(200)
+            .start()
     }
 
     override fun onDestroyView() {

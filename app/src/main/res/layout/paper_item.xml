@@ -10,6 +10,19 @@
         android:paddingBottom="8dp"
         android:layout_height="wrap_content"
         android:layout_width="match_parent">
+
+        <ImageButton
+            android:id="@+id/paper_delete_button"
+            android:src="@drawable/ic_twotone_delete_24"
+            android:background="@color/colorTransparent"
+            android:layout_marginEnd="8dp"
+            android:visibility="gone"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            android:layout_width="36dp"
+            android:layout_height="36dp" />
+
         <ImageButton
             android:id="@+id/paper_drag_handle"
             android:src="@drawable/ic_baseline_drag_handle_24"
@@ -18,9 +31,10 @@
             android:visibility="gone"
             app:layout_constraintTop_toTopOf="parent"
             app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintEnd_toStartOf="@id/paper_delete_button"
             android:layout_width="36dp"
-            android:layout_height="36dp"/>
+            android:layout_height="36dp" />
+
         <TextView
             android:id="@+id/PaperTitle"
             android:textColor="@color/font_common_color"
@@ -31,7 +45,7 @@
             android:layout_marginStart="12dp"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent"
-            app:layout_constraintEnd_toStartOf="@+id/paper_drag_handle"
+            app:layout_constraintEnd_toStartOf="@+id/paper_delete_button"
             android:layout_width="0dp"
             android:layout_height="wrap_content" />
 
@@ -44,7 +58,7 @@
             android:maxLines="3"
             android:textColor="#8FFFFFFF"
             android:textSize="14sp"
-            app:layout_constraintEnd_toStartOf="@+id/paper_drag_handle"
+            app:layout_constraintEnd_toStartOf="@+id/paper_delete_button"
             app:layout_constraintStart_toStartOf="@id/PaperTitle"
             app:layout_constraintTop_toBottomOf="@id/PaperTitle" />
 
@@ -52,13 +66,13 @@
             android:id="@+id/studyRecord"
             app:layout_constraintStart_toStartOf="@id/PaperTitle"
             app:layout_constraintTop_toBottomOf="@id/paper_desc"
-            app:layout_constraintEnd_toStartOf="@+id/paper_drag_handle"
+            app:layout_constraintEnd_toStartOf="@+id/paper_delete_button"
             android:layout_marginTop="11dp"
             android:fontFamily="@font/xwwk"
             android:textSize="12sp"
             android:textColor="#8FFFFFFF"
             android:layout_width="0dp"
-            android:layout_height="wrap_content"/>
+            android:layout_height="wrap_content" />
     </androidx.constraintlayout.widget.ConstraintLayout>
 
 

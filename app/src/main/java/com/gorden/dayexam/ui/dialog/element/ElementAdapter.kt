@@ -108,10 +108,6 @@ class ElementAdapter: RecyclerView.Adapter<EditElementViewHolder>(),
 
     }
 
-    override fun onSwiped(position: Int) {
-
-    }
-
     override fun clearView() {
 
     }
