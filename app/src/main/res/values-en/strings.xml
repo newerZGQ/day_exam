@@ -68,6 +68,8 @@
     <string name="create_paper_empty_title_msg">Title can not be empty</string>
 
     <string name="no_paper_found_msg">No Paper</string>
+    <string name="toast_questions_file_not_found">Questions file not found</string>
+    <string name="toast_questions_load_failed">Failed to load questions: %1$s</string>
     <string name="screen_shot_question_success">ScreenShot Saved</string>
     <string name="screen_shot_question_failed">ScreenShot Failed</string>
     <string name="edit_question_no_questionId_error">Error Question Id</string>

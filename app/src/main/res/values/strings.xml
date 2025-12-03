@@ -69,6 +69,8 @@
     <string name="create_paper_empty_title_msg">试卷标题不能为空</string>
 
     <string name="no_paper_found_msg">该书籍中没有找到试卷</string>
+    <string name="toast_questions_file_not_found">试题文件不存在</string>
+    <string name="toast_questions_load_failed">加载试题失败: %1$s</string>
     <string name="screen_shot_question_success">已保存到系统相册</string>
     <string name="screen_shot_question_failed">截屏失败</string>
     <string name="edit_question_no_questionId_error">传入的id异常</string>

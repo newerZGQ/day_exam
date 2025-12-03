@@ -39,7 +39,7 @@ class PaperViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
             LiveEventBus.get(
                 EventKey.PAPER_CONTAINER_CLICKED,
                 EventKey.PaperClickEventModel::class.java
-            ).post(EventKey.PaperClickEventModel(0, paperInfo.id))
+            ).post(EventKey.PaperClickEventModel(paperInfo))
         }
 
         // 长按：进入编辑模式并触发拖拽（由外部回调处理）
