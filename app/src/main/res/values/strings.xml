@@ -50,6 +50,7 @@
     <string name="last_study_time">上次学习</string>
     <string name="total">共</string>
     <string name="short_question">题</string>
+    <string name="paper_question_count">题目数量: %1$d</string>
     <string name="has_study">已学习</string>
     <string name="has_not_start_study">还未开始学习</string>
     <string name="count">次</string>

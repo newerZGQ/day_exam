@@ -49,6 +49,7 @@
     <string name="last_study_time">Last:</string>
     <string name="total">Count:</string>
     <string name="short_question"> </string>
+    <string name="paper_question_count">Questions: %1$d</string>
     <string name="has_study">&#160;&#160;Study Times:</string>
     <string name="has_not_start_study"></string>
     <string name="count"></string>

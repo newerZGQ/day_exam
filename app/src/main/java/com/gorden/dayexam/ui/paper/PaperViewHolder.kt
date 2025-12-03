@@ -30,7 +30,7 @@ class PaperViewHolder(itemView: View): RecyclerView.ViewHolder(itemView)  {
         
         title.text = paperInfo.title
         desc.text = paperInfo.description
-        record.text = "题目数量: ${paperInfo.questionCount}"
+        record.text = resources.getString(R.string.paper_question_count, paperInfo.questionCount)
 
         if (paperInfo.id == curPaperId) {
             container.setBackgroundColor(resources.getColor(R.color.colorPrimaryDark))
