@@ -22,7 +22,9 @@ import com.gorden.dayexam.databinding.FragmentPaperListLayoutBinding
 import com.gorden.dayexam.db.entity.PaperInfo
 import com.gorden.dayexam.executor.AppExecutors
 import com.gorden.dayexam.parser.PaperParser
+import com.gorden.dayexam.ui.EventKey
 import com.gorden.dayexam.ui.dialog.EditTextDialog
+import com.jeremyliao.liveeventbus.LiveEventBus
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
@@ -39,8 +41,8 @@ class PaperListFragment : Fragment() {
     private lateinit var adapter: PaperListAdapter
     private lateinit var itemTouchHelper: ItemTouchHelper
 
-    private var curPaperId: Int = 0
     private var isInEditMode: Boolean = false
+    private var currentPaperInfo: PaperInfo? = null
 
     private val filePickerLauncher =
         registerForActivityResult(ActivityResultContracts.StartActivityForResult()) { result ->
@@ -72,6 +74,18 @@ class PaperListFragment : Fragment() {
         paperListViewModel = ViewModelProvider(this).get(PaperListViewModel::class.java)
 
         adapter = PaperListAdapter(object : PaperListAdapter.Listener {
+            override fun onItemClicked(paperInfo: PaperInfo) {
+                // 记录当前选中的 paperInfo
+                currentPaperInfo = paperInfo
+                // 通知适配器更新以显示绿色标题
+                adapter.setData(adapter.getPapers(), paperInfo.id)
+                // 通过 EventBus 发送事件
+                LiveEventBus.get(
+                    EventKey.PAPER_CONTAINER_CLICKED,
+                    EventKey.PaperClickEventModel::class.java
+                ).post(EventKey.PaperClickEventModel(paperInfo))
+            }
+            
             override fun onItemLongPressed(holder: PaperViewHolder, paperInfo: PaperInfo) {
                 enterEditMode()
                 // 进入编辑模式，并开始拖拽
@@ -119,13 +133,7 @@ class PaperListFragment : Fragment() {
 
         // 试卷列表
         paperListViewModel.getAllPapers().observe(viewLifecycleOwner) {
-            if (it == null) {
-                curPaperId = 0
-                adapter.setData(listOf(), curPaperId)
-
-            } else {
-                adapter.setData(it, curPaperId)
-            }
+            adapter.setData(it, currentPaperInfo?.id ?: -1)
         }
     }
 

@@ -12,6 +12,7 @@ class PaperListAdapter(
 ) : RecyclerView.Adapter<PaperViewHolder>() {
 
     interface Listener {
+        fun onItemClicked(paperInfo: PaperInfo)
         fun onItemLongPressed(holder: PaperViewHolder, paperInfo: PaperInfo)
         fun onItemDeleteClicked(paperInfo: PaperInfo)
     }
@@ -31,6 +32,7 @@ class PaperListAdapter(
             paperInfo = papers[position],
             curPaperId = curPaperId,
             isEditMode = isEditMode,
+            onClick = { paper -> listener.onItemClicked(paper) },
             onLongPress = { vh, paper -> listener.onItemLongPressed(vh, paper) },
             onDeleteClick = { paper -> listener.onItemDeleteClicked(paper) }
         )
@@ -62,5 +64,5 @@ class PaperListAdapter(
         notifyItemMoved(fromPosition, toPosition)
     }
 
-    fun getPapers(): List<PaperInfo> = papers
+    fun getPapers(): List<PaperInfo> = papers.toMutableList()
 }

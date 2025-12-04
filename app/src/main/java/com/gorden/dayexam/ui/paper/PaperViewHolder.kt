@@ -20,6 +20,7 @@ class PaperViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
         paperInfo: PaperInfo,
         curPaperId: Int,
         isEditMode: Boolean,
+        onClick: (PaperInfo) -> Unit,
         onLongPress: (PaperViewHolder, PaperInfo) -> Unit,
         onDeleteClick: (PaperInfo) -> Unit
     ) {
@@ -28,18 +29,18 @@ class PaperViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
         title.text = paperInfo.title
         record.text = resources.getString(R.string.paper_question_count, paperInfo.questionCount)
 
+        // 选中的试卷标题显示为绿色
         if (paperInfo.id == curPaperId) {
             container.setBackgroundColor(resources.getColor(R.color.colorPrimaryDark))
+            title.setTextColor(resources.getColor(android.R.color.holo_green_light))
         } else {
             container.setBackgroundColor(resources.getColor(R.color.colorPrimary))
+            title.setTextColor(resources.getColor(R.color.font_common_color))
         }
 
-        // 点击进入试卷
+        // 点击进入试卷 - 通过回调传递给 Fragment
         rippleContainer.setOnClickListener {
-            LiveEventBus.get(
-                EventKey.PAPER_CONTAINER_CLICKED,
-                EventKey.PaperClickEventModel::class.java
-            ).post(EventKey.PaperClickEventModel(paperInfo))
+            onClick(paperInfo)
         }
 
         // 长按：进入编辑模式并触发拖拽（由外部回调处理）
