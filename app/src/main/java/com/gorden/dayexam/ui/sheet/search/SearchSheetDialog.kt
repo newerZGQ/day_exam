@@ -132,11 +132,11 @@ class SearchSheetDialog : BottomSheetDialogFragment(), SearchScopeSelectView.Sco
 
     private fun registerAction() {
         LiveEventBus.get(EventKey.SEARCH_RESULT_ITEM_CLICK, SearchItem::class.java)
-            .observe(requireActivity(), {
+            .observe(requireActivity()) {
                 hideSoftInput()
                 dismiss()
-                DataRepository.updateDContext(it.paperId, it.questionId)
-            })
+                DataRepository.updateCurPaperId(it.questionId)
+            }
     }
 
     private fun hideSoftInput() {

@@ -22,6 +22,7 @@ import com.gorden.dayexam.databinding.FragmentPaperListLayoutBinding
 import com.gorden.dayexam.db.entity.PaperInfo
 import com.gorden.dayexam.executor.AppExecutors
 import com.gorden.dayexam.parser.PaperParser
+import com.gorden.dayexam.repository.DataRepository
 import com.gorden.dayexam.ui.EventKey
 import com.gorden.dayexam.ui.dialog.EditTextDialog
 import com.jeremyliao.liveeventbus.LiveEventBus
@@ -37,7 +38,9 @@ class PaperListFragment : Fragment() {
     private var _binding: FragmentPaperListLayoutBinding? = null
     private val binding get() = _binding!!
 
-    private lateinit var paperListViewModel: PaperListViewModel
+    private val paperListViewModel: PaperListViewModel by lazy {
+        ViewModelProvider(this).get(PaperListViewModel::class.java)
+    }
     private lateinit var adapter: PaperListAdapter
     private lateinit var itemTouchHelper: ItemTouchHelper
 
@@ -65,14 +68,17 @@ class PaperListFragment : Fragment() {
         savedInstanceState: Bundle?
     ): View {
         _binding = FragmentPaperListLayoutBinding.inflate(inflater, container, false)
-        initPaperList()
         return binding.root
+    }
+
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        super.onViewCreated(view, savedInstanceState)
+        initPaperList()
+        initData()
     }
 
     @SuppressLint("SetTextI18n")
     private fun initPaperList() {
-        paperListViewModel = ViewModelProvider(this).get(PaperListViewModel::class.java)
-
         adapter = PaperListAdapter(object : PaperListAdapter.Listener {
             override fun onItemClicked(paperInfo: PaperInfo) {
                 if (isInEditMode) {
@@ -84,10 +90,7 @@ class PaperListFragment : Fragment() {
                 // 通知适配器更新以显示绿色标题
                 adapter.setData(adapter.getPapers(), paperInfo.id)
                 // 通过 EventBus 发送事件
-                LiveEventBus.get(
-                    EventKey.PAPER_CONTAINER_CLICKED,
-                    EventKey.PaperClickEventModel::class.java
-                ).post(EventKey.PaperClickEventModel(paperInfo))
+                DataRepository.updateCurPaperId(paperInfo.id)
             }
             
             override fun onItemLongPressed(holder: PaperViewHolder, paperInfo: PaperInfo) {
@@ -135,9 +138,22 @@ class PaperListFragment : Fragment() {
             }
         }
 
-        // 试卷列表
-        paperListViewModel.getAllPapers().observe(viewLifecycleOwner) {
-            adapter.setData(it, currentPaperInfo?.id ?: -1)
+    }
+
+    private fun initData() {
+        viewLifecycleOwner.lifecycleScope.launch {
+            withContext(Dispatchers.IO) {
+                currentPaperInfo = DataRepository.getCurPaperInfo()
+            }
+            // 试卷列表
+            withContext(Dispatchers.Main) {
+                paperListViewModel.getAllPapers().observe(viewLifecycleOwner) {
+                    adapter.setData(it, currentPaperInfo?.id ?: -1)
+                }
+            }
+            currentPaperInfo?.let {
+                DataRepository.updateCurPaperId(it.id)
+            }
         }
     }
 

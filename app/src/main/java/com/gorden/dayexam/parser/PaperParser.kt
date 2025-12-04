@@ -62,7 +62,6 @@ object PaperParser {
         // 2. Save PaperInfo to database
         DataRepository.insertPaperWithHash(
             title = file.nameWithoutExtension,
-            desc = "",
             path = filePath,
             hash = fileHash,
             questionCount = questionDetails.size

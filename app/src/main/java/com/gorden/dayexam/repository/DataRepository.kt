@@ -26,22 +26,13 @@ object DataRepository {
         curQuestionIdLiveData.postValue(questionId)
     }
 
-    /**
-     * Dao层状态相关
-     */
-    fun isDatabaseCreated(): LiveData<Boolean> {
-        return this.mDatabase.isDatabaseCreated
-    }
-
-    fun isDatabaseOpened(): LiveData<Boolean> {
-        return this.mDatabase.isDatabaseOpened
-    }
-
-
-    fun updateDContext(paperId: Int, questionId: Int) {
+    fun updateCurPaperId(paperId: Int) {
         SharedPreferenceUtil.setInt("cur_paper_id", paperId)
-        SharedPreferenceUtil.setInt("cur_question_id", questionId)
         curPaperIdLiveData.postValue(paperId)
+    }
+
+    fun updateCurQuestionId(questionId: Int) {
+        SharedPreferenceUtil.setInt("cur_question_id", questionId)
         curQuestionIdLiveData.postValue(questionId)
     }
 
@@ -53,6 +44,10 @@ object DataRepository {
         return curQuestionIdLiveData
     }
 
+    fun getCurPaperInfo(): PaperInfo? {
+        return getPaperById(curPaperIdLiveData.value ?: -1)
+    }
+
     /**
      * study status相关
      */
@@ -61,45 +56,27 @@ object DataRepository {
         return mDatabase.studyStatusDao().queryByTypeAndContentId(type, contentId)
     }
 
-    /**
-     * paper相关
-     */
-    fun insertPaper(title: String, desc: String, path: String, questionCount: Int) {
-        AppExecutors.diskIO().execute {
-            val maxOrder = mDatabase.paperDao().getMaxPosition()
-            val paperInfo = PaperInfo(
-                title = title,
-                path = path,
-                hash = "",
-                position = maxOrder + 1,
-                lastStudyPosition = 0,
-                questionCount = questionCount
-            )
-            val paperId = mDatabase.paperDao().insert(paperInfo).toInt()
-            val paperStatus = StudyStatus(PaperStatus, paperId, 0)
-            mDatabase.studyStatusDao().insert(paperStatus)
-        }
-    }
-
-    fun insertPaperWithHash(title: String, desc: String, path: String, hash: String, questionCount: Int) {
-        AppExecutors.diskIO().execute {
-            val maxOrder = mDatabase.paperDao().getMaxPosition()
-            val paperInfo = PaperInfo(
-                title = title,
-                path = path,
-                hash = hash,
-                position = maxOrder + 1,
-                lastStudyPosition = 0,
-                questionCount = questionCount
-            )
-            val paperId = mDatabase.paperDao().insert(paperInfo).toInt()
-            val paperStatus = StudyStatus(PaperStatus, paperId, 0)
-            mDatabase.studyStatusDao().insert(paperStatus)
-        }
+    fun insertPaperWithHash(title: String, path: String, hash: String, questionCount: Int) {
+        val maxOrder = mDatabase.paperDao().getMaxPosition()
+        val paperInfo = PaperInfo(
+            title = title,
+            path = path,
+            hash = hash,
+            position = maxOrder + 1,
+            lastStudyPosition = 0,
+            questionCount = questionCount
+        )
+        val paperId = mDatabase.paperDao().insert(paperInfo).toInt()
+        val paperStatus = StudyStatus(PaperStatus, paperId, 0)
+        mDatabase.studyStatusDao().insert(paperStatus)
     }
 
     fun getPaperByHash(hash: String): PaperInfo? {
         return mDatabase.paperDao().getPaperByHash(hash)
+    }
+
+    fun getPaperById(id: Int): PaperInfo? {
+        return mDatabase.paperDao().getEntityById(id)
     }
 
     fun currentPaper(): LiveData<PaperInfo> {

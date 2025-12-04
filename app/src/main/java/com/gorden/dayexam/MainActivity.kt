@@ -172,19 +172,18 @@ class MainActivity : BaseActivity() {
 
     private fun registerEvent() {
         LiveEventBus.get(EventKey.SEARCH_CLICKED, Int::class.java)
-            .observe(this, {
+            .observe(this) {
                 drawerLayout.closeDrawers()
                 searchSheet.show(
                     supportFragmentManager,
                     "Search"
                 )
-            })
+            }
 
         // 监听试卷点击事件
         LiveEventBus.get(EventKey.PAPER_CONTAINER_CLICKED, EventKey.PaperClickEventModel::class.java)
             .observe(this) { event ->
                 closeDrawerLayout()
-                DataRepository.updateDContext(event.paperInfo.id, 0)
             }
     }
 

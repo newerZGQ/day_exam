@@ -7,10 +7,10 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.Toast
 import androidx.fragment.app.Fragment
-import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.lifecycleScope
 import androidx.viewpager2.widget.ViewPager2
 import androidx.viewpager2.widget.ViewPager2.ORIENTATION_HORIZONTAL
+import com.google.gson.Gson
 import com.google.gson.reflect.TypeToken
 import com.gorden.dayexam.R
 import com.gorden.dayexam.databinding.FragmentHomeLayoutBinding
@@ -40,10 +40,15 @@ class HomeFragment : Fragment() {
         savedInstanceState: Bundle?
     ): View {
         _binding = FragmentHomeLayoutBinding.inflate(inflater, container, false)
+        return binding.root
+    }
+
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        super.onViewCreated(view, savedInstanceState)
         initView()
+        initData()
         registerActionEvent()
         registerRememberMode()
-        return binding.root
     }
 
     fun currentPosition(): Int {
@@ -69,6 +74,10 @@ class HomeFragment : Fragment() {
         questionPager.adapter = QuestionPagerAdapter()
         questionPager.registerOnPageChangeCallback(onPageChangeCallback)
         questionPager.orientation = ORIENTATION_HORIZONTAL
+    }
+
+    private fun initData() {
+        startLoad()
     }
 
     override fun onDestroyView() {
@@ -100,63 +109,57 @@ class HomeFragment : Fragment() {
                     )
                 }
             }
-        
-        // 监听试卷点击事件，从 JSON 文件加载试题（使用协程）
-        LiveEventBus.get(EventKey.PAPER_CONTAINER_CLICKED, EventKey.PaperClickEventModel::class.java)
-            .observe(this) { event ->
-                viewLifecycleOwner.lifecycleScope.launch {
-                    loadQuestionsFromJson(event.paperInfo)
-                }
-            }
+        DataRepository.getCurPaperId().observe(viewLifecycleOwner) {
+            startLoad()
+        }
     }
     
     /**
      * 从 JSON 文件加载试题
      */
-    private suspend fun loadQuestionsFromJson(paperInfo: PaperInfo) {
-        val context = requireContext()
-        try {
-            // 在 IO 线程读取并解析 JSON
-            var questionList: List<QuestionDetail> = emptyList()
-            withContext(Dispatchers.IO) {
-                val questionsFile = File(context.cacheDir, "${paperInfo.hash}/questions.json")
-                if (!questionsFile.exists()) {
-                    null
-                } else {
-                    val json = questionsFile.readText()
-                    val gson = com.google.gson.Gson()
-                    questionList = gson.fromJson(
-                        json,
-                        object : TypeToken<List<QuestionDetail>>() {}.type
-                    )
+    private fun startLoad() {
+        viewLifecycleOwner.lifecycleScope.launch {
+            kotlin.runCatching {
+                // 在 IO 线程读取并解析 JSON
+                var questionList: List<QuestionDetail> = emptyList()
+                withContext(Dispatchers.IO) {
+                    val paperInfo = DataRepository.getCurPaperInfo() ?: return@withContext
+                    val questionsFile = File(requireContext().cacheDir, "${paperInfo.hash}/questions.json")
+                    if (questionsFile.exists()) {
+                        questionList = Gson().fromJson(
+                            questionsFile.readText(),
+                            object : TypeToken<List<QuestionDetail>>() {}.type
+                        )
+                    }
+                    this@HomeFragment.paperInfo = paperInfo
                 }
-            }
 
-            if (questionList.isEmpty()) {
+                if (questionList.isEmpty()) {
+                    Toast.makeText(
+                        requireContext(),
+                        requireContext().getString(R.string.toast_questions_file_not_found),
+                        Toast.LENGTH_SHORT
+                    ).show()
+                    return@launch
+                }
+
+                // 更新试题列表与 UI（主线程）
+                questions = questionList
+                paperInfo?.let { info ->
+                    (questionPager.adapter as QuestionPagerAdapter).setData(
+                        info,
+                        questions
+                    )
+                    questionPager.currentItem = info.lastStudyPosition
+                }
+            }.onFailure {
+                it.printStackTrace()
                 Toast.makeText(
                     context,
-                    context.getString(R.string.toast_questions_file_not_found),
+                    getString(R.string.toast_questions_load_failed, it.message),
                     Toast.LENGTH_SHORT
                 ).show()
-                return
             }
-
-            // 更新试题列表与 UI（主线程）
-            questions = questionList
-            paperInfo.let { info ->
-                (questionPager.adapter as QuestionPagerAdapter).setData(
-                    info,
-                    questions
-                )
-                questionPager.currentItem = info.lastStudyPosition
-            }
-        } catch (e: Exception) {
-            e.printStackTrace()
-            Toast.makeText(
-                context,
-                getString(R.string.toast_questions_load_failed, e.message),
-                Toast.LENGTH_SHORT
-            ).show()
         }
     }
 
