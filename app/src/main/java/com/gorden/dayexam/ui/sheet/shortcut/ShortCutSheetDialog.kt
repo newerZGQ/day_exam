@@ -34,12 +34,12 @@ class ShortCutSheetDialog : BottomSheetDialogFragment() {
         _binding = ShortCutSheetLayoutBinding.inflate(inflater, container, false)
         rootView = binding.root
         val viewModel = ViewModelProvider(this).get(ShortCutViewModel::class.java)
-        viewModel.getConfig().observe(this, {
+        viewModel.getConfig().observe(this) {
             it?.let {
                 setStudyMode(it)
                 setStudyModeListener()
             }
-        })
+        }
         initCopyQuestion()
         initSearchAction()
         return rootView
@@ -47,9 +47,6 @@ class ShortCutSheetDialog : BottomSheetDialogFragment() {
 
     private fun setStudyMode(config: Config) {
         binding.rememberModeSwitch.isChecked = config.rememberMode
-        binding.focusModeSwitch.isChecked = config.focusMode
-        binding.favoriteModeSwitch.isChecked = config.onlyFavorite
-        binding.sortByAccuracyModeSwitch.isChecked = config.sortByAccuracy
     }
 
     private fun setStudyModeListener() {
@@ -59,33 +56,6 @@ class ShortCutSheetDialog : BottomSheetDialogFragment() {
         binding.rememberContentContainer.setOnClickListener {
             binding.rememberModeSwitch.isChecked = !binding.rememberModeSwitch.isChecked
         }
-        binding.focusModeSwitch.setOnCheckedChangeListener { _, b ->
-            DataRepository.updateFocusMode(b)
-            dismiss()
-        }
-        binding.focusContentContainer.setOnClickListener {
-            binding.focusModeSwitch.isChecked = !binding.focusModeSwitch.isChecked
-        }
-        binding.favoriteModeSwitch.setOnCheckedChangeListener { _, b ->
-            DataRepository.updateOnlyFavoriteMode(b)
-        }
-        binding.favoriteContentContainer.setOnClickListener {
-            binding.favoriteModeSwitch.isChecked = !binding.favoriteModeSwitch.isChecked
-        }
-        binding.sortByAccuracyModeSwitch.setOnCheckedChangeListener { _, b ->
-            DataRepository.updateSortAccuracyMode(b)
-        }
-        binding.sortByAccuracyContentContainer.setOnClickListener {
-            binding.sortByAccuracyModeSwitch.isChecked = !binding.sortByAccuracyModeSwitch.isChecked
-        }
-    }
-
-    private fun disableDeleteAction() {
-        binding.deleteContentContainer.setOnClickListener(null)
-        binding.deleteTitle
-            .setTextColor(requireActivity().resources.getColor(R.color.short_cut_delete_disable_color))
-        binding.deleteContentIcon
-            .setImageDrawable(requireActivity().resources.getDrawable(R.drawable.ic_baseline_delete_outline_half_transparent_24))
     }
 
     private fun initCopyQuestion() {
@@ -112,12 +82,6 @@ class ShortCutSheetDialog : BottomSheetDialogFragment() {
             val intent = Intent(requireActivity(), SettingsActivity::class.java)
             startActivity(intent)
             dismiss()
-        }
-    }
-
-    private fun initHistoryAction() {
-        binding.historyContentContainer.setOnClickListener {
-
         }
     }
 

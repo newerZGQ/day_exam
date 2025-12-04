@@ -7,7 +7,6 @@ import java.util.*
 @Entity(tableName = "Config")
 data class Config (
     var rememberMode: Boolean,
-    var focusMode: Boolean,
     var onlyFavorite: Boolean,
     var sortByAccuracy: Boolean)
 {

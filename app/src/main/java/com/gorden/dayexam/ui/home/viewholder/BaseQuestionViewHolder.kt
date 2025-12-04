@@ -20,14 +20,6 @@ import com.jeremyliao.liveeventbus.LiveEventBus
 
 abstract class BaseQuestionViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
 
-    private val questionInfoTv = itemView.findViewById<View>(R.id.question_info)
-
-    init {
-        questionInfoTv?.setOnClickListener {
-            DataRepository.updateFocusMode(false)
-        }
-    }
-
     open fun setData(paperInfo: PaperInfo, question: QuestionDetail, isRememberMode: Boolean) {
         genHeadView(paperInfo, question)
         if (isRememberMode) {

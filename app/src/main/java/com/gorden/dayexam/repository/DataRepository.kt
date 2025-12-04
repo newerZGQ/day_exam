@@ -173,16 +173,6 @@ object DataRepository {
         }
     }
 
-    fun updateFocusMode(opened: Boolean) {
-        AppExecutors.diskIO().execute {
-            mDatabase.runInTransaction {
-                val config = mDatabase.configDao().getEntity()
-                config.focusMode = opened
-                mDatabase.configDao().update(config)
-            }
-        }
-    }
-
     fun updateOnlyFavoriteMode(opened: Boolean) {
         AppExecutors.diskIO().execute {
             mDatabase.runInTransaction {

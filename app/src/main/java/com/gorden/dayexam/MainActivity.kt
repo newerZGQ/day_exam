@@ -69,7 +69,6 @@ class MainActivity : BaseActivity() {
         initFragment()
         registerEvent()
         observeDContext()
-        observeConfig()
         observeTodayStudyCount()
         checkScreenLight()
         checkPrivacyDialog()
@@ -191,19 +190,6 @@ class MainActivity : BaseActivity() {
             if (it != null) {
                 curPaperId = it.curPaperId
                 curQuestionId = it.curQuestionId
-            }
-        })
-    }
-
-    private fun observeConfig() {
-        DataRepository.getConfig().observe(this, { config ->
-            config?.let {
-                if (it.focusMode && supportActionBar != null) {
-                    toFocusMode()
-                } else if (this.isFocusMode && supportActionBar != null) {
-                    exitFocusMode()
-                }
-                this.isFocusMode = it.focusMode
             }
         })
     }
