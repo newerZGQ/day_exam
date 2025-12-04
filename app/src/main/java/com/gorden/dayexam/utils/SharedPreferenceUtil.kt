@@ -25,4 +25,14 @@ object SharedPreferenceUtil {
         editor.putBoolean(key, value)
         editor.apply()
     }
+
+    fun getInt(key: String, default: Int): Int {
+        return sp.getInt(key, default)
+    }
+
+    fun setInt(key: String, value: Int) {
+        val editor = sp.edit()
+        editor.putInt(key, value)
+        editor.apply()
+    }
 }

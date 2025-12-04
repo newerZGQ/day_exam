@@ -75,6 +75,10 @@ class PaperListFragment : Fragment() {
 
         adapter = PaperListAdapter(object : PaperListAdapter.Listener {
             override fun onItemClicked(paperInfo: PaperInfo) {
+                if (isInEditMode) {
+                    exitEditMode()
+                    return
+                }
                 // 记录当前选中的 paperInfo
                 currentPaperInfo = paperInfo
                 // 通知适配器更新以显示绿色标题

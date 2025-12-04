@@ -30,7 +30,6 @@ class HomeFragment : Fragment() {
     private var _binding: FragmentHomeLayoutBinding? = null
     private val binding get() = _binding!!
 
-    private lateinit var homeViewModel: HomeViewModel
     private lateinit var questionPager: ViewPager2
     private var questions: List<QuestionDetail> = listOf()
     private var paperInfo: PaperInfo? = null
@@ -43,7 +42,6 @@ class HomeFragment : Fragment() {
         _binding = FragmentHomeLayoutBinding.inflate(inflater, container, false)
         initView()
         registerActionEvent()
-        homeViewModel = ViewModelProvider(this).get(HomeViewModel::class.java)
         registerRememberMode()
         return binding.root
     }

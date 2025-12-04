@@ -52,6 +52,7 @@ class MainActivity : BaseActivity() {
     private var isFocusMode = false
 
     private lateinit var todayCount: TextView
+    private lateinit var toolbarTitle: TextView
 
     companion object {
         const val SELECT_QUESTION_REQUEST_CODE = 201
@@ -71,6 +72,7 @@ class MainActivity : BaseActivity() {
         observeDContext()
         observeTodayStudyCount()
         checkScreenLight()
+        observeCurrentPaper()
         checkPrivacyDialog()
     }
 
@@ -95,6 +97,7 @@ class MainActivity : BaseActivity() {
         drawerLayout.addDrawerListener(toggle)
         toggle.syncState()
         todayCount = toolbar.findViewById(R.id.today_study_count)
+        toolbarTitle = toolbar.findViewById(R.id.title)
     }
 
     private fun initFab() {
@@ -181,17 +184,32 @@ class MainActivity : BaseActivity() {
         LiveEventBus.get(EventKey.PAPER_CONTAINER_CLICKED, EventKey.PaperClickEventModel::class.java)
             .observe(this) { event ->
                 closeDrawerLayout()
+                DataRepository.updateDContext(event.paperInfo.id, 0)
             }
     }
 
 
     private fun observeDContext() {
-        DataRepository.getDContext().observe(this, {
+        DataRepository.getCurPaperId().observe(this) {
             if (it != null) {
-                curPaperId = it.curPaperId
-                curQuestionId = it.curQuestionId
+                curPaperId = it
             }
-        })
+        }
+        DataRepository.getCurQuestionId().observe(this) {
+            if (it != null) {
+                curQuestionId = it
+            }
+        }
+    }
+
+    private fun observeCurrentPaper() {
+        DataRepository.currentPaper().observe(this) { paperInfo ->
+            if (paperInfo != null) {
+                toolbarTitle.text = paperInfo.title
+            } else {
+                toolbarTitle.text = getString(R.string.app_name)
+            }
+        }
     }
 
     private fun toFocusMode() {

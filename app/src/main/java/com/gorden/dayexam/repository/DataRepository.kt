@@ -9,14 +9,21 @@ import com.gorden.dayexam.db.entity.*
 import com.gorden.dayexam.db.entity.PaperInfo
 import com.gorden.dayexam.executor.AppExecutors
 import com.gorden.dayexam.repository.model.*
+import com.gorden.dayexam.utils.SharedPreferenceUtil
 import java.util.*
 
 object DataRepository {
 
     private lateinit var mDatabase: AppDatabase
+    private val curPaperIdLiveData = MutableLiveData<Int>()
+    private val curQuestionIdLiveData = MutableLiveData<Int>()
 
     fun init(mDatabase: AppDatabase) {
         this.mDatabase = mDatabase
+        val paperId = SharedPreferenceUtil.getInt("cur_paper_id", -1)
+        val questionId = SharedPreferenceUtil.getInt("cur_question_id", -1)
+        curPaperIdLiveData.postValue(paperId)
+        curQuestionIdLiveData.postValue(questionId)
     }
 
     /**
@@ -32,18 +39,18 @@ object DataRepository {
 
 
     fun updateDContext(paperId: Int, questionId: Int) {
-        AppExecutors.diskIO().execute {
-            mDatabase.runInTransaction {
-                val dContext = mDatabase.dContextDao().getDContextEntity()
-                dContext.curPaperId = paperId
-                dContext.curQuestionId = questionId
-                mDatabase.dContextDao().update(dContext)
-            }
-        }
+        SharedPreferenceUtil.setInt("cur_paper_id", paperId)
+        SharedPreferenceUtil.setInt("cur_question_id", questionId)
+        curPaperIdLiveData.postValue(paperId)
+        curQuestionIdLiveData.postValue(questionId)
     }
 
-    fun getDContext(): LiveData<DContext> {
-        return mDatabase.dContextDao().getDContext()
+    fun getCurPaperId(): LiveData<Int> {
+        return curPaperIdLiveData
+    }
+
+    fun getCurQuestionId(): LiveData<Int> {
+        return curQuestionIdLiveData
     }
 
     /**
@@ -96,10 +103,9 @@ object DataRepository {
     }
 
     fun currentPaper(): LiveData<PaperInfo> {
-        val dContext = mDatabase.dContextDao().getDContext()
-        return Transformations.switchMap(dContext) {
-            dContext.value?.let {
-                mDatabase.paperDao().getById(it.curPaperId)
+        return Transformations.switchMap(curPaperIdLiveData) { paperId ->
+            paperId?.let {
+                mDatabase.paperDao().getById(it)
             }
         }
     }

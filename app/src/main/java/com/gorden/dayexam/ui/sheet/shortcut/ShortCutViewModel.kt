@@ -4,7 +4,6 @@ import android.app.Application
 import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.LiveData
 import com.gorden.dayexam.db.entity.Config
-import com.gorden.dayexam.db.entity.DContext
 import com.gorden.dayexam.repository.DataRepository
 
 class ShortCutViewModel(application: Application): AndroidViewModel(application) {
@@ -13,7 +12,11 @@ class ShortCutViewModel(application: Application): AndroidViewModel(application)
         return DataRepository.getConfig()
     }
 
-    fun getDContext(): LiveData<DContext> {
-        return DataRepository.getDContext()
+    fun getCurPaperId(): LiveData<Int> {
+        return DataRepository.getCurPaperId()
+    }
+
+    fun getCurQuestionId(): LiveData<Int> {
+        return DataRepository.getCurQuestionId()
     }
 }

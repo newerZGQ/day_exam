@@ -15,7 +15,7 @@ import com.gorden.dayexam.db.entity.PaperInfo
 import com.gorden.dayexam.executor.AppExecutors
 
 @Database(
-    entities = [DContext::class, PaperInfo::class, StudyStatus::class,
+    entities = [PaperInfo::class, StudyStatus::class,
                StudyRecord::class, Config::class],
     version = 1,
     exportSchema = false
@@ -25,7 +25,6 @@ import com.gorden.dayexam.executor.AppExecutors
 )
 abstract class AppDatabase : RoomDatabase() {
 
-    abstract fun dContextDao(): DContextDao
     abstract fun paperDao(): PaperDao
     abstract fun studyStatusDao(): StudyStatusDao
     abstract fun studyRecordDao(): StudyRecordDao
