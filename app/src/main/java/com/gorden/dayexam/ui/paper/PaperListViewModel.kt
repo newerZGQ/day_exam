@@ -17,21 +17,6 @@ class PaperListViewModel(application: Application): AndroidViewModel(application
     }
 
     /**
-     * 使用协程在 IO 线程更新试卷标题，返回是否成功
-     */
-    suspend fun updatePaperTitle(paperInfo: PaperInfo, newTitle: String): Boolean {
-        return withContext(Dispatchers.IO) {
-            try {
-                paperInfo.title = newTitle
-                DataRepository.updatePaper(paperInfo)
-                true
-            } catch (e: Exception) {
-                false
-            }
-        }
-    }
-
-    /**
      * 使用协程在 IO 线程删除试卷，返回是否成功
      */
     suspend fun deletePaper(paperInfo: PaperInfo): Boolean {

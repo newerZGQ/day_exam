@@ -91,12 +91,6 @@ object DataRepository {
         mDatabase.paperDao().update(paperInfos)
     }
 
-    fun updatePaper(paperInfo: PaperInfo) {
-        AppExecutors.diskIO().execute {
-            mDatabase.paperDao().update(paperInfo)
-        }
-    }
-
     fun deletePaper(paperInfo: PaperInfo) {
         AppExecutors.diskIO().execute {
             mDatabase.paperDao().delete(paperInfo.id)
@@ -151,26 +145,6 @@ object DataRepository {
             mDatabase.runInTransaction {
                 val config = mDatabase.configDao().getEntity()
                 config.rememberMode = opened
-                mDatabase.configDao().update(config)
-            }
-        }
-    }
-
-    fun updateOnlyFavoriteMode(opened: Boolean) {
-        AppExecutors.diskIO().execute {
-            mDatabase.runInTransaction {
-                val config = mDatabase.configDao().getEntity()
-                config.onlyFavorite = opened
-                mDatabase.configDao().update(config)
-            }
-        }
-    }
-
-    fun updateSortAccuracyMode(opened: Boolean) {
-        AppExecutors.diskIO().execute {
-            mDatabase.runInTransaction {
-                val config = mDatabase.configDao().getEntity()
-                config.sortByAccuracy = opened
                 mDatabase.configDao().update(config)
             }
         }
