@@ -8,9 +8,9 @@ import android.widget.ImageView
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
 import com.gorden.dayexam.R
-import com.gorden.dayexam.utils.PaperContext
 import com.gorden.dayexam.ui.EventKey
 import com.jeremyliao.liveeventbus.LiveEventBus
+import java.io.File
 
 class ImagePreviewAdapter: RecyclerView.Adapter<ImagePreviewHolder>() {
 
@@ -49,13 +49,6 @@ class ImagePreviewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
             LiveEventBus.get<String>(EventKey.IMAGE_PREVIEW_CLICKED)
                 .post(null)
         }
-        var requestBuilder = Glide.with(itemView.context).asBitmap()
-        requestBuilder = if (imageUrl.startsWith("default_data_image")) {
-            requestBuilder.load("file:///android_asset/image/" + imageUrl)
-        } else {
-            val imageFile = PaperContext.getImageFile(imageUrl)
-            requestBuilder.load(imageFile)
-        }
-        requestBuilder.into(previewImage)
+        Glide.with(itemView.context).asBitmap().load(File(imageUrl)).into(previewImage)
     }
 }

@@ -102,30 +102,6 @@ class MainActivity : BaseActivity() {
         val fab: SpeedDialView = binding.homeMainLayout.fab
         fab.addActionItem(
             SpeedDialActionItem.Builder(
-                R.id.float_button_reset_question_item,
-                R.drawable.ic_baseline_refresh_24
-            )
-                .setFabBackgroundColor(
-                    ResourcesCompat.getColor(
-                        resources,
-                        R.color.colorPrimaryDark,
-                        theme
-                    )
-                )
-                .setFabImageTintColor(
-                    ResourcesCompat.getColor(
-                        resources,
-                        R.color.float_button_item_icon_color,
-                        theme
-                    )
-                )
-                .setLabel(getString(R.string.reset_current_question))
-                .setLabelClickable(false)
-                .setTheme(R.style.FloatButtonTextAppearance)
-                .create()
-        )
-        fab.addActionItem(
-            SpeedDialActionItem.Builder(
                 R.id.float_button_list_question_item,
                 R.drawable.ic_outline_format_list_numbered_24
             )
@@ -150,10 +126,6 @@ class MainActivity : BaseActivity() {
         )
         fab.setOnActionSelectedListener {
             when (it.id) {
-                R.id.float_button_reset_question_item -> {
-                    LiveEventBus.get(EventKey.REFRESH_QUESTION, Int::class.java).post(0)
-                    fab.close()
-                }
                 R.id.float_button_favorite_question_item -> {
                     LiveEventBus.get(EventKey.FAVORITE_QUESTION, Int::class.java).post(0)
                     fab.close()
@@ -205,6 +177,12 @@ class MainActivity : BaseActivity() {
                     "Search"
                 )
             })
+
+        // 监听试卷点击事件
+        LiveEventBus.get(EventKey.PAPER_CONTAINER_CLICKED, EventKey.PaperClickEventModel::class.java)
+            .observe(this) { event ->
+                closeDrawerLayout()
+            }
     }
 
 

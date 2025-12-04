@@ -5,6 +5,7 @@ import android.view.View
 import android.widget.LinearLayout
 import androidx.core.view.children
 import com.gorden.dayexam.R
+import com.gorden.dayexam.db.entity.PaperInfo
 import com.gorden.dayexam.db.entity.StudyRecord
 import com.gorden.dayexam.repository.model.QuestionDetail
 import com.gorden.dayexam.repository.model.RealAnswer
@@ -18,13 +19,13 @@ class SingleChoiceViewHolder(itemView: View): BaseQuestionViewHolder(itemView) {
 
     private val optionContainer: LinearLayout = itemView.findViewById(R.id.options_container)
 
-    override fun genOptionsView(question: QuestionDetail) {
+    override fun genOptionsView(paperInfo: PaperInfo, question: QuestionDetail) {
         optionContainer.removeAllViews()
         question.options.forEachIndexed { index, optionItemWithElement ->
             val optionTag = (index + 'A'.toInt()).toChar().toString()
             val optionCardView = OptionCardView(itemView.context)
             optionCardView.setBackgroundColor(itemView.context.getColor(R.color.option_default_color))
-            optionCardView.setContent(optionItemWithElement.element, optionTag, ElementViewListener())
+            optionCardView.setContent(paperInfo, optionItemWithElement.element, optionTag, ElementViewListener())
             val layoutParams = LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT,LinearLayout.LayoutParams.WRAP_CONTENT)
             layoutParams.topMargin = ScreenUtils.dp2px(8f)
             optionContainer.addView(optionCardView, layoutParams)
@@ -32,7 +33,7 @@ class SingleChoiceViewHolder(itemView: View): BaseQuestionViewHolder(itemView) {
                 val realAnswerContent = (index + 'A'.toInt()).toChar().toString()
                 val realAnswer = RealAnswer(realAnswerContent)
                 question.realAnswer = realAnswer
-                setAnsweredStatus(question)
+                setAnsweredStatus(paperInfo, question)
                 val isCorrectTag = getAnswerEventTag(question)
                 LiveEventBus.get(EventKey.ANSWER_EVENT, EventKey.AnswerEventModel::class.java)
                     .post(EventKey.AnswerEventModel(realAnswerContent, isCorrectTag))
@@ -40,7 +41,7 @@ class SingleChoiceViewHolder(itemView: View): BaseQuestionViewHolder(itemView) {
         }
     }
 
-    override fun genAnsweredOptionsView(question: QuestionDetail) {
+    override fun genAnsweredOptionsView(paperInfo: PaperInfo, question: QuestionDetail) {
         question.options.forEachIndexed { index, optionItemWithElement ->
             val context = itemView.context
             val realAnswer = question.realAnswer?.answer
@@ -48,7 +49,7 @@ class SingleChoiceViewHolder(itemView: View): BaseQuestionViewHolder(itemView) {
                 return
             }
             val optionTag = (index + 'A'.toInt()).toChar().toString()
-            val answer = getAnswer(question)
+            val answer = getAnswer(paperInfo, question)
             if (realAnswer == optionTag) {
                 if (answer == realAnswer) {
                     optionContainer.getChildAt(index).setBackgroundColor(context.getColor(R.color.option_select_correct_color))
@@ -66,7 +67,7 @@ class SingleChoiceViewHolder(itemView: View): BaseQuestionViewHolder(itemView) {
         }
     }
 
-    override fun genRememberOptionsView(question: QuestionDetail) {
+    override fun genRememberOptionsView(paperInfo: PaperInfo, question: QuestionDetail) {
         optionContainer.removeAllViews()
         var correctAnswer = ""
         if ((question.answer.size) > 0) {
@@ -80,19 +81,19 @@ class SingleChoiceViewHolder(itemView: View): BaseQuestionViewHolder(itemView) {
             } else {
                 optionCardView.setBackgroundColor(itemView.context.getColor(R.color.option_default_color))
             }
-            optionCardView.setContent(optionItemWithElement.element, optionTag, ElementViewListener())
+            optionCardView.setContent(paperInfo, optionItemWithElement.element, optionTag, ElementViewListener())
             val layoutParams = LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT,LinearLayout.LayoutParams.WRAP_CONTENT)
             layoutParams.topMargin = ScreenUtils.dp2px(8f)
             optionContainer.addView(optionCardView, layoutParams)
         }
     }
 
-    override fun genActionView(question: QuestionDetail) {
+    override fun genActionView(paperInfo: PaperInfo, question: QuestionDetail) {
 
     }
 
-    override fun setAnsweredStatus(question: QuestionDetail) {
-        super.setAnsweredStatus(question)
+    override fun setAnsweredStatus(paperInfo: PaperInfo, question: QuestionDetail) {
+        super.setAnsweredStatus(paperInfo, question)
         optionContainer.children.forEach {
             it.setOnClickListener(null)
         }

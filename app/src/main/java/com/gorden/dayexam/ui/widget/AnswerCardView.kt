@@ -7,6 +7,7 @@ import android.view.LayoutInflater
 import android.widget.FrameLayout
 import android.widget.TextView
 import com.gorden.dayexam.R
+import com.gorden.dayexam.db.entity.PaperInfo
 import com.gorden.dayexam.repository.model.Element
 import com.gorden.dayexam.repository.model.RealAnswer
 
@@ -21,8 +22,8 @@ class AnswerCardView: FrameLayout {
     }
 
     @SuppressLint("CutPasteId")
-    fun setElements(elements: List<Element>, highlightText: String, realAnswer: RealAnswer?, listener: ElementActionListener) {
-        findViewById<ElementsView>(R.id.answer_content).setElements(elements, highlightText, listener)
+    fun setElements(paperInfo: PaperInfo, elements: List<Element>, highlightText: String, realAnswer: RealAnswer?, listener: ElementActionListener) {
+        findViewById<ElementsView>(R.id.answer_content).setElements(paperInfo, elements, highlightText, listener)
         if (realAnswer?.answer?.isNotEmpty() == true) {
             findViewById<TextView>(R.id.real_answer_content).visibility = VISIBLE
             findViewById<TextView>(R.id.real_answer_content).text = realAnswer.answer

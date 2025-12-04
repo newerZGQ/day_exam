@@ -3,6 +3,7 @@ package com.gorden.dayexam.ui.home.viewholder
 import android.text.TextUtils
 import android.view.View
 import com.gorden.dayexam.R
+import com.gorden.dayexam.db.entity.PaperInfo
 import com.gorden.dayexam.db.entity.StudyRecord
 import com.gorden.dayexam.repository.model.QuestionDetail
 import com.gorden.dayexam.repository.model.RealAnswer
@@ -14,14 +15,14 @@ class TrueFalseViewHolder(itemView: View): BaseQuestionViewHolder(itemView) {
     private val correctOption: View = itemView.findViewById(R.id.action_correct)
     private val inCorrectOption: View = itemView.findViewById(R.id.action_incorrect)
 
-    override fun genOptionsView(question: QuestionDetail) {
+    override fun genOptionsView(paperInfo: PaperInfo, question: QuestionDetail) {
         val resources = itemView.resources
         correctOption.setBackgroundColor(resources.getColor(R.color.option_default_color))
         inCorrectOption.setBackgroundColor(resources.getColor(R.color.option_default_color))
         correctOption.setOnClickListener {
             val realAnswerContent = resources.getString(R.string.correct)
             question.realAnswer = RealAnswer(realAnswerContent)
-            setAnsweredStatus(question)
+            setAnsweredStatus(paperInfo, question)
             val answerTag = getAnswerEventTag(question)
             LiveEventBus.get(EventKey.ANSWER_EVENT, EventKey.AnswerEventModel::class.java)
                 .post(EventKey.AnswerEventModel(realAnswerContent, answerTag))
@@ -29,24 +30,24 @@ class TrueFalseViewHolder(itemView: View): BaseQuestionViewHolder(itemView) {
         inCorrectOption.setOnClickListener {
             val realAnswerContent = resources.getString(R.string.incorrect)
             question.realAnswer = RealAnswer(realAnswerContent)
-            setAnsweredStatus(question)
+            setAnsweredStatus(paperInfo, question)
             val answerTag = getAnswerEventTag(question)
             LiveEventBus.get(EventKey.ANSWER_EVENT, EventKey.AnswerEventModel::class.java)
                 .post(EventKey.AnswerEventModel(realAnswerContent, answerTag))
         }
     }
 
-    override fun setAnsweredStatus(question: QuestionDetail) {
-        super.setAnsweredStatus(question)
+    override fun setAnsweredStatus(paperInfo: PaperInfo, question: QuestionDetail) {
+        super.setAnsweredStatus(paperInfo, question)
         correctOption.isClickable = false
         inCorrectOption.isClickable = false
     }
 
-    override fun genAnsweredOptionsView(question: QuestionDetail) {
+    override fun genAnsweredOptionsView(paperInfo: PaperInfo, question: QuestionDetail) {
         val context = itemView.context
         val answer = question.answer[0].content
         if (question.realAnswer != null) {
-            if (question?.realAnswer?.answer.equals(answer)){
+            if (question.realAnswer?.answer.equals(answer)){
                 if (answer == context.getString(R.string.correct)) {
                     correctOption.setBackgroundColor(context.getColor(R.color.option_select_correct_color))
                     inCorrectOption.setBackgroundColor(context.getColor(R.color.option_default_color))
@@ -66,7 +67,7 @@ class TrueFalseViewHolder(itemView: View): BaseQuestionViewHolder(itemView) {
         }
     }
 
-    override fun genRememberOptionsView(question: QuestionDetail) {
+    override fun genRememberOptionsView(paperInfo: PaperInfo, question: QuestionDetail) {
         val answer = question.answer[0].content
         val resources = itemView.resources
         if (answer.isEmpty()) {
@@ -83,7 +84,7 @@ class TrueFalseViewHolder(itemView: View): BaseQuestionViewHolder(itemView) {
         inCorrectOption.setOnClickListener(null)
     }
 
-    override fun genActionView(question: QuestionDetail) {
+    override fun genActionView(paperInfo: PaperInfo, question: QuestionDetail) {
 
     }
 

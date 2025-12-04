@@ -8,6 +8,7 @@ import android.view.ViewGroup
 import android.widget.Toast
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
+import androidx.lifecycle.lifecycleScope
 import androidx.viewpager2.widget.ViewPager2
 import androidx.viewpager2.widget.ViewPager2.ORIENTATION_HORIZONTAL
 import com.google.gson.reflect.TypeToken
@@ -15,11 +16,13 @@ import com.gorden.dayexam.R
 import com.gorden.dayexam.databinding.FragmentHomeLayoutBinding
 import com.gorden.dayexam.db.entity.PaperInfo
 import com.gorden.dayexam.db.entity.StudyRecord
-
 import com.gorden.dayexam.repository.DataRepository
 import com.gorden.dayexam.repository.model.QuestionDetail
 import com.gorden.dayexam.ui.EventKey
 import com.jeremyliao.liveeventbus.LiveEventBus
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 import java.io.File
 
 class HomeFragment : Fragment() {
@@ -67,7 +70,6 @@ class HomeFragment : Fragment() {
         questionPager = binding.questionPager
         questionPager.adapter = QuestionPagerAdapter()
         questionPager.registerOnPageChangeCallback(onPageChangeCallback)
-        // TODO 这里调整问题的滑动方式
         questionPager.orientation = ORIENTATION_HORIZONTAL
     }
 
@@ -101,22 +103,38 @@ class HomeFragment : Fragment() {
                 }
             }
         
-        // 监听试卷点击事件，从 JSON 文件加载试题
+        // 监听试卷点击事件，从 JSON 文件加载试题（使用协程）
         LiveEventBus.get(EventKey.PAPER_CONTAINER_CLICKED, EventKey.PaperClickEventModel::class.java)
             .observe(this) { event ->
-                loadQuestionsFromJson(event.paperInfo)
+                viewLifecycleOwner.lifecycleScope.launch {
+                    loadQuestionsFromJson(event.paperInfo)
+                }
             }
     }
     
     /**
      * 从 JSON 文件加载试题
      */
-    private fun loadQuestionsFromJson(paperInfo: PaperInfo) {
+    private suspend fun loadQuestionsFromJson(paperInfo: PaperInfo) {
+        val context = requireContext()
         try {
-            val context = requireContext()
-            val questionsFile = File(context.cacheDir, "${paperInfo.hash}/questions.json")
-            
-            if (!questionsFile.exists()) {
+            // 在 IO 线程读取并解析 JSON
+            var questionList: List<QuestionDetail> = emptyList()
+            withContext(Dispatchers.IO) {
+                val questionsFile = File(context.cacheDir, "${paperInfo.hash}/questions.json")
+                if (!questionsFile.exists()) {
+                    null
+                } else {
+                    val json = questionsFile.readText()
+                    val gson = com.google.gson.Gson()
+                    questionList = gson.fromJson(
+                        json,
+                        object : TypeToken<List<QuestionDetail>>() {}.type
+                    )
+                }
+            }
+
+            if (questionList.isEmpty()) {
                 Toast.makeText(
                     context,
                     context.getString(R.string.toast_questions_file_not_found),
@@ -124,31 +142,20 @@ class HomeFragment : Fragment() {
                 ).show()
                 return
             }
-            
-            val json = questionsFile.readText()
-            val gson = com.google.gson.Gson()
-            val questionList: List<QuestionDetail> = gson.fromJson(
-                json,
-                object : TypeToken<List<QuestionDetail>>() {}.type
-            )
-            
-            // 更新试题列表
+
+            // 更新试题列表与 UI（主线程）
             questions = questionList
-            
-            // 更新适配器 - 传入试卷标题作为 bookTitle 和 paperTitle
-            (questionPager.adapter as QuestionPagerAdapter).setData(
-                questions,
-                paperInfo.title,  // bookTitle
-                paperInfo.title   // paperTitle
-            )
-            
-            // 跳转到上次学习位置
-            questionPager.currentItem = paperInfo.lastStudyPosition
-            
+            paperInfo.let { info ->
+                (questionPager.adapter as QuestionPagerAdapter).setData(
+                    info,
+                    questions
+                )
+                questionPager.currentItem = info.lastStudyPosition
+            }
         } catch (e: Exception) {
             e.printStackTrace()
             Toast.makeText(
-                requireContext(),
+                context,
                 getString(R.string.toast_questions_load_failed, e.message),
                 Toast.LENGTH_SHORT
             ).show()

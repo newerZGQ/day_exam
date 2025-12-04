@@ -7,6 +7,7 @@ import androidx.lifecycle.LifecycleOwner
 import androidx.recyclerview.widget.RecyclerView
 import com.gorden.dayexam.ContextHolder
 import com.gorden.dayexam.R
+import com.gorden.dayexam.db.entity.PaperInfo
 import com.gorden.dayexam.repository.model.Element
 import com.gorden.dayexam.repository.DataRepository
 import com.gorden.dayexam.repository.model.QuestionDetail
@@ -19,93 +20,84 @@ import com.jeremyliao.liveeventbus.LiveEventBus
 
 abstract class BaseQuestionViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
 
-    private val questionInfo = itemView.findViewById<View>(R.id.question_info)
+    private val questionInfoTv = itemView.findViewById<View>(R.id.question_info)
 
     init {
-        questionInfo?.setOnClickListener {
+        questionInfoTv?.setOnClickListener {
             DataRepository.updateFocusMode(false)
         }
     }
 
-    open fun setData(question: QuestionDetail, bookTitle: String, paperTitle: String, isRememberMode: Boolean) {
-        genHeadView(question, bookTitle, paperTitle)
+    open fun setData(paperInfo: PaperInfo, question: QuestionDetail, isRememberMode: Boolean) {
+        genHeadView(paperInfo, question)
         if (isRememberMode) {
-            setRememberStatus(question)
+            setRememberStatus(paperInfo, question)
             return
         }
         if (question.realAnswer != null) {
-            setAnsweredStatus(question)
+            setAnsweredStatus(paperInfo, question)
         } else {
-            setInitStatus(question)
-        }
-
-        ContextHolder.currentActivity()?.let {
-            LiveEventBus.get(EventKey.REFRESH_QUESTION, Int::class.java)
-                .observe(it as LifecycleOwner) {
-                    if (isRememberMode) {
-                        return@observe
-                    }
-                    setInitStatus(question)
-                }
+            setInitStatus(paperInfo, question)
         }
     }
 
     @SuppressLint("SetTextI18n")
-    open fun genHeadView(question: QuestionDetail, bookTitle: String, paperTitle: String) {
+    open fun genHeadView(paperInfo: PaperInfo, question: QuestionDetail) {
         val headView = itemView.findViewById<TextView>(R.id.question_info)
-        headView.text = "$bookTitle-$paperTitle" + " 第" + (adapterPosition + 1) + "题"
+        headView.text = "第" + (adapterPosition + 1) + "题"
     }
 
-    open fun setInitStatus(question: QuestionDetail) {
-        genOptionsView(question)
-        genActionView(question)
-        hideAnswer(question)
+    open fun setInitStatus(paperInfo: PaperInfo, question: QuestionDetail) {
+        genBodyView(paperInfo, question)
+        genOptionsView(paperInfo, question)
+        genActionView(paperInfo, question)
+        hideAnswer(paperInfo, question)
     }
 
-    open fun setAnsweredStatus(question: QuestionDetail) {
-        genBodyView(question)
-        genAnsweredOptionsView(question)
-        genAnswerView(question)
-        showAnswer(question)
+    open fun setAnsweredStatus(paperInfo: PaperInfo, question: QuestionDetail) {
+        genBodyView(paperInfo, question)
+        genAnsweredOptionsView(paperInfo, question)
+        genAnswerView(paperInfo, question)
+        showAnswer(paperInfo, question)
     }
 
-    open fun setRememberStatus(question: QuestionDetail) {
-        genBodyView(question)
-        genRememberOptionsView(question)
-        showAnswer(question)
+    open fun setRememberStatus(paperInfo: PaperInfo, question: QuestionDetail) {
+        genBodyView(paperInfo, question)
+        genRememberOptionsView(paperInfo, question)
+        showAnswer(paperInfo, question)
     }
     @SuppressLint("NewApi")
-    open fun genBodyView(question: QuestionDetail) {
+    open fun genBodyView(paperInfo: PaperInfo, question: QuestionDetail) {
         val body = itemView.findViewById<ElementsView>(R.id.body)
-        body.setElements(question.body, NameUtils.getTypeName(question.type), ElementViewListener())
+        body.setElements(paperInfo, question.body, NameUtils.getTypeName(question.type), ElementViewListener())
     }
 
-    abstract fun genOptionsView(question: QuestionDetail)
+    abstract fun genOptionsView(paperInfo: PaperInfo, question: QuestionDetail)
 
-    abstract fun genAnsweredOptionsView(question: QuestionDetail)
+    abstract fun genAnsweredOptionsView(paperInfo: PaperInfo, question: QuestionDetail)
 
-    abstract fun genRememberOptionsView(question: QuestionDetail)
+    abstract fun genRememberOptionsView(paperInfo: PaperInfo, question: QuestionDetail)
 
-    open fun genAnswerView(question: QuestionDetail) {
+    open fun genAnswerView(paperInfo: PaperInfo, question: QuestionDetail) {
         val answerCardView = itemView.findViewById<AnswerCardView>(R.id.answer)
-        answerCardView.setElements(question.answer,
+        answerCardView.setElements(paperInfo, question.answer,
             "",
             question.realAnswer,
             ElementViewListener())
     }
 
-    abstract fun genActionView(question: QuestionDetail)
+    abstract fun genActionView(paperInfo: PaperInfo, question: QuestionDetail)
 
-    open fun showAnswer(question: QuestionDetail) {
-        genAnswerView(question)
+    open fun showAnswer(paperInfo: PaperInfo, question: QuestionDetail) {
+        genAnswerView(paperInfo, question)
         itemView.findViewById<View>(R.id.answer_container).visibility = View.VISIBLE
     }
 
-    open fun hideAnswer(question: QuestionDetail) {
+    open fun hideAnswer(paperInfo: PaperInfo, question: QuestionDetail) {
         itemView.findViewById<View>(R.id.answer_container).visibility = View.GONE
     }
 
-    fun getAnswer(question: QuestionDetail): String {
+    fun getAnswer(paperInfo: PaperInfo, question: QuestionDetail): String {
         if (question.answer.isNotEmpty() && question.answer[0].elementType == Element.TEXT) {
             return question.answer[0].content
         }

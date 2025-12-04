@@ -6,8 +6,6 @@ import com.gorden.dayexam.repository.DataRepository
 import com.gorden.dayexam.repository.model.Element
 import com.gorden.dayexam.repository.model.OptionItems
 import com.gorden.dayexam.repository.model.QuestionDetail
-import com.gorden.dayexam.utils.NameUtils
-import com.gorden.dayexam.utils.PaperContext
 import com.google.gson.Gson
 import org.apache.poi.xwpf.usermodel.XWPFDocument
 import org.apache.poi.xwpf.usermodel.XWPFParagraph
@@ -82,7 +80,6 @@ object PaperParser {
      * @return Pair of (questions list, image hash to data map)
      */
     private fun parseDocument(filePath: String): Pair<List<QuestionDetail>, Map<String, ByteArray>> {
-        val timeStamp = System.currentTimeMillis()
         val imageHashToData = mutableMapOf<String, ByteArray>()
         val questionDetails = mutableListOf<QuestionDetail>()
         
@@ -92,7 +89,7 @@ object PaperParser {
                 val splitTitleSeparatorResult = splitByTitleSeparator(document.paragraphs)
                 splitTitleSeparatorResult.forEach { questionParas ->
                     val questionUnits = splitBySeparator(questionParas)
-                    val question = parseParagraphToQuestion(questionUnits, timeStamp, imageHashToData)
+                    val question = parseParagraphToQuestion(questionUnits, imageHashToData)
                     question?.let {
                         questionDetails.add(question)
                     }
@@ -112,6 +109,15 @@ object PaperParser {
     private fun generateHash(input: String): String {
         val md = MessageDigest.getInstance("MD5")
         val digest = md.digest(input.toByteArray())
+        return digest.joinToString("") { "%02x".format(it) }
+    }
+
+    /**
+     * Generate a hash string from the input string
+     */
+    private fun generateHash(input: ByteArray): String {
+        val md = MessageDigest.getInstance("MD5")
+        val digest = md.digest(input)
         return digest.joinToString("") { "%02x".format(it) }
     }
 
@@ -153,7 +159,6 @@ object PaperParser {
 
     private fun parseParagraphToQuestion(
         paras: List<List<XWPFParagraph>>,
-        timeStamp: Long,
         imageHashToData: MutableMap<String, ByteArray>
     ): QuestionDetail? {
         var body = listOf<Element>()
@@ -167,15 +172,15 @@ object PaperParser {
                 when {
                     isQuestionSeparator(text) -> {
                         type = parseType(it)
-                        body = parseParagraphToElement(it, timeStamp, imageHashToData)
+                        body = parseParagraphToElement(it, imageHashToData)
                     }
                     text.startsWith(ParserConstants.OPTION_SEPARATOR) ||
                             text.lowercase().startsWith(ParserConstants.OPTION_SEPARATOR_EN) -> {
-                        options.add(OptionItems(parseParagraphToElement(it, timeStamp, imageHashToData)))
+                        options.add(OptionItems(parseParagraphToElement(it, imageHashToData)))
                     }
                     text.startsWith(ParserConstants.ANSWER_SEPARATOR) ||
                             text.lowercase().startsWith(ParserConstants.ANSWER_SEPARATOR_EN) -> {
-                        answer = parseParagraphToElement(it, timeStamp, imageHashToData)
+                        answer = parseParagraphToElement(it, imageHashToData)
                     }
                 }
             }
@@ -249,11 +254,9 @@ object PaperParser {
 
     private fun parseParagraphToElement(
         paras: List<XWPFParagraph>,
-        timeStamp: Long,
         imageHashToData: MutableMap<String, ByteArray>
     ): List<Element> {
         val result = mutableListOf<Element>()
-        var elementPosition = 1
         paras.filter {
             !it.text.startsWith(ParserConstants.SEPARATOR)
         }.forEach {
@@ -264,20 +267,20 @@ object PaperParser {
                 }
                 if (run.embeddedPictures.isNotEmpty()) {
                     if (builder.toString().isNotEmpty()) {
-                        val element = Element(Element.TEXT, builder.toString(), 0, elementPosition++)
+                        val element = Element(Element.TEXT, builder.toString())
                         result.add(element)
                         builder.clear()
                     }
                     run.embeddedPictures.forEach { picture ->
-                        val imageHash = NameUtils.generateImageName(picture.pictureData.fileName, timeStamp)
+                        val imageHash = generateHash(picture.pictureData.data)
                         imageHashToData[imageHash] = picture.pictureData.data
                         // Store just the hash in content, path will be constructed when saving
-                        val element = Element(Element.PICTURE, imageHash, 0, elementPosition++, imageHash)
+                        val element = Element(Element.PICTURE, imageHash)
                         result.add(element)
                     }
                 }
                 if (index == it.runs.size - 1 && builder.toString().isNotEmpty()) {
-                    val element = Element(Element.TEXT, builder.toString(), 0, elementPosition++)
+                    val element = Element(Element.TEXT, builder.toString())
                     result.add(element)
                 }
             }

@@ -26,9 +26,4 @@ object NameUtils {
         }
         return ""
     }
-
-    fun generateImageName(oriName: String, timeStamp: Long): String {
-        val res: Long = 71L + timeStamp + oriName.hashCode()
-        return res.toString(16)
-    }
 }

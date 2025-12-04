@@ -6,6 +6,7 @@ import android.widget.LinearLayout
 import android.widget.Toast
 import androidx.core.view.children
 import com.gorden.dayexam.R
+import com.gorden.dayexam.db.entity.PaperInfo
 import com.gorden.dayexam.db.entity.StudyRecord
 import com.gorden.dayexam.repository.model.QuestionDetail
 import com.gorden.dayexam.repository.model.RealAnswer
@@ -19,13 +20,13 @@ class MultipleChoiceViewHolder(itemView: View): BaseQuestionViewHolder(itemView)
 
     private val optionContainer: LinearLayout = itemView.findViewById(R.id.options_container)
 
-    override fun genOptionsView(question: QuestionDetail) {
+    override fun genOptionsView(paperInfo: PaperInfo, question: QuestionDetail) {
         optionContainer.removeAllViews()
         question.options.forEachIndexed { index, optionItemWithElement ->
             val optionTag = (index + 'A'.toInt()).toChar()
             val optionCardView = OptionCardView(itemView.context)
             optionCardView.setBackgroundColor(itemView.context.getColor(R.color.option_default_color))
-            optionCardView.setContent(optionItemWithElement.element, optionTag.toString(), ElementViewListener())
+            optionCardView.setContent(paperInfo, optionItemWithElement.element, optionTag.toString(), ElementViewListener())
             val layoutParams = LinearLayout.LayoutParams(
                 LinearLayout.LayoutParams.MATCH_PARENT,
                 LinearLayout.LayoutParams.WRAP_CONTENT)
@@ -51,17 +52,17 @@ class MultipleChoiceViewHolder(itemView: View): BaseQuestionViewHolder(itemView)
         }
     }
 
-    override fun setInitStatus(question: QuestionDetail) {
-        super.setInitStatus(question)
+    override fun setInitStatus(paperInfo: PaperInfo, question: QuestionDetail) {
+        super.setInitStatus(paperInfo, question)
         question.realAnswer = null
     }
 
-    override fun genAnsweredOptionsView(question: QuestionDetail) {
+    override fun genAnsweredOptionsView(paperInfo: PaperInfo, question: QuestionDetail) {
         val selectedOptions = question.realAnswer?.answer?.toCharArray()
         if (selectedOptions == null || selectedOptions?.size == 0) {
             return
         }
-        val answer = getAnswer(question)
+        val answer = getAnswer(paperInfo, question)
         val context = itemView.context
         if (answer.isNullOrEmpty()) {
             Toast.makeText(
@@ -91,7 +92,7 @@ class MultipleChoiceViewHolder(itemView: View): BaseQuestionViewHolder(itemView)
         }
     }
 
-    override fun genRememberOptionsView(question: QuestionDetail) {
+    override fun genRememberOptionsView(paperInfo: PaperInfo, question: QuestionDetail) {
         optionContainer.removeAllViews()
         var correctAnswer = ""
         if (question.answer.isNotEmpty()) {
@@ -105,7 +106,7 @@ class MultipleChoiceViewHolder(itemView: View): BaseQuestionViewHolder(itemView)
             } else {
                 optionCardView.setBackgroundColor(itemView.context.getColor(R.color.option_default_color))
             }
-            optionCardView.setContent(optionItemWithElement.element, optionTag.toString(), ElementViewListener())
+            optionCardView.setContent(paperInfo, optionItemWithElement.element, optionTag.toString(), ElementViewListener())
             val layoutParams = LinearLayout.LayoutParams(
                 LinearLayout.LayoutParams.MATCH_PARENT,
                 LinearLayout.LayoutParams.WRAP_CONTENT)
@@ -114,7 +115,7 @@ class MultipleChoiceViewHolder(itemView: View): BaseQuestionViewHolder(itemView)
         }
     }
 
-    override fun genActionView(question: QuestionDetail) {
+    override fun genActionView(paperInfo: PaperInfo, question: QuestionDetail) {
         val action = itemView.findViewById<View>(R.id.action)
         action.visibility = View.VISIBLE
         val context = itemView.context
@@ -127,7 +128,7 @@ class MultipleChoiceViewHolder(itemView: View): BaseQuestionViewHolder(itemView)
                 return@setOnClickListener
             }
             action.visibility = View.GONE
-            setAnsweredStatus(question)
+            setAnsweredStatus(paperInfo, question)
             val isCorrect = isCorrect(question)
             LiveEventBus.get(EventKey.ANSWER_EVENT, EventKey.AnswerEventModel::class.java)
                 .post(EventKey.AnswerEventModel(
@@ -147,8 +148,8 @@ class MultipleChoiceViewHolder(itemView: View): BaseQuestionViewHolder(itemView)
         return TextUtils.equals(standardAnswer, realAnswer)
     }
 
-    override fun setAnsweredStatus(question: QuestionDetail) {
-        super.setAnsweredStatus(question)
+    override fun setAnsweredStatus(paperInfo: PaperInfo, question: QuestionDetail) {
+        super.setAnsweredStatus(paperInfo, question)
         optionContainer.children.forEach {
             it.setOnClickListener(null)
         }

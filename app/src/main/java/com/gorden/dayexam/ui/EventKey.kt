@@ -13,8 +13,6 @@ class EventKey {
         const val PAPER_CONTAINER_CLICKED = "3"
 
         // FloatingActionButton点击
-        const val REFRESH_QUESTION = "100"
-        // FloatingActionButton点击
         const val FAVORITE_QUESTION = "101"
         // 点击回答问题事件
         const val ANSWER_EVENT = "200"
