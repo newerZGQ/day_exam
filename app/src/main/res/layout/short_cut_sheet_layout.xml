@@ -201,6 +201,30 @@
 
         </androidx.constraintlayout.widget.ConstraintLayout>
 
+        <LinearLayout
+            android:id="@+id/exit_study_container"
+            style="@style/SelectableItemBackground"
+            android:orientation="horizontal"
+            android:gravity="center"
+            android:paddingTop="12dp"
+            android:paddingBottom="12dp"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
+            <ImageView
+                android:layout_marginStart="16dp"
+                android:src="@drawable/ic_baseline_restart_alt_24"
+                android:layout_width="24dp"
+                android:layout_height="24dp"/>
+            <TextView
+                android:layout_marginStart="8dp"
+                android:fontFamily="@font/xwwk"
+                android:textSize="16sp"
+                android:textColor="#FF5252"
+                android:text="退出学习"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"/>
+        </LinearLayout>
+
     </LinearLayout>
 
 </androidx.coordinatorlayout.widget.CoordinatorLayout>

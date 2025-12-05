@@ -44,6 +44,7 @@ class ShortCutSheetDialog : BottomSheetDialogFragment() {
         initCopyQuestion()
         initSearchAction()
         initKeepScreenSwitch()
+        initExitStudy()
         return rootView
     }
 
@@ -96,6 +97,18 @@ class ShortCutSheetDialog : BottomSheetDialogFragment() {
         }
         binding.keepScreenContentContainer.setOnClickListener {
             binding.keepScreenLightSwitch.isChecked = !binding.keepScreenLightSwitch.isChecked
+        }
+    }
+
+    private fun initExitStudy() {
+        binding.exitStudyContainer.setOnClickListener {
+            // 设置偏好，主页展示欢迎页
+            SharedPreferenceUtil.setBoolean("home_show_welcome", true)
+            // 清除当前试卷，使 HomeFragment 能响应显示欢迎页
+            DataRepository.updateCurPaperId(-1)
+            // 通知 HomeFragment 切换视图
+            LiveEventBus.get(EventKey.EXIT_STUDY, Boolean::class.java).post(true)
+            dismiss()
         }
     }
 

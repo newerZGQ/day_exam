@@ -12,6 +12,7 @@ import androidx.viewpager2.widget.ViewPager2
 import androidx.viewpager2.widget.ViewPager2.ORIENTATION_HORIZONTAL
 import com.gorden.dayexam.R
 import com.gorden.dayexam.databinding.FragmentHomeLayoutBinding
+import com.gorden.dayexam.utils.SharedPreferenceUtil
 import com.gorden.dayexam.db.entity.PaperInfo
 import com.gorden.dayexam.db.entity.StudyRecord
 import com.gorden.dayexam.repository.DataRepository
@@ -73,6 +74,16 @@ class HomeFragment : Fragment() {
         questionPager.orientation = ORIENTATION_HORIZONTAL
     }
 
+    private fun showWelcome() {
+        binding.questionPager.visibility = View.GONE
+        binding.welcomeContainer.visibility = View.VISIBLE
+    }
+
+    private fun hideWelcome() {
+        binding.welcomeContainer.visibility = View.GONE
+        binding.questionPager.visibility = View.VISIBLE
+    }
+
     private fun initData() {
         startLoad()
     }
@@ -109,6 +120,14 @@ class HomeFragment : Fragment() {
         DataRepository.getCurPaperId().observe(viewLifecycleOwner) {
             startLoad()
         }
+        LiveEventBus.get(EventKey.EXIT_STUDY, Boolean::class.java)
+            .observe(viewLifecycleOwner) { exited ->
+                if (exited == true) {
+                    showWelcome()
+                } else {
+                    hideWelcome()
+                }
+            }
     }
     
     /**
@@ -116,6 +135,12 @@ class HomeFragment : Fragment() {
      */
     private fun startLoad() {
         viewLifecycleOwner.lifecycleScope.launch {
+            // 如果已设置退出学习，则展示欢迎页
+            val showWelcome = SharedPreferenceUtil.getBoolean("home_show_welcome", false)
+            if (showWelcome) {
+                showWelcome()
+                return@launch
+            }
             kotlin.runCatching {
                 val paperDetail = withContext(Dispatchers.IO) {
                     val paperId = DataRepository.getCurPaperId().value ?: return@withContext null

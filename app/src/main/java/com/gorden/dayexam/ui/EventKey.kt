@@ -21,6 +21,8 @@ class EventKey {
 
         // short_cut_sheet页面事件
         const val SEARCH_CLICKED = "500"
+        // 退出学习，首页展示欢迎页
+        const val EXIT_STUDY = "501"
 
         // search_sheet事件
         const val SEARCH_RESULT_ITEM_CLICK = "600"

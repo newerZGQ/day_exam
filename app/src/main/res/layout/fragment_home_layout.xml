@@ -11,4 +11,21 @@
         android:id="@+id/questionPager"
         android:layout_width="match_parent"
         android:layout_height="match_parent"/>
+
+    <LinearLayout
+        android:id="@+id/welcome_container"
+        android:orientation="vertical"
+        android:gravity="center"
+        android:visibility="gone"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+        <TextView
+            android:id="@+id/welcome_text"
+            android:text="欢迎使用 DayExam\n请开始您的学习或从侧边菜单选择试卷"
+            android:textColor="@color/font_common_color"
+            android:textSize="18sp"
+            android:gravity="center"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"/>
+    </LinearLayout>
 </androidx.constraintlayout.widget.ConstraintLayout>
