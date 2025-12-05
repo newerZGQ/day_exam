@@ -1,72 +1,52 @@
 package com.gorden.dayexam.repository
 
+import com.gorden.dayexam.ContextHolder
 import com.gorden.dayexam.repository.model.QuestionDetail
 import com.google.gson.Gson
 import com.google.gson.reflect.TypeToken
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 import okhttp3.MediaType.Companion.toMediaType
-import okhttp3.OkHttpClient
-import okhttp3.Request
-import okhttp3.RequestBody.Companion.toRequestBody
-import java.io.IOException
+	// prompt 从 assets 加载以便运行时编辑；提供回退模板
+	private const val PROMPT_ASSET_FILE = "question_template.json"
 
-object AiRepository {
-	private val client = OkHttpClient()
-	private val gson = Gson()
+	private val fallbackTemplate = """
+		[
+		  {"type":1,"body":[{"elementType":0,"content":"示例题干"}],"options":[],"answer":[{"elementType":0,"content":"示例答案"}],"realAnswer":{"answer":"A"}}
+		]
+	""".trimIndent().replace("\n", " ")
 
-	// 可单独编辑的 prompt 变量（用于 Gemini）
-	// 指示模型输出与项目中 `QuestionDetail` 数据类完全匹配的 JSON。
-	// QuestionDetail 字段说明：
-	// - type: 整数 (例如 1 表示单选)
-	// - body: 数组，元素为 Element ({"elementType":0,"content":"..."})
-	// - options: 数组，每项为 OptionItems {"element": [ Element, ... ]}
-	// - answer: 数组，包含正确答案表示为 Element 列表（与 body 相同结构）
-	// - realAnswer: 可选对象 {"answer": "A"} 或 null
-	// 请严格使用这些字段名并只返回 JSON 数组（不要返回多余的说明文字）。示例只需 3 个 items 即可。
-	private val geminiPrompt = """
-		Output a JSON array of objects that exactly match the following Kotlin data structure:
-		QuestionDetail {
-		  type: Int,
-		  body: List<Element> where Element = {"elementType": Int, "content": String},
-		  options: List<OptionItems> where OptionItems = {"element": List<Element>},
-		  answer: List<Element>,
-		  realAnswer: {"answer": String} | null
+	private fun loadTemplate(): String {
+		return try {
+			ContextHolder.application.assets.open(PROMPT_ASSET_FILE).use { it.readBytes().toString(Charsets.UTF_8) }
+		} catch (e: Exception) {
+			e.printStackTrace()
+			fallbackTemplate
 		}
-		Use the exact field names: "type", "body", "options", "answer", "realAnswer".
-		Return only the JSON array (no surrounding text). Provide 3 example items.
-	""".trimIndent().replace("\n", " ")
+	}
 
-	// Deepseek 使用的 prompt（可按需修改），与 Gemini prompt 保持一致的结构要求
-	private val deepseekPrompt = """
-		Output a JSON array of objects that exactly match the Kotlin data structure QuestionDetail:
-		- type: Int
-		- body: List of Element objects like {"elementType": Int, "content": String}
-		- options: List of OptionItems like {"element": [ Element, ... ]}
-		- answer: List of Element objects (the correct answer as Elements)
-		- realAnswer: either {"answer": "..."} or null
-		Use only the field names: "type","body","options","answer","realAnswer" and return only the JSON array.
-		Provide 3 example items.
-	""".trimIndent().replace("\n", " ")
-    // 单一可编辑的 prompt 变量（用于 Gemini 与 Deepseek）
-    // 指示模型输出与项目中 `QuestionDetail` 数据类完全匹配的 JSON。
-    // QuestionDetail 字段说明：
-    // - type: 整数
-    // - body: 数组，元素为 Element ({"elementType":Int,"content":String})
-    // - options: 数组，每项为 OptionItems {"element": [ Element, ... ]}
-    // - answer: 数组，包含正确答案表示为 Element 列表
-    // - realAnswer: 可选对象 {"answer": String} 或 null
-    // 请严格使用这些字段名并只返回 JSON 数组（不要返回多余的说明文字）。示例只需 3 个 items 即可。
-    private val questionDetailPrompt = """
-        Output a JSON array of objects that exactly match the Kotlin data structure QuestionDetail:
-        - type: Int
-        - body: List of Element objects like {"elementType": Int, "content": String}
-        - options: List of OptionItems like {"element": [ Element, ... ]}
-        - answer: List of Element objects
-        - realAnswer: either {"answer": "..."} or null
-        Use only the field names: "type","body","options","answer","realAnswer" and return only the JSON array.
-        Provide 3 example items.
-    """.trimIndent().replace("\n", " ")
+	private fun buildPrompt(): String {
+		val template = loadTemplate()
+		return StringBuilder().apply {
+			append("请严格返回与下面示例结构一致的 JSON 数组，仅返回 JSON 数组（不要返回任何说明文字）。示例模板：\n")
+			append(template)
+			append("\n\n字段说明：\n")
+			append("- type: 题型整数标识，例如 1/2/3/4/5；\n")
+			append("- body: 题干，List<Element>，Element = {\\\"elementType\\\": Int, \\\"content\\\": String}，elementType=0 文本，=1 图片等；\n")
+			append("- options: 可选项，List<OptionItems>，OptionItems = {\\\"element\\\": List<Element>}；\n")
+			append("- answer: 正确答案，用 Element 列表表示（与 body 中 Element 结构相同）；\n")
+			append("- realAnswer: 可选，{\\\"answer\\\": 字符串} 表示简洁答案，如 A/B/BD，或 null 。\n")
+		}.toString()
+	}
+							{"element":[{"elementType":0,"content":"A. 4"}]},
+							{"element":[{"elementType":0,"content":"B. 7"}]},
+							{"element":[{"elementType":0,"content":"C. 9"}]}
+						],
+						"answer": [{"elementType":0,"content":"B. 7"}],
+						"realAnswer": {"answer":"B"}
+					}
+				]
+		""".trimIndent().replace("\n", " ")
 
 	/**
 	 * 调用 Gemini / Generative Language REST API，返回解析后的 List<QuestionDetail>
@@ -74,7 +54,13 @@ object AiRepository {
 	suspend fun callGeminiApi(apiKey: String): List<QuestionDetail> = withContext(Dispatchers.IO) {
 		val url = "https://generativelanguage.googleapis.com/v1beta2/models/text-bison-001:generate?key=$apiKey"
 
-		val requestJson = """{"prompt":{"text":"$questionDetailPrompt"},"temperature":0.0,"max_output_tokens":60000}"""
+		val promptText = buildPrompt()
+		val requestMap = mapOf(
+			"prompt" to mapOf("text" to promptText),
+			"temperature" to 0.0,
+			"max_output_tokens" to 60000
+		)
+		val requestJson = gson.toJson(requestMap)
 
 		val mediaType = "application/json; charset=utf-8".toMediaType()
 		val body = requestJson.toRequestBody(mediaType)
@@ -111,7 +97,13 @@ object AiRepository {
 		val url = "https://api.deepseek.ai/v1/generate"
 
 		// Deepseek 请求体示例（很多 deepseek 风格的 API 可能使用 api_key 或 Authorization header）
-		val requestJson = """{"api_key":"$apiKey","prompt":"$questionDetailPrompt","max_tokens":60000}"""
+		val promptText = buildPrompt()
+		val requestMap = mapOf(
+			"api_key" to apiKey,
+			"prompt" to promptText,
+			"max_tokens" to 60000
+		)
+		val requestJson = gson.toJson(requestMap)
 
 		val mediaType = "application/json; charset=utf-8".toMediaType()
 		val body = requestJson.toRequestBody(mediaType)
