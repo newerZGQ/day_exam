@@ -22,8 +22,8 @@ object DataRepository {
         this.mDatabase = mDatabase
         val paperId = SharedPreferenceUtil.getInt("cur_paper_id", -1)
         val questionId = SharedPreferenceUtil.getInt("cur_question_id", -1)
-        curPaperIdLiveData.postValue(paperId)
-        curQuestionIdLiveData.postValue(questionId)
+        curPaperIdLiveData.value = paperId
+        curQuestionIdLiveData.value = questionId
     }
 
     fun updateCurPaperId(paperId: Int) {
