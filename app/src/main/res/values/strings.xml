@@ -148,6 +148,13 @@
     <string name="bilibili_video_help_summary">up主: 上帝用左手</string>
 
     <string name="demo_template_key">demo_template_key</string>
+    <string name="gemini_api_key">gemini_api_key</string>
+    <string name="gemini_api_title">Gemini api key</string>
+    <string name="gemini_api_summary">未设置</string>
+
+    <string name="deepseek_api_key">deepseek_api_key</string>
+    <string name="deepseek_api_title">Deepseek api key</string>
+    <string name="deepseek_api_summary">未设置</string>
     <string name="demo_template_title">文档模板</string>
     <string name="demo_template_summary">用于解析的word文档模板，点击下载</string>
     <string name="demo_template_link">https://docs.google.com/document/d/1sgdJn-r1nEbq3Ok14oxdm4MEadWQvnoi/edit?usp=sharing&amp;ouid=116258016900543803615&amp;rtpof=true&amp;sd=true</string>

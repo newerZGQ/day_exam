@@ -18,4 +18,14 @@
         app:summary="@string/demo_template_title"
         app:title="@string/demo_template_summary"/>
 
+    <com.gorden.dayexam.ui.settings.preference.CustomPreference
+        app:key="@string/gemini_api_key"
+        app:summary="@string/gemini_api_summary"
+        app:title="@string/gemini_api_title"/>
+
+    <com.gorden.dayexam.ui.settings.preference.CustomPreference
+        app:key="@string/deepseek_api_key"
+        app:summary="@string/deepseek_api_summary"
+        app:title="@string/deepseek_api_title"/>
+
 </PreferenceScreen>
