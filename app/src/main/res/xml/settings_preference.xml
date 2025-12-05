@@ -9,10 +9,6 @@
         app:key="@string/privacy_key"
         app:summary="@string/privacy_summary"
         app:title="@string/privacy_title"/>
-<!--    <com.gorden.dayexam.ui.settings.preference.CustomPreference-->
-<!--        app:key="@string/bilibili_video_help_key"-->
-<!--        app:summary="@string/bilibili_video_help_summary"-->
-<!--        app:title="@string/bilibili_video_help_title"/>-->
     <com.gorden.dayexam.ui.settings.preference.CustomPreference
         app:key="@string/demo_template_key"
         app:summary="@string/demo_template_title"

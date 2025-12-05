@@ -28,12 +28,6 @@ class SettingsFragment: PreferenceFragmentCompat() {
                 }).show()
             return@setOnPreferenceClickListener true
         }
-//        findPreference<Preference>(resources.getString(R.string.bilibili_video_help_key))?.setOnPreferenceClickListener {
-//            val uri = Uri.parse("")
-//            val intent = Intent(Intent.ACTION_VIEW, uri)
-//            startActivity(intent)
-//            return@setOnPreferenceClickListener true
-//        }
         findPreference<Preference>(resources.getString(R.string.demo_template_key))?.setOnPreferenceClickListener {
             val uri = Uri.parse(resources.getString(R.string.demo_template_link))
             val intent = Intent(Intent.ACTION_VIEW, uri)
