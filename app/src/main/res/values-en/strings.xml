@@ -175,4 +175,8 @@
     <string name="total_study_times">study:</string>
     <string name="times"></string>
 
+    <string name="exit_study_key">home_show_welcome</string>
+    <string name="exit_study_title">Exit Study</string>
+    <string name="exit_study_summary">Show welcome page on next launch</string>
+
 </resources>
