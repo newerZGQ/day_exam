@@ -5,6 +5,7 @@ import android.content.Intent
 import android.os.Bundle
 import android.widget.LinearLayout
 import androidx.lifecycle.ViewModelProvider
+import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.DividerItemDecoration
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.gorden.dayexam.BaseActivity
@@ -13,6 +14,7 @@ import com.gorden.dayexam.R
 import com.gorden.dayexam.databinding.ActivityFastQuestionSelectBinding
 import com.gorden.dayexam.ui.EventKey
 import com.jeremyliao.liveeventbus.LiveEventBus
+import kotlinx.coroutines.launch
 
 class FastQuestionSelectActivity: BaseActivity() {
 
@@ -36,15 +38,12 @@ class FastQuestionSelectActivity: BaseActivity() {
         currentPosition = intent.getIntExtra(CURRENT_POSITION, 0)
         initList()
         registerAction()
-        viewModel.currentQuestionDetail(paperId).observe(this, {
-            if (it == null) {
-                return@observe
-            }
-            adapter?.setData(it, currentPosition)
+        lifecycleScope.launch {
+            val questions = viewModel.currentQuestionDetail(paperId)
+            adapter?.setData(questions, currentPosition)
             (binding.questionList.layoutManager as LinearLayoutManager).scrollToPosition(currentPosition)
             binding.toolbar.title = "要改"
-        })
-
+        }
     }
 
     private fun initToolbar() {

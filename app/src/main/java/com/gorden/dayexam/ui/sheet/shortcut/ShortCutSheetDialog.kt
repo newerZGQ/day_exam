@@ -14,6 +14,7 @@ import com.gorden.dayexam.R
 import com.gorden.dayexam.db.entity.Config
 import com.gorden.dayexam.databinding.ShortCutSheetLayoutBinding
 import com.gorden.dayexam.repository.DataRepository
+import com.gorden.dayexam.utils.SharedPreferenceUtil
 import com.gorden.dayexam.ui.EventKey
 import com.gorden.dayexam.ui.action.ScreenShotHomeQuestionAction
 import com.gorden.dayexam.ui.settings.SettingsActivity
@@ -42,6 +43,8 @@ class ShortCutSheetDialog : BottomSheetDialogFragment() {
         }
         initCopyQuestion()
         initSearchAction()
+        initKeepScreenSwitch()
+        initExitStudy()
         return rootView
     }
 
@@ -81,6 +84,30 @@ class ShortCutSheetDialog : BottomSheetDialogFragment() {
         binding.toSetting.setOnClickListener {
             val intent = Intent(requireActivity(), SettingsActivity::class.java)
             startActivity(intent)
+            dismiss()
+        }
+    }
+
+    private fun initKeepScreenSwitch() {
+        val key = requireContext().resources.getString(R.string.keep_screen_light_key)
+        val opened = SharedPreferenceUtil.getBoolean(key, false)
+        binding.keepScreenLightSwitch.isChecked = opened
+        binding.keepScreenLightSwitch.setOnCheckedChangeListener { _, b ->
+            SharedPreferenceUtil.setBoolean(key, b)
+        }
+        binding.keepScreenContentContainer.setOnClickListener {
+            binding.keepScreenLightSwitch.isChecked = !binding.keepScreenLightSwitch.isChecked
+        }
+    }
+
+    private fun initExitStudy() {
+        binding.exitStudyContainer.setOnClickListener {
+            // 设置偏好，主页展示欢迎页
+            SharedPreferenceUtil.setBoolean("home_show_welcome", true)
+            // 清除当前试卷，使 HomeFragment 能响应显示欢迎页
+            DataRepository.updateCurPaperId(-1)
+            // 通知 HomeFragment 切换视图
+            LiveEventBus.get(EventKey.EXIT_STUDY, Boolean::class.java).post(true)
             dismiss()
         }
     }

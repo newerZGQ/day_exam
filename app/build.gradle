@@ -94,4 +94,6 @@ dependencies {
     implementation "androidx.lifecycle:lifecycle-runtime-ktx:2.4.0"
 
     // 引导
+    // HTTP client for AI calls
+    implementation 'com.squareup.okhttp3:okhttp:4.11.0'
 }

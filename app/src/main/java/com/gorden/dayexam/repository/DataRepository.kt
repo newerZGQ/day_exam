@@ -3,6 +3,7 @@ package com.gorden.dayexam.repository
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.Transformations
+import com.gorden.dayexam.ContextHolder
 import com.gorden.dayexam.db.AppDatabase
 import com.gorden.dayexam.db.converter.DateConverter
 import com.gorden.dayexam.db.entity.*
@@ -10,6 +11,9 @@ import com.gorden.dayexam.db.entity.PaperInfo
 import com.gorden.dayexam.executor.AppExecutors
 import com.gorden.dayexam.repository.model.*
 import com.gorden.dayexam.utils.SharedPreferenceUtil
+import com.google.gson.Gson
+import com.google.gson.reflect.TypeToken
+import java.io.File
 import java.util.*
 
 object DataRepository {
@@ -147,6 +151,38 @@ object DataRepository {
                 config.rememberMode = opened
                 mDatabase.configDao().update(config)
             }
+        }
+    }
+
+    /**
+     * 问题相关
+     */
+    fun getQuestionsByPaperId(paperId: Int): List<QuestionDetail> {
+        val paperInfo = getPaperById(paperId) ?: return emptyList()
+        return getQuestionsFromCache(paperInfo.hash)
+    }
+
+    fun getPaperDetailById(paperId: Int): PaperDetail? {
+        val paperInfo = getPaperById(paperId) ?: return null
+        val questions = getQuestionsFromCache(paperInfo.hash)
+        if (questions.isEmpty()) return null
+        return PaperDetail(paperInfo, PaperStudyInfo(0, null), questions)
+    }
+
+    private fun getQuestionsFromCache(paperHash: String): List<QuestionDetail> {
+        return try {
+            val jsonFile = File(ContextHolder.application.cacheDir, "$paperHash/questions.json")
+            if (!jsonFile.exists()) {
+                emptyList()
+            } else {
+                val jsonString = jsonFile.readText()
+                val gson = Gson()
+                val type = object : TypeToken<List<QuestionDetail>>() {}.type
+                gson.fromJson(jsonString, type) ?: emptyList()
+            }
+        } catch (e: Exception) {
+            e.printStackTrace()
+            emptyList()
         }
     }
 
