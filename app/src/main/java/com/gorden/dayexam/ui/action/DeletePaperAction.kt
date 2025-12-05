@@ -4,7 +4,7 @@ import android.content.Context
 import com.gorden.dayexam.R
 import com.gorden.dayexam.db.entity.PaperInfo
 import com.gorden.dayexam.repository.DataRepository
-import com.gorden.dayexam.repository.IsInRecycleBinCallback
+
 import com.gorden.dayexam.ui.dialog.EditTextDialog
 
 class DeletePaperAction(val context: Context, val paperInfo: PaperInfo): Action {

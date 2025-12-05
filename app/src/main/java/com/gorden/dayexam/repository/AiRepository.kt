@@ -7,21 +7,25 @@ import com.google.gson.reflect.TypeToken
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 import okhttp3.MediaType.Companion.toMediaType
+import okhttp3.Request
+import okhttp3.RequestBody.Companion.toRequestBody
+import java.io.IOException
+
+import okhttp3.OkHttpClient
+
+object AiRepository {
 	// prompt 从 assets 加载以便运行时编辑；提供回退模板
 	private const val PROMPT_ASSET_FILE = "question_template.json"
 
-	private val fallbackTemplate = """
-		[
-		  {"type":1,"body":[{"elementType":0,"content":"示例题干"}],"options":[],"answer":[{"elementType":0,"content":"示例答案"}],"realAnswer":{"answer":"A"}}
-		]
-	""".trimIndent().replace("\n", " ")
+	private val gson = Gson()
+	private val client = OkHttpClient()
 
 	private fun loadTemplate(): String {
 		return try {
 			ContextHolder.application.assets.open(PROMPT_ASSET_FILE).use { it.readBytes().toString(Charsets.UTF_8) }
 		} catch (e: Exception) {
 			e.printStackTrace()
-			fallbackTemplate
+			return ""
 		}
 	}
 
@@ -38,15 +42,6 @@ import okhttp3.MediaType.Companion.toMediaType
 			append("- realAnswer: 可选，{\\\"answer\\\": 字符串} 表示简洁答案，如 A/B/BD，或 null 。\n")
 		}.toString()
 	}
-							{"element":[{"elementType":0,"content":"A. 4"}]},
-							{"element":[{"elementType":0,"content":"B. 7"}]},
-							{"element":[{"elementType":0,"content":"C. 9"}]}
-						],
-						"answer": [{"elementType":0,"content":"B. 7"}],
-						"realAnswer": {"answer":"B"}
-					}
-				]
-		""".trimIndent().replace("\n", " ")
 
 	/**
 	 * 调用 Gemini / Generative Language REST API，返回解析后的 List<QuestionDetail>

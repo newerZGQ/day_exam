@@ -10,8 +10,7 @@ import com.gorden.dayexam.utils.SharedPreferenceUtil
 import com.gorden.dayexam.R
 import com.gorden.dayexam.ui.dialog.EditTextDialog
  
-import com.gorden.dayexam.R
-import com.gorden.dayexam.ui.dialog.EditTextDialog
+
 
 class SettingsFragment: PreferenceFragmentCompat() {
     override fun onCreatePreferences(savedInstanceState: Bundle?, rootKey: String?) {

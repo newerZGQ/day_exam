@@ -1,7 +1,7 @@
 package com.gorden.dayexam.ui.home.shortcut
 
 import androidx.lifecycle.ViewModel
-import androidx.lifecycle.viewModelScope
+
 import com.gorden.dayexam.repository.DataRepository
 import com.gorden.dayexam.repository.model.QuestionDetail
 import kotlinx.coroutines.Dispatchers
