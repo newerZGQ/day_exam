@@ -49,12 +49,6 @@ cd day_exam
 
 欢迎提交 Issue 和 Pull Request！
 
-## 技术栈
-
-- Kotlin
-- Android Jetpack (Room, LiveData, ViewModel)
-- Material Design
-- Apache POI (Excel 文件处理)
 
 ## 联系方式
 
