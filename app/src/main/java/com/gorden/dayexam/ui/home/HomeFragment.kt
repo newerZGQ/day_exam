@@ -10,8 +10,6 @@ import androidx.fragment.app.Fragment
 import androidx.lifecycle.lifecycleScope
 import androidx.viewpager2.widget.ViewPager2
 import androidx.viewpager2.widget.ViewPager2.ORIENTATION_HORIZONTAL
-import com.google.gson.Gson
-import com.google.gson.reflect.TypeToken
 import com.gorden.dayexam.R
 import com.gorden.dayexam.databinding.FragmentHomeLayoutBinding
 import com.gorden.dayexam.db.entity.PaperInfo
@@ -23,7 +21,6 @@ import com.jeremyliao.liveeventbus.LiveEventBus
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
-import java.io.File
 
 class HomeFragment : Fragment() {
 
@@ -115,26 +112,17 @@ class HomeFragment : Fragment() {
     }
     
     /**
-     * 从 JSON 文件加载试题
+     * 从 Repository 加载试卷及其问题
      */
     private fun startLoad() {
         viewLifecycleOwner.lifecycleScope.launch {
             kotlin.runCatching {
-                // 在 IO 线程读取并解析 JSON
-                var questionList: List<QuestionDetail> = emptyList()
-                withContext(Dispatchers.IO) {
-                    val paperInfo = DataRepository.getCurPaperInfo() ?: return@withContext
-                    val questionsFile = File(requireContext().cacheDir, "${paperInfo.hash}/questions.json")
-                    if (questionsFile.exists()) {
-                        questionList = Gson().fromJson(
-                            questionsFile.readText(),
-                            object : TypeToken<List<QuestionDetail>>() {}.type
-                        )
-                    }
-                    this@HomeFragment.paperInfo = paperInfo
+                val paperDetail = withContext(Dispatchers.IO) {
+                    val paperId = DataRepository.getCurPaperId().value ?: return@withContext null
+                    DataRepository.getPaperDetailById(paperId)
                 }
 
-                if (questionList.isEmpty()) {
+                if (paperDetail == null) {
                     Toast.makeText(
                         requireContext(),
                         requireContext().getString(R.string.toast_questions_file_not_found),
@@ -144,14 +132,13 @@ class HomeFragment : Fragment() {
                 }
 
                 // 更新试题列表与 UI（主线程）
-                questions = questionList
-                paperInfo?.let { info ->
-                    (questionPager.adapter as QuestionPagerAdapter).setData(
-                        info,
-                        questions
-                    )
-                    questionPager.currentItem = info.lastStudyPosition
-                }
+                questions = paperDetail.question
+                paperInfo = paperDetail.paperInfo
+                (questionPager.adapter as QuestionPagerAdapter).setData(
+                    paperDetail.paperInfo,
+                    questions
+                )
+                questionPager.currentItem = paperDetail.paperInfo.lastStudyPosition
             }.onFailure {
                 it.printStackTrace()
                 Toast.makeText(
