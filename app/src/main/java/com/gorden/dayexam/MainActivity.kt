@@ -193,6 +193,7 @@ class MainActivity : BaseActivity() {
             if (it != null) {
                 curPaperId = it
             }
+            closeDrawerLayout()
         }
         DataRepository.getCurQuestionId().observe(this) {
             if (it != null) {
