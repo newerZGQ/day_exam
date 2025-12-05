@@ -1,11 +1,6 @@
 <PreferenceScreen
     xmlns:app="http://schemas.android.com/apk/res-auto">
 
-    <com.gorden.dayexam.ui.settings.preference.CustomCheckBoxPreference
-        app:key="@string/keep_screen_light_key"
-        app:allowDividerBelow="true"
-        app:icon="@drawable/ic_outline_lightbulb_24"
-        app:title="@string/keep_screen_light"/>
     <com.gorden.dayexam.ui.settings.preference.CustomPreference
         app:key="@string/privacy_and_help_key"
         app:allowDividerAbove="true"
