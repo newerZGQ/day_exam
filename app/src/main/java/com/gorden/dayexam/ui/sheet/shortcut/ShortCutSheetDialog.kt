@@ -75,12 +75,6 @@ class ShortCutSheetDialog : BottomSheetDialogFragment() {
                 .post(0)
             dismiss()
         }
-        binding.searchIcon.setOnClickListener {
-            LiveEventBus.get(EventKey.SEARCH_CLICKED, Int::class.java)
-                // 0没有意义
-                .post(0)
-            dismiss()
-        }
         binding.toSetting.setOnClickListener {
             val intent = Intent(requireActivity(), SettingsActivity::class.java)
             startActivity(intent)
