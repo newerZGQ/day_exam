@@ -1,4 +1,4 @@
-# 🌐 Language Selection
+# DayExam
 
 🇺🇸 **English** &nbsp; | &nbsp; 🇨🇳 [简体中文](doc/README_CN.md)
 
@@ -34,7 +34,7 @@ To build the application yourself, follow these steps:
 git clone [https://github.com/newerZGQ/day_exam.git](https://github.com/newerZGQ/day_exam.git)
 cd day_exam
 ./gradlew assembleRelease
-
+```
 
 Build Requirements:
 
