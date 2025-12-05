@@ -1,59 +1,67 @@
-# Day Exam - 考试题库管理工具
+# 🌐 Language Selection
+
+🇺🇸 **English** &nbsp; | &nbsp; 🇨🇳 [简体中文](doc/README_CN.md)
+
+---
+
+# Day Exam - Exam Question Bank Management Tool
 
 [![License: AGPL v3](https://img.shields.io/badge/License-AGPLv3-blue.svg)](https://www.gnu.org/licenses/agpl-3.0)
 
-一个功能强大的 Android 考试准备应用，帮助您高效管理和学习考试题目。
+A powerful Android application designed to help you efficiently manage and study for various exams.
 
-## 主要功能
+## ✨ Key Features
 
-- **题目管理** - 支持导入和组织各类考试题目
-- **考试模拟** - 模拟真实考试环境进行练习
-- **学习追踪** - 记录学习进度和答题统计
-- **多种题型** - 支持单选题、多选题等多种题型
-- **课程分类** - 按课程和试卷组织题目
-- **错题回顾** - 重点复习答错的题目
-- **专注模式** - 沉浸式学习体验
-- **数据导入** - 支持从 Excel 文件导入题库
+* **Question Management** - Supports importing and organizing various exam questions.
+* **Simulated Exams** - Practice in a simulated, realistic testing environment.
+* **Learning Tracking** - Records study progress and tracks answer statistics.
+* **Multiple Question Types** - Supports single-choice, multiple-choice, and other question formats.
+* **Course Classification** - Organizes questions by courses and test papers.
+* **Mistake Review** - Focus on reviewing and practicing incorrect answers.
+* **Focus Mode** - Provides an immersive, distraction-free learning experience.
+* **Data Import** - Supports importing question banks from Excel files.
 
-## 下载
+## ⬇️ Download
 
-- [F-Droid](https://f-droid.org/packages/com.gorden.dayexam/)
-- [GitHub Releases](https://github.com/newerZGQ/day_exam/releases)
+* [F-Droid](https://f-droid.org/packages/com.gorden.dayexam/)
+* [GitHub Releases](https://github.com/newerZGQ/day_exam/releases)
 
-## 构建
+## 🛠️ Build from Source
+
+To build the application yourself, follow these steps:
 
 ```bash
-git clone https://github.com/newerZGQ/day_exam.git
+git clone [https://github.com/newerZGQ/day_exam.git](https://github.com/newerZGQ/day_exam.git)
 cd day_exam
 ./gradlew assembleRelease
-```
-
-构建需要：
-- JDK 17
-- Android SDK (API 31)
-
-## 开源许可
-
-本项目采用 [GNU Affero General Public License v3.0](LICENSE) 开源许可证。
-
-## 隐私
-
-本应用：
-- ✅ 完全开源
-- ✅ 不包含任何追踪
-- ✅ 不包含广告
-- ✅ 所有数据存储在本地
-- ✅ 尊重您的隐私
-
-## 贡献
-
-欢迎提交 Issue 和 Pull Request！
 
 
-## 联系方式
+Build Requirements:
 
-如有问题或建议，欢迎通过微信联系：
+JDK 17
 
-<div align="center">
-  <img src="image/image.png" alt="微信二维码" width="200"/>
-</div>
+Android SDK (API 31)
+
+## ⚖️ Open Source License
+This project is released under the GNU Affero General Public License v3.0.
+
+## 🔒 Privacy Commitment
+This application is built with privacy in mind:
+
+✅ Completely Open Source
+
+✅ Contains No Tracking
+
+✅ Contains No Advertisements
+
+✅ All data is stored locally
+
+✅ Respects your privacy
+
+## 🤝 Contribution
+Contributions are welcome! Feel free to submit Issues and Pull Requests.
+
+## 📧 Contact
+If you have any questions or suggestions, please feel free to contact the author via WeChat:
+
+<div align="center"> <img src="image/image.png" alt="WeChat QR Code" width="200"/> </div>
