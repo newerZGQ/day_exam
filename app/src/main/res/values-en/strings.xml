@@ -2,10 +2,6 @@
     <string name="app_name">DayExam</string>
     <string name="action_settings">Settings</string>
 
-    // 书籍边栏
-
-    <string name="menu_home">Home</string>
-    <string name="sort">sort</string>
 
     <string name="paper">Paper</string>
     <string name="fill_blank">Completion</string>
@@ -42,9 +38,6 @@
 
     <string name="none_question_desc">Exam paper is Empty, you can parse questions from a doc file(recommend)，or you can add question by hand</string>
 
-    // 移动Paper Dialog
-
-    <string name="select_target_paper">Select Exam Paper</string>
 
     // 书籍列表的学习信息
     <string name="last_study_time">Last:</string>
@@ -57,8 +50,6 @@
 
     // menu
     <string name="parse_from_file">Parse From Doc</string>
-    <string name="insert_paper_after">Insert Above</string>
-    <string name="insert_paper_before">Insert Below</string>
     <string name="sort_by_hand">Sort</string>
     <string name="delete">Delete</string>
     <string name="edit_paper">Edit</string>
@@ -67,16 +58,10 @@
     // toast
     <string name="create_paper_empty_title_msg">Title can not be empty</string>
 
-    <string name="no_paper_found_msg">No Paper</string>
     <string name="toast_questions_file_not_found">Questions file not found</string>
     <string name="toast_questions_load_failed">Failed to load questions: %1$s</string>
     <string name="screen_shot_question_success">ScreenShot Saved</string>
     <string name="screen_shot_question_failed">ScreenShot Failed</string>
-    <string name="edit_question_no_questionId_error">Error Question Id</string>
-    <string name="current_other_question_editing">Editing</string>
-    <string name="recover_failed_because_file">Please Check Backup File Is Available</string>
-    <string name="recover_image_exception">Recover Image Failed</string>
-    <string name="recover_data_exception">Recover DataBase Failed</string>
     <string name="backup_success">Backup Success</string>
 
     // 首页
@@ -101,11 +86,7 @@
     <string name="copy_question_content">Screenshot</string>
     <string name="search_question_content">Search</string>
     <string name="delete_question_content">Move to trash</string>
-    <string name="history_question_content">History</string>
     <string name="remember_question_content">Remember</string>
-    <string name="focus_question_content">Focus</string>
-    <string name="favorite_question_content">Only Favorite</string>
-    <string name="sort_by_accuracy_question_content">Sort by accuracy</string>
     <string name="back_up_now">Backup</string>
 
     // 搜索
@@ -134,7 +115,7 @@
     <string name="confirm_recover">Confirm</string>
     <string name="please_select_backup">Select Backup</string>
     <string name="privacy_key">privacy_key</string>
-    <string name="privacy_title">《Privacy》</string>
+    <string name="privacy_title">Privacy</string>
     <string name="privacy_summary">We guarantee not to reveal your personal information</string>
     <string name="privacy_and_help_key">privacy_and_help</string>
     <string name="privacy_and_help">Privacy And Help</string>

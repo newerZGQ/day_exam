@@ -2,10 +2,6 @@
     <string name="app_name">天天背题</string>
     <string name="action_settings">Settings</string>
 
-    // 书籍边栏
-
-    <string name="menu_home">Home</string>
-    <string name="sort">sort</string>
 
 
     <string name="paper">试卷</string>
@@ -43,9 +39,6 @@
 
     <string name="none_question_desc">还未添加任何试题，您可以从word文件中解析(推荐)，也可以手动添加</string>
 
-    // 移动Paper Dialog
-
-    <string name="select_target_paper">请选择目标试卷</string>
 
     // 书籍列表的学习信息
     <string name="last_study_time">上次学习</string>
@@ -58,8 +51,6 @@
 
     // menu
     <string name="parse_from_file">从文件解析试题</string>
-    <string name="insert_paper_after">在此之上插入试卷</string>
-    <string name="insert_paper_before">在此之下插入试卷</string>
     <string name="sort_by_hand">手动排序</string>
     <string name="delete">删除</string>
     <string name="edit_paper">编辑试卷</string>
@@ -68,16 +59,10 @@
     // toast
     <string name="create_paper_empty_title_msg">试卷标题不能为空</string>
 
-    <string name="no_paper_found_msg">该书籍中没有找到试卷</string>
     <string name="toast_questions_file_not_found">试题文件不存在</string>
     <string name="toast_questions_load_failed">加载试题失败: %1$s</string>
     <string name="screen_shot_question_success">已保存到系统相册</string>
     <string name="screen_shot_question_failed">截屏失败</string>
-    <string name="edit_question_no_questionId_error">传入的id异常</string>
-    <string name="current_other_question_editing">当前有段落正在编辑</string>
-    <string name="recover_failed_because_file">请检查备份文件是否存在以及文件后缀是否正确</string>
-    <string name="recover_image_exception">恢复图片备份异常</string>
-    <string name="recover_data_exception">恢复数据库备份异常</string>
     <string name="backup_success">备份成功</string>
 
     // 首页
@@ -102,11 +87,7 @@
     <string name="copy_question_content">截屏本题内容</string>
     <string name="search_question_content">搜索试题/快速跳转</string>
     <string name="delete_question_content">移动该题到废纸篓</string>
-    <string name="history_question_content">历史记录</string>
     <string name="remember_question_content">背诵模式</string>
-    <string name="focus_question_content">专注模式</string>
-    <string name="favorite_question_content">只看收藏</string>
-    <string name="sort_by_accuracy_question_content">按照错误率排序</string>
     <string name="back_up_now">立即备份</string>
 
     // 搜索
