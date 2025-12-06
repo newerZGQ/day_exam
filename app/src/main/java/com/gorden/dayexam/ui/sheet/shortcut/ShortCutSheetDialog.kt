@@ -6,7 +6,6 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment
-import com.gorden.dayexam.Constants.SP_HOME_SHOW_WELCOME
 import com.gorden.dayexam.R
 import com.gorden.dayexam.databinding.ShortCutSheetLayoutBinding
 import com.gorden.dayexam.repository.DataRepository
@@ -86,8 +85,6 @@ class ShortCutSheetDialog : BottomSheetDialogFragment() {
 
     private fun initExitStudy() {
         binding.exitStudyContainer.setOnClickListener {
-            // 设置偏好，主页展示欢迎页
-            SharedPreferenceUtil.setBoolean(SP_HOME_SHOW_WELCOME, true)
             // 清除当前试卷，使 HomeFragment 能响应显示欢迎页
             DataRepository.updateCurPaperId(-1)
             // 通知 HomeFragment 切换视图

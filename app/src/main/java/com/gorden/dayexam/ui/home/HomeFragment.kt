@@ -10,7 +10,6 @@ import androidx.fragment.app.Fragment
 import androidx.lifecycle.lifecycleScope
 import androidx.viewpager2.widget.ViewPager2
 import androidx.viewpager2.widget.ViewPager2.ORIENTATION_HORIZONTAL
-import com.gorden.dayexam.Constants.SP_HOME_SHOW_WELCOME
 import com.gorden.dayexam.R
 import com.gorden.dayexam.databinding.FragmentHomeLayoutBinding
 import com.gorden.dayexam.utils.SharedPreferenceUtil
@@ -101,7 +100,7 @@ class HomeFragment : Fragment() {
 
     private fun initData() {
         // 如果已设置退出学习，则展示欢迎页
-        val showWelcome = SharedPreferenceUtil.getBoolean(SP_HOME_SHOW_WELCOME, false)
+        val showWelcome = (DataRepository.getCurPaperId().value ?: -1) < 0
         if (showWelcome) {
             showWelcome()
         } else {
@@ -209,7 +208,6 @@ class HomeFragment : Fragment() {
                 )
                 questionPager.setCurrentItem(paperDetail.paperInfo.lastStudyPosition, false)
                 hideWelcome()
-                SharedPreferenceUtil.setBoolean(SP_HOME_SHOW_WELCOME, false)
             }.onFailure {
                 it.printStackTrace()
                 Toast.makeText(
