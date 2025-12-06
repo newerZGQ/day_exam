@@ -59,7 +59,13 @@ class HomeFragment : Fragment() {
         override fun onPageSelected(position: Int) {
             paperInfo?.let {
                 if (position < questions.size) {
-                    DataRepository.updatePaperStatus(it.id, position)
+                    lifecycleScope.launch {
+                        withContext(Dispatchers.IO) {
+                            DataRepository.updatePaperStatus(it.id, position)
+                            paperInfo?.lastStudyPosition = position
+                            DataRepository.updatePapers(listOfNotNull(paperInfo))
+                        }
+                    }
                 }
             }
         }
@@ -112,12 +118,16 @@ class HomeFragment : Fragment() {
         LiveEventBus.get(EventKey.ANSWER_EVENT, EventKey.AnswerEventModel::class.java)
             .observe(this) {
                 paperInfo?.let { paperInfo ->
-                    DataRepository.insertStudyRecord(
-                        StudyRecord(
-                            paperInfo.id,
-                            it.correct
-                        )
-                    )
+                    lifecycleScope.launch {
+                        withContext(Dispatchers.IO) {
+                            DataRepository.insertStudyRecord(
+                                StudyRecord(
+                                    paperInfo.id,
+                                    it.correct
+                                )
+                            )
+                        }
+                    }
                 }
             }
         DataRepository.getCurPaperId().observe(viewLifecycleOwner) {
@@ -186,7 +196,7 @@ class HomeFragment : Fragment() {
                     paperDetail.paperInfo,
                     questions
                 )
-                questionPager.currentItem = paperDetail.paperInfo.lastStudyPosition
+                questionPager.setCurrentItem(paperDetail.paperInfo.lastStudyPosition, false)
                 hideWelcome()
                 SharedPreferenceUtil.setBoolean(SP_HOME_SHOW_WELCOME, false)
             }.onFailure {

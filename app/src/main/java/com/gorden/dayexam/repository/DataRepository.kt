@@ -8,7 +8,6 @@ import com.gorden.dayexam.db.AppDatabase
 import com.gorden.dayexam.db.converter.DateConverter
 import com.gorden.dayexam.db.entity.*
 import com.gorden.dayexam.db.entity.PaperInfo
-import com.gorden.dayexam.executor.AppExecutors
 import com.gorden.dayexam.repository.model.*
 import com.gorden.dayexam.utils.SharedPreferenceUtil
 import com.google.gson.Gson
@@ -89,9 +88,7 @@ object DataRepository {
     }
 
     fun deletePaper(paperInfo: PaperInfo) {
-        AppExecutors.diskIO().execute {
-            mDatabase.paperDao().delete(paperInfo.id)
-        }
+        mDatabase.paperDao().delete(paperInfo.id)
     }
 
     /**
@@ -100,11 +97,9 @@ object DataRepository {
 
     // 更新试卷状态以及dontext的当前question
      fun updatePaperStatus(paperId: Int, questionPosition: Int) {
-        AppExecutors.diskIO().execute {
-            mDatabase.runInTransaction {
-                val paperStatus = mDatabase.studyStatusDao().queryEntityByTypeAndContentId(PaperStatus, paperId)
-                mDatabase.studyStatusDao().update(paperStatus)
-            }
+        mDatabase.runInTransaction {
+            val paperStatus = mDatabase.studyStatusDao().queryEntityByTypeAndContentId(PaperStatus, paperId)
+            mDatabase.studyStatusDao().update(paperStatus)
         }
     }
 
@@ -116,9 +111,7 @@ object DataRepository {
      * StudyRecord相关
      */
     fun insertStudyRecord(studyRecord: StudyRecord) {
-        AppExecutors.diskIO().execute {
-            mDatabase.studyRecordDao().insert(studyRecord)
-        }
+        mDatabase.studyRecordDao().insert(studyRecord)
     }
 
     fun todayStudyCount(): LiveData<Long> {
