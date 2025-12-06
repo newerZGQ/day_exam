@@ -178,8 +178,9 @@
     <string name="default_user_paper_name">To Users</string>
 
     // 描述词
-    <string name="the_type_key"></string>
+    <string name="the_type_key">Question </string>
     <string name="short_of_question"></string>
+    <string name="question_number_format">Question %1$d</string>
     <string name="total_study_times">study:</string>
     <string name="times"></string>
 

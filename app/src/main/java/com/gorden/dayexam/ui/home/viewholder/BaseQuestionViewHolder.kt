@@ -55,10 +55,9 @@ abstract class BaseQuestionViewHolder(itemView: View) : RecyclerView.ViewHolder(
 
     abstract fun setContent(paperInfo: PaperInfo, question: QuestionDetail, isRememberMode: Boolean)
 
-    @SuppressLint("SetTextI18n")
     open fun setHeadView(paperInfo: PaperInfo, question: QuestionDetail) {
         val headView = itemView.findViewById<TextView>(R.id.question_info)
-        headView.text = "第" + (adapterPosition + 1) + "题"
+        headView.text = itemView.context.getString(R.string.question_number_format, adapterPosition + 1)
     }
 
 

@@ -170,6 +170,7 @@
     // 描述词
     <string name="the_type_key">第</string>
     <string name="short_of_question">题</string>
+    <string name="question_number_format">第%1$d题</string>
     <string name="total_study_times">共学习</string>
     <string name="times">次</string>
 
