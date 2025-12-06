@@ -5,20 +5,15 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.ImageView
-import android.widget.TextView
-import androidx.annotation.Nullable
-import androidx.lifecycle.ViewModelProvider
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment
 import com.gorden.dayexam.Constants.SP_HOME_SHOW_WELCOME
 import com.gorden.dayexam.R
-import com.gorden.dayexam.db.entity.Config
 import com.gorden.dayexam.databinding.ShortCutSheetLayoutBinding
 import com.gorden.dayexam.repository.DataRepository
-import com.gorden.dayexam.utils.SharedPreferenceUtil
 import com.gorden.dayexam.ui.EventKey
 import com.gorden.dayexam.ui.action.ScreenShotHomeQuestionAction
 import com.gorden.dayexam.ui.settings.SettingsActivity
+import com.gorden.dayexam.utils.SharedPreferenceUtil
 import com.jeremyliao.liveeventbus.LiveEventBus
 
 class ShortCutSheetDialog : BottomSheetDialogFragment() {
@@ -83,11 +78,9 @@ class ShortCutSheetDialog : BottomSheetDialogFragment() {
         val key = requireContext().resources.getString(R.string.keep_screen_light_key)
         val opened = SharedPreferenceUtil.getBoolean(key, false)
         binding.keepScreenLightSwitch.isChecked = opened
-        binding.keepScreenLightSwitch.setOnCheckedChangeListener { _, b ->
-            SharedPreferenceUtil.setBoolean(key, b)
-        }
-        binding.keepScreenContentContainer.setOnClickListener {
-            binding.keepScreenLightSwitch.isChecked = !binding.keepScreenLightSwitch.isChecked
+        binding.keepScreenLightSwitch.setOnCheckedChangeListener { _, checked ->
+            SharedPreferenceUtil.setBoolean(key, checked)
+            LiveEventBus.get(EventKey.KEEP_SCREEN_ON, Boolean::class.java).post(checked)
         }
     }
 

@@ -185,6 +185,12 @@ class MainActivity : BaseActivity() {
             .observe(this) { event ->
                 closeDrawerLayout()
             }
+
+        // 监听试卷点击事件
+        LiveEventBus.get(EventKey.KEEP_SCREEN_ON, Boolean::class.java)
+            .observe(this) { event ->
+                checkScreenLight()
+            }
     }
 
 
@@ -270,11 +276,9 @@ class MainActivity : BaseActivity() {
     }
 
     private fun checkScreenLight() {
-        val sharedPreferences =
-            PreferenceManager.getDefaultSharedPreferences(ContextHolder.currentActivity())
         val keepScreenOnKey =
             ContextHolder.application.resources.getString(R.string.keep_screen_light_key)
-        val keepScreenOn = sharedPreferences.getBoolean(keepScreenOnKey, false)
+        val keepScreenOn = SharedPreferenceUtil.getBoolean(keepScreenOnKey, false)
         if (keepScreenOn) {
             window.addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON)
         } else {
