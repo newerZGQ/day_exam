@@ -91,18 +91,6 @@ object DataRepository {
         mDatabase.paperDao().delete(paperInfo.id)
     }
 
-    /**
-     * question相关
-     */
-
-    // 更新试卷状态以及dontext的当前question
-     fun updatePaperStatus(paperId: Int, questionPosition: Int) {
-        mDatabase.runInTransaction {
-            val paperStatus = mDatabase.studyStatusDao().queryEntityByTypeAndContentId(PaperStatus, paperId)
-            mDatabase.studyStatusDao().update(paperStatus)
-        }
-    }
-
     fun getAllPapers(): LiveData<List<PaperInfo>> {
         return mDatabase.paperDao().getAllPapers()
     }

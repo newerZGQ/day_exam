@@ -61,7 +61,6 @@ class HomeFragment : Fragment() {
                 if (position < questions.size) {
                     lifecycleScope.launch {
                         withContext(Dispatchers.IO) {
-                            DataRepository.updatePaperStatus(it.id, position)
                             paperInfo?.lastStudyPosition = position
                             DataRepository.updatePapers(listOfNotNull(paperInfo))
                         }
