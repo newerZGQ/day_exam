@@ -11,6 +11,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.Toast
+import androidx.activity.result.ActivityResultLauncher
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
@@ -48,16 +49,31 @@ class PaperListFragment : Fragment() {
     private var isInEditMode: Boolean = false
     private var currentPaperInfo: PaperInfo? = null
 
-    private val filePickerLauncher =
+    // 导入原始文档 - 使用AI解析
+    private val rawDocumentPickerLauncher =
         registerForActivityResult(ActivityResultContracts.StartActivityForResult()) { result ->
             if (result.resultCode == Activity.RESULT_OK) {
                 try {
                     result.data?.data?.let { uri ->
                         showProgress()
-                        importPaperFromUri(uri)
+                        importRawDocumentFromUri(uri)
                     }
                 } catch (e: Exception) {
-                    // 异常处理（例如 Toast 或日志）
+                    hideProgress()
+                }
+            }
+        }
+
+    // 导入格式化文档 - 使用模版
+    private val formattedDocumentPickerLauncher =
+        registerForActivityResult(ActivityResultContracts.StartActivityForResult()) { result ->
+            if (result.resultCode == Activity.RESULT_OK) {
+                try {
+                    result.data?.data?.let { uri ->
+                        showProgress()
+                        importFormattedDocumentFromUri(uri)
+                    }
+                } catch (e: Exception) {
                     hideProgress()
                 }
             }
@@ -203,13 +219,13 @@ class PaperListFragment : Fragment() {
         // 导入原始文档 - 使用AI解析
         view.findViewById<View>(R.id.import_raw_document).setOnClickListener {
             bottomSheetDialog.dismiss()
-            toFileBrowser()
+            openFileBrowser(rawDocumentPickerLauncher)
         }
 
         // 导入格式化文档 - 使用模版
         view.findViewById<View>(R.id.import_formatted_document).setOnClickListener {
             bottomSheetDialog.dismiss()
-            toFileBrowser()
+            openFileBrowser(formattedDocumentPickerLauncher)
         }
 
         bottomSheetDialog.show()
@@ -244,19 +260,20 @@ class PaperListFragment : Fragment() {
         ).show()
     }
 
-    private fun toFileBrowser() {
-        Log.d("paperList", "toFileBrowser")
+    private fun openFileBrowser(launcher: ActivityResultLauncher<Intent>) {
+        Log.d("paperList", "openFileBrowser")
         val intent = Intent(Intent.ACTION_GET_CONTENT)
         intent.type = "*/*"
         intent.putExtra(Intent.EXTRA_ALLOW_MULTIPLE, true)
         intent.addCategory(Intent.CATEGORY_OPENABLE)
-        filePickerLauncher.launch(intent)
+        launcher.launch(intent)
     }
 
     /**
+     * 导入原始文档 - 使用AI解析试题
      * 将系统文件选择器返回的 Uri 拷贝到应用缓存目录，再交给 PaperParser 解析
      */
-    private fun importPaperFromUri(uri: Uri) {
+    private fun importRawDocumentFromUri(uri: Uri) {
         viewLifecycleOwner.lifecycleScope.launch {
             try {
                 // IO operations in IO dispatcher
@@ -285,7 +302,52 @@ class PaperListFragment : Fragment() {
                         return@withContext
                     }
 
-                    // 使用 PaperParser 解析拷贝到缓存目录的文件
+                    // TODO: 使用 AI 解析原始文档
+                    // 暂时使用 PaperParser 解析拷贝到缓存目录的文件
+                    PaperParser.parseFromFile(destFile.absolutePath)
+                }
+            } catch (e: Exception) {
+                e.printStackTrace()
+            } finally {
+                hideProgress()
+            }
+        }
+    }
+
+    /**
+     * 导入格式化文档 - 使用模版格式解析
+     * 将系统文件选择器返回的 Uri 拷贝到应用缓存目录，再交给 PaperParser 解析
+     */
+    private fun importFormattedDocumentFromUri(uri: Uri) {
+        viewLifecycleOwner.lifecycleScope.launch {
+            try {
+                // IO operations in IO dispatcher
+                withContext(Dispatchers.IO) {
+                    val context = requireContext()
+                    val fileName = queryDisplayName(uri) ?: "paper_${System.currentTimeMillis()}.docx"
+                    val destDir = File(context.cacheDir, "imported_papers")
+                    if (!destDir.exists()) {
+                        destDir.mkdirs()
+                    }
+                    val destFile = File(destDir, fileName)
+                    context.contentResolver.openInputStream(uri)?.use { input ->
+                        FileOutputStream(destFile).use { output ->
+                            input.copyTo(output)
+                        }
+                    }
+                    // Check if paper already exists before parsing
+                    if (PaperParser.checkExist(destFile.absolutePath)) {
+                        withContext(Dispatchers.Main) {
+                            Toast.makeText(
+                                context,
+                                context.getString(R.string.toast_paper_already_exists),
+                                Toast.LENGTH_SHORT
+                            ).show()
+                        }
+                        return@withContext
+                    }
+
+                    // 使用模版格式解析
                     PaperParser.parseFromFile(destFile.absolutePath)
                 }
             } catch (e: Exception) {
