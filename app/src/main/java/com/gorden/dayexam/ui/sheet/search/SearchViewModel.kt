@@ -38,22 +38,21 @@ class SearchViewModel: ViewModel() {
         
         // 遍历所有问题
         questions.forEachIndexed { index, question ->
-            // 检查问题的 body 中是否包含关键词
-            val matchedElements = question.body.filter { element ->
-                element.elementType == com.gorden.dayexam.repository.model.Element.TEXT &&
-                element.content.contains(key, ignoreCase = true)
-            }
+            // 将 body 中所有 TEXT 类型的元素合并成一个字符串
+            val bodyText = question.body
+                .filter { it.elementType == com.gorden.dayexam.repository.model.Element.TEXT }
+                .joinToString(" ") { it.content }
             
-            // 如果找到匹配的元素，为每个匹配的元素创建一个 SearchItem
-            matchedElements.forEach { element ->
+            // 检查合并后的文本是否包含关键词
+            if (bodyText.contains(key, ignoreCase = true)) {
                 results.add(
                     SearchItem(
                         paperId = paperInfo.id,
                         paperTitle = paperInfo.title,
-                        questionId = index,  // 使用问题的索引作为 ID
+                        questionIndex = index,
                         questionType = question.type,
-                        elementType = element.elementType,
-                        elementContent = element.content
+                        elementType = com.gorden.dayexam.repository.model.Element.TEXT,
+                        elementContent = bodyText  // 使用合并后的完整文本
                     )
                 )
             }
