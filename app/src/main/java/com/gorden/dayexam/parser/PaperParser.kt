@@ -7,6 +7,7 @@ import com.gorden.dayexam.repository.model.Element
 import com.gorden.dayexam.repository.model.OptionItems
 import com.gorden.dayexam.repository.model.QuestionDetail
 import com.google.gson.Gson
+import com.gorden.dayexam.repository.model.Answer
 import org.apache.poi.xwpf.usermodel.XWPFDocument
 import org.apache.poi.xwpf.usermodel.XWPFParagraph
 import java.io.File
@@ -142,7 +143,7 @@ object PaperParser {
             if (curItem.isEmpty || curItem.runs.isEmpty()) {
                 continue
             }
-            if (isQuestionSeparator(curItem.text)) {
+            if (ParserConstants.isQuestionSeparator(curItem.text)) {
                 if (curParas.isNotEmpty()) {
                     result.add(curParas)
                     curParas = mutableListOf()
@@ -161,27 +162,44 @@ object PaperParser {
         imageHashToData: MutableMap<String, ByteArray>
     ): QuestionDetail? {
         var body = listOf<Element>()
-        var options = mutableListOf<OptionItems>()
-        var answer = listOf<Element>()
+        val options = mutableListOf<OptionItems>()
+        var rawAnswer = listOf<Element>()
         var type = QuestionType.ERROR_TYPE
         
         paras.forEach {
             if (it.isNotEmpty()) {
                 val text = it[0].text
                 when {
-                    isQuestionSeparator(text) -> {
+                    ParserConstants.isQuestionSeparator(text) -> {
                         type = parseType(it)
                         body = parseParagraphToElement(it, imageHashToData)
                     }
-                    text.startsWith(ParserConstants.OPTION_SEPARATOR) ||
-                            text.lowercase().startsWith(ParserConstants.OPTION_SEPARATOR_EN) -> {
+                    ParserConstants.isOption(text) -> {
                         options.add(OptionItems(parseParagraphToElement(it, imageHashToData)))
                     }
-                    text.startsWith(ParserConstants.ANSWER_SEPARATOR) ||
-                            text.lowercase().startsWith(ParserConstants.ANSWER_SEPARATOR_EN) -> {
-                        answer = parseParagraphToElement(it, imageHashToData)
+                    ParserConstants.isAnswer(text) -> {
+                        rawAnswer = parseParagraphToElement(it, imageHashToData)
                     }
                 }
+            }
+        }
+
+        val answer = when (type) {
+            QuestionType.TRUE_FALSE -> {
+                Answer(
+                    tfAnswer = ParserConstants.toTrueFalseAnswer(rawAnswer.firstOrNull()?.content ?: "")
+                )
+            }
+            QuestionType.MULTIPLE_CHOICE,
+            QuestionType.SINGLE_CHOICE -> {
+                Answer(
+                    commonAnswer = rawAnswer
+                )
+            }
+            else -> {
+                Answer(
+                    commonAnswer = rawAnswer
+                )
             }
         }
         
@@ -224,31 +242,7 @@ object PaperParser {
             return QuestionType.ERROR_TYPE
         }
         val typeText = paras[0].text
-        if (typeText.isNotEmpty()) {
-            when {
-                typeText.lowercase().startsWith(ParserConstants.FILL_BLANK_SEPARATOR) ||
-                        typeText.lowercase().startsWith(ParserConstants.FILL_BLANK_SEPARATOR_EN) -> {
-                    return QuestionType.FILL_BLANK
-                }
-                typeText.lowercase().startsWith(ParserConstants.TRUE_FALSE_SEPARATOR) ||
-                        typeText.lowercase().startsWith(ParserConstants.TRUE_FALSE_SEPARATOR_EN) -> {
-                    return QuestionType.TRUE_FALSE
-                }
-                typeText.lowercase().startsWith(ParserConstants.SINGLE_CHOICE_SEPARATOR) ||
-                        typeText.lowercase().startsWith(ParserConstants.SINGLE_CHOICE_SEPARATOR_EN) -> {
-                    return QuestionType.SINGLE_CHOICE
-                }
-                typeText.lowercase().startsWith(ParserConstants.MULTIPLE_CHOICE_SEPARATOR) ||
-                        typeText.lowercase().startsWith(ParserConstants.MULTIPLE_CHOICE_SEPARATOR_EN) -> {
-                    return QuestionType.MULTIPLE_CHOICE
-                }
-                typeText.lowercase().startsWith(ParserConstants.ESSAY_QUESTION_SEPARATOR) ||
-                        typeText.lowercase().startsWith(ParserConstants.ESSAY_QUESTION_SEPARATOR_EN) -> {
-                    return QuestionType.ESSAY_QUESTION
-                }
-            }
-        }
-        return QuestionType.ERROR_TYPE
+        return ParserConstants.getQuestionType(typeText)
     }
 
     private fun parseParagraphToElement(
@@ -285,20 +279,6 @@ object PaperParser {
             }
         }
         return result
-    }
-
-    private fun isQuestionSeparator(text: String): Boolean {
-        if (text.isEmpty()) return false
-        return text.lowercase().startsWith(ParserConstants.FILL_BLANK_SEPARATOR) ||
-                text.lowercase().startsWith(ParserConstants.TRUE_FALSE_SEPARATOR) ||
-                text.lowercase().startsWith(ParserConstants.SINGLE_CHOICE_SEPARATOR) ||
-                text.lowercase().startsWith(ParserConstants.MULTIPLE_CHOICE_SEPARATOR) ||
-                text.lowercase().startsWith(ParserConstants.ESSAY_QUESTION_SEPARATOR) ||
-                text.lowercase().startsWith(ParserConstants.FILL_BLANK_SEPARATOR_EN) ||
-                text.lowercase().startsWith(ParserConstants.TRUE_FALSE_SEPARATOR_EN) ||
-                text.lowercase().startsWith(ParserConstants.SINGLE_CHOICE_SEPARATOR_EN) ||
-                text.lowercase().startsWith(ParserConstants.MULTIPLE_CHOICE_SEPARATOR_EN) ||
-                text.lowercase().startsWith(ParserConstants.ESSAY_QUESTION_SEPARATOR_EN)
     }
 }
 

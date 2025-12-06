@@ -4,15 +4,18 @@ class QuestionDetail (
     val type: Int,
     val body: List<Element>,
     val options: List<OptionItems>,
-    val answer: List<Element>,
-    var realAnswer: RealAnswer? = null
+    val answer: Answer,
+    var realAnswer: Answer? = null
 )
 
 data class OptionItems(
     val element: List<Element>
 )
 
-data class RealAnswer(
-    var answer: String = ""
+data class Answer(
+    val commonAnswer: List<Element> = listOf(),
+    val optionAnswer: List<Int> = listOf(),
+    val tfAnswer: Boolean = false
 )
+
 

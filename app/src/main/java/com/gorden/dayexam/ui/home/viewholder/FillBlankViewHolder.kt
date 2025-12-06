@@ -4,8 +4,8 @@ import android.view.View
 import com.gorden.dayexam.R
 import com.gorden.dayexam.db.entity.PaperInfo
 import com.gorden.dayexam.db.entity.StudyRecord
+import com.gorden.dayexam.repository.model.Answer
 import com.gorden.dayexam.repository.model.QuestionDetail
-import com.gorden.dayexam.repository.model.RealAnswer
 import com.gorden.dayexam.ui.EventKey
 import com.jeremyliao.liveeventbus.LiveEventBus
 
@@ -29,9 +29,9 @@ class FillBlankViewHolder(itemView: View): BaseQuestionViewHolder(itemView) {
         action.setOnClickListener {
             action.visibility = View.GONE
             showAnswer(paperInfo, question)
-            question.realAnswer = RealAnswer()
+            question.realAnswer = Answer()
             LiveEventBus.get(EventKey.ANSWER_EVENT, EventKey.AnswerEventModel::class.java)
-                .post(EventKey.AnswerEventModel("", StudyRecord.NOT_AVAILABLE))
+                .post(EventKey.AnswerEventModel(StudyRecord.NOT_AVAILABLE))
         }
     }
 

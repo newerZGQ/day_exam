@@ -118,7 +118,6 @@ class HomeFragment : Fragment() {
                     DataRepository.insertStudyRecord(
                         StudyRecord(
                             paperInfo.id,
-                            it.answer,
                             it.correct
                         )
                     )

@@ -98,7 +98,7 @@ abstract class BaseQuestionViewHolder(itemView: View) : RecyclerView.ViewHolder(
 
     open fun genAnswerView(paperInfo: PaperInfo, question: QuestionDetail) {
         val answerCardView = itemView.findViewById<AnswerCardView>(R.id.answer)
-        answerCardView.setElements(paperInfo, question.answer,
+        answerCardView.setElements(paperInfo, question.answer.commonAnswer,
             "",
             question.realAnswer,
             ElementViewListener())
@@ -113,13 +113,6 @@ abstract class BaseQuestionViewHolder(itemView: View) : RecyclerView.ViewHolder(
 
     open fun hideAnswer(paperInfo: PaperInfo, question: QuestionDetail) {
         itemView.findViewById<View>(R.id.answer_container).visibility = View.GONE
-    }
-
-    fun getAnswer(paperInfo: PaperInfo, question: QuestionDetail): String {
-        if (question.answer.isNotEmpty() && question.answer[0].elementType == Element.TEXT) {
-            return question.answer[0].content
-        }
-        return ""
     }
 
 }

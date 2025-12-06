@@ -1,14 +1,13 @@
 package com.gorden.dayexam.ui.home.viewholder
 
-import android.text.TextUtils
 import android.view.View
 import android.widget.LinearLayout
 import androidx.core.view.children
 import com.gorden.dayexam.R
 import com.gorden.dayexam.db.entity.PaperInfo
 import com.gorden.dayexam.db.entity.StudyRecord
+import com.gorden.dayexam.repository.model.Answer
 import com.gorden.dayexam.repository.model.QuestionDetail
-import com.gorden.dayexam.repository.model.RealAnswer
 import com.gorden.dayexam.ui.EventKey
 import com.gorden.dayexam.ui.widget.ElementViewListener
 import com.gorden.dayexam.ui.widget.OptionCardView
@@ -30,13 +29,12 @@ class SingleChoiceViewHolder(itemView: View): BaseQuestionViewHolder(itemView) {
             layoutParams.topMargin = ScreenUtils.dp2px(8f)
             optionContainer.addView(optionCardView, layoutParams)
             optionCardView.setOnClickListener {
-                val realAnswerContent = (index + 'A'.toInt()).toChar().toString()
-                val realAnswer = RealAnswer(realAnswerContent)
+                val realAnswer = Answer(optionAnswer = listOf(index))
                 question.realAnswer = realAnswer
                 setAnsweredStatus(paperInfo, question)
                 val isCorrectTag = getAnswerEventTag(question)
                 LiveEventBus.get(EventKey.ANSWER_EVENT, EventKey.AnswerEventModel::class.java)
-                    .post(EventKey.AnswerEventModel(realAnswerContent, isCorrectTag))
+                    .post(EventKey.AnswerEventModel(isCorrectTag))
             }
         }
     }
@@ -44,20 +42,16 @@ class SingleChoiceViewHolder(itemView: View): BaseQuestionViewHolder(itemView) {
     override fun genAnsweredOptionsView(paperInfo: PaperInfo, question: QuestionDetail) {
         question.options.forEachIndexed { index, optionItemWithElement ->
             val context = itemView.context
-            val realAnswer = question.realAnswer?.answer
-            if (realAnswer.isNullOrEmpty()) {
-                return
-            }
-            val optionTag = (index + 'A'.toInt()).toChar().toString()
-            val answer = getAnswer(paperInfo, question)
-            if (realAnswer == optionTag) {
+            val realAnswer = question.realAnswer?.optionAnswer?.firstOrNull() ?: -1
+            val answer = question.answer.optionAnswer.firstOrNull() ?: -1
+            if (question.realAnswer != null) {
                 if (answer == realAnswer) {
                     optionContainer.getChildAt(index).setBackgroundColor(context.getColor(R.color.option_select_correct_color))
                 } else {
                     optionContainer.getChildAt(index).setBackgroundColor(context.getColor(R.color.option_select_incorrect_color))
                 }
             } else {
-                if (answer == optionTag) {
+                if (answer == realAnswer) {
                     optionContainer.getChildAt(index).setBackgroundColor(context.getColor(R.color.option_select_correct_color))
                 } else {
                     optionContainer.getChildAt(index).setBackgroundColor(context.getColor(R.color.option_default_color))
@@ -69,14 +63,11 @@ class SingleChoiceViewHolder(itemView: View): BaseQuestionViewHolder(itemView) {
 
     override fun genRememberOptionsView(paperInfo: PaperInfo, question: QuestionDetail) {
         optionContainer.removeAllViews()
-        var correctAnswer = ""
-        if ((question.answer.size) > 0) {
-            correctAnswer = question.answer[0].content
-        }
+        val correctAnswer = question.answer.optionAnswer.firstOrNull()
         question.options.forEachIndexed { index, optionItemWithElement ->
             val optionTag = (index + 'A'.toInt()).toChar().toString()
             val optionCardView = OptionCardView(itemView.context)
-            if (correctAnswer.contains(optionTag)) {
+            if (correctAnswer == index) {
                 optionCardView.setBackgroundColor(itemView.context.getColor(R.color.option_select_correct_color))
             } else {
                 optionCardView.setBackgroundColor(itemView.context.getColor(R.color.option_default_color))
@@ -100,18 +91,12 @@ class SingleChoiceViewHolder(itemView: View): BaseQuestionViewHolder(itemView) {
     }
 
     private fun getAnswerEventTag(question: QuestionDetail): Int {
-        val answer = question.answer
-        var answerString = ""
-        if (answer.isNotEmpty() && answer[0].content.isNotEmpty()) {
-            answerString = answer[0].content
-        }
-        val realAnswerString = question.realAnswer?.answer
-        return if (answerString.isNotEmpty() && TextUtils.equals(answerString, realAnswerString)) {
+        val answer = question.answer.optionAnswer.firstOrNull()
+        val realAnswer = question.realAnswer?.optionAnswer?.firstOrNull()
+        return if (answer == realAnswer) {
             StudyRecord.CORRECT
-        } else if (answerString.isNotEmpty() && !TextUtils.equals(answerString, realAnswerString)) {
-            StudyRecord.IN_CORRECT
         } else {
-            StudyRecord.NOT_AVAILABLE
+            StudyRecord.IN_CORRECT
         }
     }
 
