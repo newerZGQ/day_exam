@@ -37,6 +37,18 @@
                 android:textSize="24sp"
                 android:textStyle="bold"
                 android:gravity="center"
+                android:layout_marginBottom="8dp"/>
+            
+            <!-- Welcome Subtitle -->
+            <TextView
+                android:id="@+id/welcome_subtitle"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:fontFamily="@font/xwwk"
+                android:text="@string/welcome_subtitle"
+                android:textColor="@color/setting_preference_summary_color"
+                android:textSize="14sp"
+                android:gravity="center"
                 android:layout_marginBottom="32dp"/>
             
             <!-- Step 1: AI Settings -->

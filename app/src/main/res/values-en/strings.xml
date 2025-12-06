@@ -4,6 +4,7 @@
 
     // Welcome page
     <string name="welcome_title">Welcome to DayExam</string>
+    <string name="welcome_subtitle">AI-powered learning, carry your papers in your pocket</string>
     <string name="welcome_add_paper_tip">Tap the menu icon ➕ in the top left to add and parse papers</string>
     <string name="welcome_ai_tip">Configure AI model API Key in settings to enable AI features</string>
     <string name="welcome_go_to_settings">Go to Settings</string>

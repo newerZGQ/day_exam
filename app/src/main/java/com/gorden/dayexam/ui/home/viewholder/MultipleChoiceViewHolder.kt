@@ -145,7 +145,7 @@ class MultipleChoiceViewHolder(itemView: View): BaseQuestionViewHolder(itemView)
                 optionContainer.getChildAt(index)
                     .setBackgroundColor(context.getColor(R.color.option_default_color))
             }
-
+            optionContainer.getChildAt(index).setOnClickListener {  }
         }
     }
 
