@@ -18,10 +18,10 @@ open class CustomPreference: Preference {
 
     override fun onBindViewHolder(holder: PreferenceViewHolder?) {
         super.onBindViewHolder(holder)
-        val titleView = holder?.itemView?.findViewById(R.id.title) as TextView?
+        val titleView: TextView? = holder?.itemView?.findViewById(R.id.title)
         titleView?.setTextColor(Color.WHITE)
         titleView?.typeface = FontUtils[FontUtils.XWWK_FONT]
-        val summaryView = holder?.itemView?.findViewById(R.id.summary) as TextView?
+        val summaryView: TextView? = holder?.itemView?.findViewById(R.id.summary)
         summaryView?.setTextColor(context.resources.getColor(com.gorden.dayexam.R.color.setting_preference_summary_color))
         summaryView?.typeface = FontUtils[FontUtils.XWWK_FONT]
     }
