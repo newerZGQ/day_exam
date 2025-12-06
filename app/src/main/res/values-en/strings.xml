@@ -174,4 +174,11 @@
 
     <string name="exit_study_title">Exit Study</string>
 
+    // Import Paper Dialog
+    <string name="import_paper_title">Import Paper</string>
+    <string name="import_raw_document_title">Import Raw Document</string>
+    <string name="import_raw_document_desc">Parse questions with AI</string>
+    <string name="import_formatted_document_title">Import Formatted Document</string>
+    <string name="import_formatted_document_desc">Download template in settings</string>
+
 </resources>

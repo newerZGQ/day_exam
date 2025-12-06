@@ -1,0 +1,92 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="vertical"
+    android:background="#212121">
+
+    <!-- 顶部拖动条 -->
+    <ImageView
+        android:src="@drawable/ic_round_horizontal_rule_24"
+        android:layout_width="match_parent"
+        android:layout_height="36dp"/>
+
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="@string/import_paper_title"
+        android:textSize="18sp"
+        android:textColor="@color/menu_title_color"
+        android:fontFamily="@font/xwwk"
+        android:layout_marginTop="8dp"
+        android:layout_marginBottom="16dp"
+        android:layout_marginStart="16dp"
+        android:layout_marginEnd="16dp"
+        android:gravity="center"/>
+
+    <!-- 导入原始文档 -->
+    <LinearLayout
+        android:id="@+id/import_raw_document"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        style="@style/SelectableItemBackground"
+        android:clickable="true"
+        android:focusable="true"
+        android:paddingStart="16dp"
+        android:paddingEnd="16dp"
+        android:paddingTop="12dp"
+        android:paddingBottom="12dp">
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="@string/import_raw_document_title"
+            android:textSize="16sp"
+            android:textColor="@color/menu_title_color"
+            android:fontFamily="@font/xwwk"
+            android:layout_marginBottom="4dp"/>
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="@string/import_raw_document_desc"
+            android:textSize="14sp"
+            android:textColor="@color/paper_title_color"
+            android:fontFamily="@font/xwwk"/>
+    </LinearLayout>
+
+    <!-- 导入格式化文档 -->
+    <LinearLayout
+        android:id="@+id/import_formatted_document"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        style="@style/SelectableItemBackground"
+        android:clickable="true"
+        android:focusable="true"
+        android:paddingStart="16dp"
+        android:paddingEnd="16dp"
+        android:paddingTop="12dp"
+        android:paddingBottom="12dp"
+        android:layout_marginBottom="16dp">
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="@string/import_formatted_document_title"
+            android:textSize="16sp"
+            android:textColor="@color/menu_title_color"
+            android:fontFamily="@font/xwwk"
+            android:layout_marginBottom="4dp"/>
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="@string/import_formatted_document_desc"
+            android:textSize="14sp"
+            android:textColor="@color/paper_title_color"
+            android:fontFamily="@font/xwwk"/>
+    </LinearLayout>
+
+</LinearLayout>

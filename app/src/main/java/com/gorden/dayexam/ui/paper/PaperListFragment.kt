@@ -25,6 +25,7 @@ import com.gorden.dayexam.parser.PaperParser
 import com.gorden.dayexam.repository.DataRepository
 import com.gorden.dayexam.ui.EventKey
 import com.gorden.dayexam.ui.dialog.EditTextDialog
+import com.google.android.material.bottomsheet.BottomSheetDialog
 import com.jeremyliao.liveeventbus.LiveEventBus
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
@@ -134,11 +135,12 @@ class PaperListFragment : Fragment() {
             if (isInEditMode) {
                 exitEditMode()
             } else {
-                toFileBrowser()
+                showImportPaperDialog()
             }
         }
 
     }
+
 
     private fun initData() {
         viewLifecycleOwner.lifecycleScope.launch {
@@ -190,6 +192,27 @@ class PaperListFragment : Fragment() {
     override fun onDestroyView() {
         super.onDestroyView()
         _binding = null
+    }
+
+    private fun showImportPaperDialog() {
+        val ctx = context ?: return
+        val bottomSheetDialog = BottomSheetDialog(ctx)
+        val view = layoutInflater.inflate(R.layout.dialog_import_paper_bottom_sheet, null)
+        bottomSheetDialog.setContentView(view)
+
+        // 导入原始文档 - 使用AI解析
+        view.findViewById<View>(R.id.import_raw_document).setOnClickListener {
+            bottomSheetDialog.dismiss()
+            toFileBrowser()
+        }
+
+        // 导入格式化文档 - 使用模版
+        view.findViewById<View>(R.id.import_formatted_document).setOnClickListener {
+            bottomSheetDialog.dismiss()
+            toFileBrowser()
+        }
+
+        bottomSheetDialog.show()
     }
 
     private fun deletePaper(paperInfo: PaperInfo) {

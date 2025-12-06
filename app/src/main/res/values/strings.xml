@@ -164,4 +164,11 @@
 
     <string name="exit_study_title">退出学习</string>
 
+    // 导入试卷对话框
+    <string name="import_paper_title">导入试卷</string>
+    <string name="import_raw_document_title">导入原始文档</string>
+    <string name="import_raw_document_desc">使用AI解析试题</string>
+    <string name="import_formatted_document_title">导入格式化文档</string>
+    <string name="import_formatted_document_desc">在设置页下载模版</string>
+
 </resources>
