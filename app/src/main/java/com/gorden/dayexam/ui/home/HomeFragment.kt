@@ -135,6 +135,19 @@ class HomeFragment : Fragment() {
                     hideWelcome()
                 }
             }
+        LiveEventBus.get(EventKey.NAVIGATE_QUESTION, Int::class.java)
+            .observe(viewLifecycleOwner) { direction ->
+                val current = currentPosition()
+                if (direction == -1) {
+                    if (current > 0) {
+                        setCurrentPosition(current - 1)
+                    }
+                } else if (direction == 1) {
+                    if (current < questions.size - 1) {
+                        setCurrentPosition(current + 1)
+                    }
+                }
+            }
     }
     
     /**

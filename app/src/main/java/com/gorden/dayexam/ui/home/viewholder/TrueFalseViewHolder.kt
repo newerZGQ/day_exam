@@ -1,6 +1,7 @@
 package com.gorden.dayexam.ui.home.viewholder
 
 import android.text.TextUtils
+import android.util.Log
 import android.view.View
 import com.gorden.dayexam.R
 import com.gorden.dayexam.db.entity.PaperInfo
@@ -37,12 +38,6 @@ class TrueFalseViewHolder(itemView: View): BaseQuestionViewHolder(itemView) {
         }
     }
 
-    override fun setAnsweredStatus(paperInfo: PaperInfo, question: QuestionDetail) {
-        super.setAnsweredStatus(paperInfo, question)
-        correctOption.isClickable = false
-        inCorrectOption.isClickable = false
-    }
-
     override fun genAnsweredOptionsView(paperInfo: PaperInfo, question: QuestionDetail) {
         val context = itemView.context
         val answer = question.answer[0].content
@@ -64,6 +59,12 @@ class TrueFalseViewHolder(itemView: View): BaseQuestionViewHolder(itemView) {
                     inCorrectOption.setBackgroundColor(context.getColor(R.color.option_select_correct_color))
                 }
             }
+        }
+        correctOption.setOnClickListener {
+            Log.d("", "")
+        }
+        inCorrectOption.setOnClickListener {
+            Log.d("", "")
         }
     }
 

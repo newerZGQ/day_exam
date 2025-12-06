@@ -15,10 +15,36 @@ import com.gorden.dayexam.ui.EventKey
 import com.gorden.dayexam.ui.widget.AnswerCardView
 import com.gorden.dayexam.ui.widget.ElementViewListener
 import com.gorden.dayexam.ui.widget.ElementsView
+import android.view.MotionEvent
 import com.gorden.dayexam.utils.NameUtils
+import com.gorden.dayexam.utils.ScreenUtils
 import com.jeremyliao.liveeventbus.LiveEventBus
 
+@SuppressLint("ClickableViewAccessibility")
 abstract class BaseQuestionViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
+
+    private var downX = 0f
+
+    init {
+        // 使用 OnTouchListener 记录 down 事件的坐标
+        itemView.findViewById<View>(R.id.question_container).setOnTouchListener { _, event ->
+            if (event.action == MotionEvent.ACTION_DOWN) {
+                downX = event.rawX
+            }
+            false // 返回 false 让事件继续传递给 OnClickListener
+        }
+        
+        // 使用 itemView 的点击事件处理翻页
+        itemView.findViewById<View>(R.id.question_container).setOnClickListener {
+            val screenWidth = ScreenUtils.screenWidth()
+            
+            if (downX < screenWidth / 2) {
+                LiveEventBus.get(EventKey.NAVIGATE_QUESTION, Int::class.java).post(-1)
+            } else {
+                LiveEventBus.get(EventKey.NAVIGATE_QUESTION, Int::class.java).post(1)
+            }
+        }
+    }
 
     open fun setData(paperInfo: PaperInfo, question: QuestionDetail, isRememberMode: Boolean) {
         genHeadView(paperInfo, question)

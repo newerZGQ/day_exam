@@ -16,6 +16,8 @@ class EventKey {
         const val FAVORITE_QUESTION = "101"
         // 点击回答问题事件
         const val ANSWER_EVENT = "200"
+        // 左右点击切换题目
+        const val NAVIGATE_QUESTION = "803"
         // 在试题选择页面点击选择试题
         const val SELECT_QUESTION = "300"
 
