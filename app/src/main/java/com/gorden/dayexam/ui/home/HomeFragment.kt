@@ -51,6 +51,10 @@ class HomeFragment : Fragment() {
         registerRememberMode()
     }
 
+    fun setCurrentPosition(position: Int) {
+        questionPager.setCurrentItem(position, false)
+    }
+
     fun currentPosition(): Int {
         return questionPager.currentItem
     }

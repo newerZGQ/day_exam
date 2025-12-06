@@ -66,11 +66,11 @@ class FastQuestionSelectActivity: BaseActivity() {
 
     private fun registerAction() {
         LiveEventBus.get(EventKey.SELECT_QUESTION, Int::class.java)
-            .observe(this, {
+            .observe(this) {
                 val intent = Intent()
                 intent.putExtra(SimpleQuestionViewHolder.SELECT_POSITION, it)
                 setResult(MainActivity.SELECT_QUESTION_RESULT_CODE, intent)
                 finish()
-            })
+            }
     }
 }

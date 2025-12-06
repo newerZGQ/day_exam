@@ -27,6 +27,7 @@ import com.gorden.dayexam.ui.home.HomeFragment
 import com.gorden.dayexam.ui.home.shortcut.FastQuestionSelectActivity
 import com.gorden.dayexam.ui.home.shortcut.FastQuestionSelectActivity.Companion.CURRENT_POSITION
 import com.gorden.dayexam.ui.home.shortcut.FastQuestionSelectActivity.Companion.PAPER_ID_KEY
+import com.gorden.dayexam.ui.home.shortcut.SimpleQuestionViewHolder
 import com.gorden.dayexam.ui.sheet.search.SearchSheetDialog
 import com.gorden.dayexam.ui.sheet.shortcut.ShortCutSheetDialog
 import com.gorden.dayexam.utils.SharedPreferenceUtil
@@ -263,9 +264,9 @@ class MainActivity : BaseActivity() {
     }
 
     private fun observeTodayStudyCount() {
-        DataRepository.todayStudyCount().observe(this, {
+        DataRepository.todayStudyCount().observe(this) {
             todayCount.text = it.toString()
-        })
+        }
     }
 
     private fun checkScreenLight() {
@@ -295,6 +296,18 @@ class MainActivity : BaseActivity() {
                     getString(R.string.agree)
                 ) { p0, p1 -> SharedPreferenceUtil.setBoolean(HAS_AGREE_PRIVACY_KEY, true) }
                 .create().show()
+        }
+    }
+
+    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
+        super.onActivityResult(requestCode, resultCode, data)
+        if (requestCode == SELECT_QUESTION_REQUEST_CODE && resultCode == SELECT_QUESTION_RESULT_CODE) {
+            val selectPosition =
+                data?.getIntExtra(SimpleQuestionViewHolder.SELECT_POSITION, -1) ?: -1
+            if (selectPosition == -1 || selectPosition == lastHomepagePosition) {
+                return
+            }
+            homeFragment.setCurrentPosition(selectPosition)
         }
     }
 
