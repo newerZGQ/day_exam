@@ -173,8 +173,6 @@
     <string name="total_study_times">共学习</string>
     <string name="times">次</string>
 
-    <string name="exit_study_key">home_show_welcome</string>
     <string name="exit_study_title">退出学习</string>
-    <string name="exit_study_summary">开启后，下次启动将显示欢迎页</string>
 
 </resources>

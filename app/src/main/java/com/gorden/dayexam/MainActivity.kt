@@ -45,7 +45,6 @@ class MainActivity : BaseActivity() {
     private val homeFragment = HomeFragment()
     private val paperListFragment = PaperListFragment()
     private var curPaperId = 0
-    private var curQuestionId = 0
     private var lastHomepagePosition = -1
 
     // config相关
@@ -194,11 +193,6 @@ class MainActivity : BaseActivity() {
                 curPaperId = it
             }
             closeDrawerLayout()
-        }
-        DataRepository.getCurQuestionId().observe(this) {
-            if (it != null) {
-                curQuestionId = it
-            }
         }
     }
 

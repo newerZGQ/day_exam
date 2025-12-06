@@ -20,32 +20,20 @@ object DataRepository {
 
     private lateinit var mDatabase: AppDatabase
     private val curPaperIdLiveData = MutableLiveData<Int>()
-    private val curQuestionIdLiveData = MutableLiveData<Int>()
 
     fun init(mDatabase: AppDatabase) {
         this.mDatabase = mDatabase
         val paperId = SharedPreferenceUtil.getInt("cur_paper_id", -1)
-        val questionId = SharedPreferenceUtil.getInt("cur_question_id", -1)
         curPaperIdLiveData.value = paperId
-        curQuestionIdLiveData.value = questionId
     }
 
     fun updateCurPaperId(paperId: Int) {
         SharedPreferenceUtil.setInt("cur_paper_id", paperId)
-        curPaperIdLiveData.postValue(paperId)
-    }
-
-    fun updateCurQuestionId(questionId: Int) {
-        SharedPreferenceUtil.setInt("cur_question_id", questionId)
-        curQuestionIdLiveData.postValue(questionId)
+        curPaperIdLiveData.value = paperId
     }
 
     fun getCurPaperId(): LiveData<Int> {
         return curPaperIdLiveData
-    }
-
-    fun getCurQuestionId(): LiveData<Int> {
-        return curQuestionIdLiveData
     }
 
     fun getCurPaperInfo(): PaperInfo? {

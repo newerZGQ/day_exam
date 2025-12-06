@@ -135,7 +135,6 @@ class SearchSheetDialog : BottomSheetDialogFragment(), SearchScopeSelectView.Sco
             .observe(requireActivity()) {
                 hideSoftInput()
                 dismiss()
-                DataRepository.updateCurQuestionId(it.questionId)
             }
     }
 

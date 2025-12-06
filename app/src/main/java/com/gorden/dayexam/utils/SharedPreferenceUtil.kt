@@ -13,7 +13,7 @@ object SharedPreferenceUtil {
     fun setString(key: String, value: String) {
         val editor = sp.edit()
         editor.putString(key, value)
-        editor.apply()
+        editor.commit()
     }
 
     fun getBoolean(key: String, default: Boolean): Boolean {
@@ -23,7 +23,7 @@ object SharedPreferenceUtil {
     fun setBoolean(key: String, value: Boolean) {
         val editor = sp.edit()
         editor.putBoolean(key, value)
-        editor.apply()
+        editor.commit()
     }
 
     fun getInt(key: String, default: Int): Int {
@@ -33,6 +33,6 @@ object SharedPreferenceUtil {
     fun setInt(key: String, value: Int) {
         val editor = sp.edit()
         editor.putInt(key, value)
-        editor.apply()
+        editor.commit()
     }
 }

@@ -10,6 +10,7 @@ import androidx.fragment.app.Fragment
 import androidx.lifecycle.lifecycleScope
 import androidx.viewpager2.widget.ViewPager2
 import androidx.viewpager2.widget.ViewPager2.ORIENTATION_HORIZONTAL
+import com.gorden.dayexam.Constants.SP_HOME_SHOW_WELCOME
 import com.gorden.dayexam.R
 import com.gorden.dayexam.databinding.FragmentHomeLayoutBinding
 import com.gorden.dayexam.utils.SharedPreferenceUtil
@@ -85,7 +86,13 @@ class HomeFragment : Fragment() {
     }
 
     private fun initData() {
-        startLoad()
+        // 如果已设置退出学习，则展示欢迎页
+        val showWelcome = SharedPreferenceUtil.getBoolean(SP_HOME_SHOW_WELCOME, false)
+        if (showWelcome) {
+            showWelcome()
+        } else {
+            startLoad()
+        }
     }
 
     override fun onDestroyView() {
@@ -135,27 +142,18 @@ class HomeFragment : Fragment() {
      */
     private fun startLoad() {
         viewLifecycleOwner.lifecycleScope.launch {
-            // 如果已设置退出学习，则展示欢迎页
-            val showWelcome = SharedPreferenceUtil.getBoolean("home_show_welcome", false)
-            if (showWelcome) {
-                showWelcome()
-                return@launch
-            }
             kotlin.runCatching {
-                val paperDetail = withContext(Dispatchers.IO) {
-                    val paperId = DataRepository.getCurPaperId().value ?: return@withContext null
-                    DataRepository.getPaperDetailById(paperId)
-                }
-
-                if (paperDetail == null) {
-                    Toast.makeText(
-                        requireContext(),
-                        requireContext().getString(R.string.toast_questions_file_not_found),
-                        Toast.LENGTH_SHORT
-                    ).show()
+                val paperId = DataRepository.getCurPaperId().value ?: -1
+                if (paperId < 0) {
                     return@launch
                 }
-
+                val paperDetail = withContext(Dispatchers.IO) {
+                    DataRepository.getPaperDetailById(paperId)
+                }
+                if (paperDetail == null) {
+                    Toast.makeText(requireContext(), requireContext().getString(R.string.toast_questions_file_not_found), Toast.LENGTH_SHORT).show()
+                    return@launch
+                }
                 // 更新试题列表与 UI（主线程）
                 questions = paperDetail.question
                 paperInfo = paperDetail.paperInfo
@@ -164,6 +162,8 @@ class HomeFragment : Fragment() {
                     questions
                 )
                 questionPager.currentItem = paperDetail.paperInfo.lastStudyPosition
+                hideWelcome()
+                SharedPreferenceUtil.setBoolean(SP_HOME_SHOW_WELCOME, false)
             }.onFailure {
                 it.printStackTrace()
                 Toast.makeText(

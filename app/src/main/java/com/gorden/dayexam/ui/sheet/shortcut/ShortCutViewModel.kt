@@ -15,8 +15,4 @@ class ShortCutViewModel(application: Application): AndroidViewModel(application)
     fun getCurPaperId(): LiveData<Int> {
         return DataRepository.getCurPaperId()
     }
-
-    fun getCurQuestionId(): LiveData<Int> {
-        return DataRepository.getCurQuestionId()
-    }
 }
