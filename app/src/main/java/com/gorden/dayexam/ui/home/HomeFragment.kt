@@ -188,9 +188,9 @@ class HomeFragment : Fragment() {
     }
 
     private fun registerRememberMode() {
-        DataRepository.getConfig().observe(viewLifecycleOwner) { config ->
-            config?.let {
-                (questionPager.adapter as QuestionPagerAdapter).setRememberMode(it.rememberMode)
+        DataRepository.getRememberMode().observe(viewLifecycleOwner) { rememberMode ->
+            rememberMode?.let {
+                (questionPager.adapter as QuestionPagerAdapter).setRememberMode(rememberMode)
             }
         }
     }

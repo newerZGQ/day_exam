@@ -15,6 +15,7 @@ import java.io.FileInputStream
 import java.io.FileOutputStream
 import java.lang.StringBuilder
 import java.security.MessageDigest
+import kotlin.streams.toList
 
 object PaperParser {
 
@@ -193,7 +194,13 @@ object PaperParser {
             QuestionType.MULTIPLE_CHOICE,
             QuestionType.SINGLE_CHOICE -> {
                 Answer(
-                    commonAnswer = rawAnswer
+                    optionAnswer = if (rawAnswer.isNotEmpty()) {
+                        rawAnswer[0].content.lowercase().trim().toCharArray().map {
+                            it - 'a'
+                        }.toList()
+                    } else {
+                        emptyList()
+                    }
                 )
             }
             else -> {

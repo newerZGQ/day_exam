@@ -1,14 +1,15 @@
 package com.gorden.dayexam.ui.home.viewholder
 
-import android.text.TextUtils
-import android.util.Log
 import android.view.View
 import com.gorden.dayexam.R
 import com.gorden.dayexam.db.entity.PaperInfo
 import com.gorden.dayexam.db.entity.StudyRecord
 import com.gorden.dayexam.repository.model.Answer
+import com.gorden.dayexam.repository.model.Element
 import com.gorden.dayexam.repository.model.QuestionDetail
 import com.gorden.dayexam.ui.EventKey
+import com.gorden.dayexam.ui.widget.AnswerCardView
+import com.gorden.dayexam.utils.showOrGone
 import com.jeremyliao.liveeventbus.LiveEventBus
 
 class TrueFalseViewHolder(itemView: View): BaseQuestionViewHolder(itemView) {
@@ -16,27 +17,67 @@ class TrueFalseViewHolder(itemView: View): BaseQuestionViewHolder(itemView) {
     private val correctOption: View = itemView.findViewById(R.id.action_correct)
     private val inCorrectOption: View = itemView.findViewById(R.id.action_incorrect)
 
-    override fun genOptionsView(paperInfo: PaperInfo, question: QuestionDetail) {
+    private val answerContainer: View = itemView.findViewById(R.id.answer_container)
+    private val answer: AnswerCardView = itemView.findViewById(R.id.answer)
+
+    override fun setContent(
+        paperInfo: PaperInfo,
+        question: QuestionDetail,
+        isRememberMode: Boolean
+    ) {
+        if (isRememberMode) {
+            question.realAnswer = null
+        }
+        setOptionsView(paperInfo, question, isRememberMode)
+        setAnswerView(paperInfo, question, isRememberMode)
+    }
+
+    private fun setOptionsView(paperInfo: PaperInfo, question: QuestionDetail, isRememberMode: Boolean) {
+        if (isRememberMode) {
+            switchToRememberOptionsView(paperInfo, question)
+            return
+        }
+        if (question.realAnswer != null) {
+            switchToAnsweredOptionsView(paperInfo, question)
+        } else {
+            switchToCommonOptionsView(paperInfo, question)
+        }
+    }
+
+    private fun setAnswerView(paperInfo: PaperInfo, question: QuestionDetail, isRememberMode: Boolean) {
+        if (isRememberMode) {
+            answerContainer.showOrGone(false)
+            return
+        }
+        if (question.realAnswer != null) {
+            answerContainer.showOrGone(true)
+            genAnswerView(paperInfo, question)
+        } else {
+            answerContainer.showOrGone(false)
+        }
+    }
+
+    private fun switchToCommonOptionsView(paperInfo: PaperInfo, question: QuestionDetail) {
         val resources = itemView.resources
         correctOption.setBackgroundColor(resources.getColor(R.color.option_default_color))
         inCorrectOption.setBackgroundColor(resources.getColor(R.color.option_default_color))
         correctOption.setOnClickListener {
             question.realAnswer = Answer(tfAnswer = true)
-            setAnsweredStatus(paperInfo, question)
-            val answerTag = getAnswerEventTag(question)
+            resetAllStatus()
+            val eventTag = getAnswerEventTag(question)
             LiveEventBus.get(EventKey.ANSWER_EVENT, EventKey.AnswerEventModel::class.java)
-                .post(EventKey.AnswerEventModel(answerTag))
+                .post(EventKey.AnswerEventModel(eventTag))
         }
         inCorrectOption.setOnClickListener {
             question.realAnswer = Answer(tfAnswer = false)
-            setAnsweredStatus(paperInfo, question)
-            val answerTag = getAnswerEventTag(question)
+            resetAllStatus()
+            val eventTag = getAnswerEventTag(question)
             LiveEventBus.get(EventKey.ANSWER_EVENT, EventKey.AnswerEventModel::class.java)
-                .post(EventKey.AnswerEventModel(answerTag))
+                .post(EventKey.AnswerEventModel(eventTag))
         }
     }
 
-    override fun genAnsweredOptionsView(paperInfo: PaperInfo, question: QuestionDetail) {
+    private fun switchToAnsweredOptionsView(paperInfo: PaperInfo, question: QuestionDetail) {
         val context = itemView.context
         val answer = question.answer.tfAnswer
         if (question.realAnswer != null) {
@@ -63,7 +104,7 @@ class TrueFalseViewHolder(itemView: View): BaseQuestionViewHolder(itemView) {
         inCorrectOption.setOnClickListener {}
     }
 
-    override fun genRememberOptionsView(paperInfo: PaperInfo, question: QuestionDetail) {
+    private fun switchToRememberOptionsView(paperInfo: PaperInfo, question: QuestionDetail) {
         val answer = question.answer.tfAnswer
         val resources = itemView.resources
         if (answer) {
@@ -77,7 +118,17 @@ class TrueFalseViewHolder(itemView: View): BaseQuestionViewHolder(itemView) {
         inCorrectOption.setOnClickListener(null)
     }
 
-    override fun genActionView(paperInfo: PaperInfo, question: QuestionDetail) {
+    private fun genAnswerView(paperInfo: PaperInfo, question: QuestionDetail) {
+        val resources = itemView.resources
+        val answerText = if (question.answer.tfAnswer) resources.getString(R.string.correct) else resources.getString(R.string.incorrect)
+        val elements = listOf(Element(content = answerText, elementType = Element.TEXT))
+        val realAnswer = if (question.realAnswer?.tfAnswer == true) resources.getString(R.string.correct) else resources.getString(R.string.incorrect)
+        answer.setElements(
+            paperInfo = paperInfo, elements = elements, "", realAnswer,
+            listener = { target, elements ->
+
+            },
+        )
 
     }
 

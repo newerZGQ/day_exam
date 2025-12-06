@@ -20,6 +20,7 @@ object DataRepository {
 
     private lateinit var mDatabase: AppDatabase
     private val curPaperIdLiveData = MutableLiveData<Int>()
+    private val rememberMode = MutableLiveData<Boolean>()
 
     fun init(mDatabase: AppDatabase) {
         this.mDatabase = mDatabase
@@ -137,13 +138,11 @@ object DataRepository {
     }
 
     fun updateRememberMode(opened: Boolean) {
-        AppExecutors.diskIO().execute {
-            mDatabase.runInTransaction {
-                val config = mDatabase.configDao().getEntity()
-                config.rememberMode = opened
-                mDatabase.configDao().update(config)
-            }
-        }
+        rememberMode.value = opened
+    }
+
+    fun getRememberMode(): LiveData<Boolean> {
+        return rememberMode
     }
 
     /**

@@ -1,19 +1,20 @@
 package com.gorden.dayexam.ui.home.viewholder
 
-import android.text.TextUtils
 import android.view.View
 import android.widget.LinearLayout
 import android.widget.Toast
-import androidx.core.view.children
 import com.gorden.dayexam.R
 import com.gorden.dayexam.db.entity.PaperInfo
 import com.gorden.dayexam.db.entity.StudyRecord
 import com.gorden.dayexam.repository.model.Answer
+import com.gorden.dayexam.repository.model.Element
 import com.gorden.dayexam.repository.model.QuestionDetail
 import com.gorden.dayexam.ui.EventKey
+import com.gorden.dayexam.ui.widget.AnswerCardView
 import com.gorden.dayexam.ui.widget.ElementViewListener
 import com.gorden.dayexam.ui.widget.OptionCardView
 import com.gorden.dayexam.utils.ScreenUtils
+import com.gorden.dayexam.utils.showOrGone
 import com.jeremyliao.liveeventbus.LiveEventBus
 
 class MultipleChoiceViewHolder(itemView: View): BaseQuestionViewHolder(itemView) {
@@ -21,8 +22,78 @@ class MultipleChoiceViewHolder(itemView: View): BaseQuestionViewHolder(itemView)
     private var selectedOptions = mutableListOf<Int>()
 
     private val optionContainer: LinearLayout = itemView.findViewById(R.id.options_container)
+    private val answerContainer: View = itemView.findViewById(R.id.answer_container)
+    private val answer: AnswerCardView = itemView.findViewById(R.id.answer)
+    private val action = itemView.findViewById<View>(R.id.action)
 
-    override fun genOptionsView(paperInfo: PaperInfo, question: QuestionDetail) {
+    override fun setContent(
+        paperInfo: PaperInfo,
+        question: QuestionDetail,
+        isRememberMode: Boolean
+    ) {
+        if (isRememberMode) {
+            question.realAnswer = null
+        }
+        setOptionsView(paperInfo, question, isRememberMode)
+        setAnswerView(paperInfo, question, isRememberMode)
+        setActionView(paperInfo, question, isRememberMode)
+    }
+
+    private fun setOptionsView(paperInfo: PaperInfo, question: QuestionDetail, isRememberMode: Boolean) {
+        if (isRememberMode) {
+            switchToRememberOptionsView(paperInfo, question)
+            return
+        }
+        if (question.realAnswer != null) {
+            switchToAnsweredOptionsView(paperInfo, question)
+        } else {
+            switchToCommonOptionsView(paperInfo, question)
+        }
+    }
+
+    private fun setAnswerView(paperInfo: PaperInfo, question: QuestionDetail, isRememberMode: Boolean) {
+        if (isRememberMode) {
+            answerContainer.showOrGone(false)
+            return
+        }
+        if (question.realAnswer != null) {
+            answerContainer.showOrGone(true)
+            genAnswerView(paperInfo, question)
+        } else {
+            answerContainer.showOrGone(false)
+        }
+    }
+
+    private fun setActionView(paperInfo: PaperInfo, question: QuestionDetail, isRememberMode: Boolean) {
+        if (isRememberMode) {
+            action.showOrGone(false)
+            return
+        }
+        if (question.realAnswer != null) {
+            action.showOrGone(false)
+        } else {
+            action.showOrGone(true)
+        }
+
+        val context = itemView.context
+        action.setOnClickListener {
+            if (selectedOptions.isEmpty()) {
+                Toast.makeText(
+                    context,
+                    context.getString(R.string.toast_please_select_option),
+                    Toast.LENGTH_SHORT).show()
+                return@setOnClickListener
+            }
+            question.realAnswer = Answer(optionAnswer = selectedOptions.sortedBy { it })
+            resetAllStatus()
+            val isCorrect = isCorrect(question)
+            LiveEventBus.get(EventKey.ANSWER_EVENT, EventKey.AnswerEventModel::class.java)
+                .post(EventKey.AnswerEventModel(
+                    StudyRecord.parseFromBoolean(isCorrect)))
+        }
+    }
+
+    private fun switchToCommonOptionsView(paperInfo: PaperInfo, question: QuestionDetail) {
         optionContainer.removeAllViews()
         question.options.forEachIndexed { index, optionItemWithElement ->
             val optionTag = (index + 'A'.toInt()).toChar()
@@ -46,12 +117,7 @@ class MultipleChoiceViewHolder(itemView: View): BaseQuestionViewHolder(itemView)
         }
     }
 
-    override fun setInitStatus(paperInfo: PaperInfo, question: QuestionDetail) {
-        super.setInitStatus(paperInfo, question)
-        question.realAnswer = null
-    }
-
-    override fun genAnsweredOptionsView(paperInfo: PaperInfo, question: QuestionDetail) {
+    private fun switchToAnsweredOptionsView(paperInfo: PaperInfo, question: QuestionDetail) {
         val selectedOptions = question.realAnswer?.optionAnswer
         if (selectedOptions.isNullOrEmpty()) {
             return
@@ -83,7 +149,7 @@ class MultipleChoiceViewHolder(itemView: View): BaseQuestionViewHolder(itemView)
         }
     }
 
-    override fun genRememberOptionsView(paperInfo: PaperInfo, question: QuestionDetail) {
+    private fun switchToRememberOptionsView(paperInfo: PaperInfo, question: QuestionDetail) {
         optionContainer.removeAllViews()
         val correctAnswer = question.answer.optionAnswer
         question.options.forEachIndexed { index, optionItemWithElement ->
@@ -103,26 +169,20 @@ class MultipleChoiceViewHolder(itemView: View): BaseQuestionViewHolder(itemView)
         }
     }
 
-    override fun genActionView(paperInfo: PaperInfo, question: QuestionDetail) {
-        val action = itemView.findViewById<View>(R.id.action)
-        action.visibility = View.VISIBLE
-        val context = itemView.context
-        action.setOnClickListener {
-            if (selectedOptions.isEmpty()) {
-                Toast.makeText(
-                    context,
-                    context.getString(R.string.toast_please_select_option),
-                    Toast.LENGTH_SHORT).show()
-                return@setOnClickListener
-            }
-            action.visibility = View.GONE
-            question.realAnswer = Answer(optionAnswer = selectedOptions.sortedBy { it })
-            setAnsweredStatus(paperInfo, question)
-            val isCorrect = isCorrect(question)
-            LiveEventBus.get(EventKey.ANSWER_EVENT, EventKey.AnswerEventModel::class.java)
-                .post(EventKey.AnswerEventModel(
-                    StudyRecord.parseFromBoolean(isCorrect)))
-        }
+    private fun genAnswerView(paperInfo: PaperInfo, question: QuestionDetail) {
+        val answerText = question.answer.optionAnswer.sortedBy { it }.map {
+            (it + 'A'.toInt()).toChar().toString()
+        }.toString()
+        val elements = listOf(Element(content = answerText, elementType = Element.TEXT))
+        val realAnswer = question.realAnswer?.optionAnswer?.sortedBy { it }?.map {
+            (it + 'A'.toInt()).toChar().toString()
+        }.toString()
+        answer.setElements(
+            paperInfo = paperInfo, elements = elements, "", realAnswer,
+            listener = { target, elements ->
+
+            },
+        )
     }
 
     private fun isCorrect(question: QuestionDetail): Boolean {
@@ -132,13 +192,6 @@ class MultipleChoiceViewHolder(itemView: View): BaseQuestionViewHolder(itemView)
         val standardAnswer = question.answer.optionAnswer
         val realAnswer = question.realAnswer?.optionAnswer
         return standardAnswer == realAnswer
-    }
-
-    override fun setAnsweredStatus(paperInfo: PaperInfo, question: QuestionDetail) {
-        super.setAnsweredStatus(paperInfo, question)
-        optionContainer.children.forEach {
-            it.setOnClickListener(null)
-        }
     }
 
 }

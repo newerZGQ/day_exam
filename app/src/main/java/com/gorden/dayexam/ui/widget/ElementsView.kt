@@ -32,8 +32,6 @@ class ElementsView: LinearLayout {
         tagTextSize = typeArray.getDimension(R.styleable.element_tag_text_size, 3f)
     }
 
-    private var listener: ElementActionListener? = null
-
     companion object {
         const val ELEMENT_MARGIN_TOP = 0f
     }
@@ -110,6 +108,6 @@ class ElementsView: LinearLayout {
     }
 }
 
-interface ElementActionListener {
+fun interface ElementActionListener {
     fun onImageClick(target: Int, elements: List<Element>)
 }

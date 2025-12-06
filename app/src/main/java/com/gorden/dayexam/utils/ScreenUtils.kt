@@ -49,3 +49,7 @@ object ScreenUtils {
         return rectangle.top
     }
 }
+
+fun View.showOrGone(show: Boolean) {
+    this.visibility = if (show) View.VISIBLE else View.GONE
+}

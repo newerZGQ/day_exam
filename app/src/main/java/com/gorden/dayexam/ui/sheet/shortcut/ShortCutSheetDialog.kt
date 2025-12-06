@@ -35,13 +35,7 @@ class ShortCutSheetDialog : BottomSheetDialogFragment() {
     ): View {
         _binding = ShortCutSheetLayoutBinding.inflate(inflater, container, false)
         rootView = binding.root
-        val viewModel = ViewModelProvider(this).get(ShortCutViewModel::class.java)
-        viewModel.getConfig().observe(this) {
-            it?.let {
-                setStudyMode(it)
-                setStudyModeListener()
-            }
-        }
+        setStudyModeListener()
         initCopyQuestion()
         initSearchAction()
         initKeepScreenSwitch()
@@ -58,16 +52,9 @@ class ShortCutSheetDialog : BottomSheetDialogFragment() {
         return rootView
     }
 
-    private fun setStudyMode(config: Config) {
-        binding.rememberModeSwitch.isChecked = config.rememberMode
-    }
-
     private fun setStudyModeListener() {
         binding.rememberModeSwitch.setOnCheckedChangeListener { _, b ->
             DataRepository.updateRememberMode(b)
-        }
-        binding.rememberContentContainer.setOnClickListener {
-            binding.rememberModeSwitch.isChecked = !binding.rememberModeSwitch.isChecked
         }
     }
 

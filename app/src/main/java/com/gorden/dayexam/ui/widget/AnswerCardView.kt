@@ -8,7 +8,6 @@ import android.widget.FrameLayout
 import android.widget.TextView
 import com.gorden.dayexam.R
 import com.gorden.dayexam.db.entity.PaperInfo
-import com.gorden.dayexam.repository.model.Answer
 import com.gorden.dayexam.repository.model.Element
 
 class AnswerCardView: FrameLayout {
@@ -22,16 +21,22 @@ class AnswerCardView: FrameLayout {
     }
 
     @SuppressLint("CutPasteId")
-    fun setElements(paperInfo: PaperInfo, elements: List<Element>, highlightText: String, realAnswer: Answer?, listener: ElementActionListener) {
+    fun setElements(
+        paperInfo: PaperInfo,
+        elements: List<Element>,
+        highlightText: String,
+        realAnswer: String?,
+        listener: ElementActionListener
+    ) {
         findViewById<ElementsView>(R.id.answer_content).setElements(paperInfo, elements, highlightText, listener)
-//        if (realAnswer?.answer?.isNotEmpty() == true) {
-//            findViewById<TextView>(R.id.real_answer_content).visibility = VISIBLE
-//            findViewById<TextView>(R.id.real_answer_content).text = realAnswer.answer
-//            findViewById<TextView>(R.id.real_answer_tag).visibility = VISIBLE
-//        } else {
-//            findViewById<TextView>(R.id.real_answer_content).visibility = GONE
-//            findViewById<TextView>(R.id.real_answer_content).text = ""
-//            findViewById<TextView>(R.id.real_answer_tag).visibility = GONE
-//        }
+        if (realAnswer?.isNotEmpty() == true) {
+            findViewById<TextView>(R.id.real_answer_content).visibility = VISIBLE
+            findViewById<TextView>(R.id.real_answer_content).text = realAnswer
+            findViewById<TextView>(R.id.real_answer_tag).visibility = VISIBLE
+        } else {
+            findViewById<TextView>(R.id.real_answer_content).visibility = GONE
+            findViewById<TextView>(R.id.real_answer_content).text = ""
+            findViewById<TextView>(R.id.real_answer_tag).visibility = GONE
+        }
     }
 }

@@ -6,27 +6,11 @@ import com.gorden.dayexam.repository.model.QuestionDetail
 
 class ErrorTypeQuestionViewHolder(itemView: View): BaseQuestionViewHolder(itemView) {
 
-    override fun genOptionsView(paperInfo: PaperInfo, question: QuestionDetail) {
-
-    }
-
-    override fun genAnsweredOptionsView(paperInfo: PaperInfo, question: QuestionDetail) {
-
-    }
-
-    override fun genRememberOptionsView(paperInfo: PaperInfo, question: QuestionDetail) {
-
-    }
-
-    override fun genActionView(paperInfo: PaperInfo, question: QuestionDetail) {
-
-    }
-
-    override fun showAnswer(paperInfo: PaperInfo, question: QuestionDetail) {
-
-    }
-
-    override fun hideAnswer(paperInfo: PaperInfo, question: QuestionDetail) {
+    override fun setContent(
+        paperInfo: PaperInfo,
+        question: QuestionDetail,
+        isRememberMode: Boolean
+    ) {
 
     }
 
