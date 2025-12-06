@@ -28,8 +28,7 @@ import com.gorden.dayexam.ui.EventKey
 import com.gorden.dayexam.utils.ScreenUtils
 import com.jeremyliao.liveeventbus.LiveEventBus
 
-class SearchSheetDialog : BottomSheetDialogFragment(), SearchScopeSelectView.ScopeSelectListener,
-    TextWatcher {
+class SearchSheetDialog : BottomSheetDialogFragment(), TextWatcher {
 
     private var _binding: SearchSheetLayoutBinding? = null
     private val binding get() = _binding!!
@@ -38,13 +37,11 @@ class SearchSheetDialog : BottomSheetDialogFragment(), SearchScopeSelectView.Sco
     private lateinit var parent: View
     private lateinit var searchInput: EditText
     private lateinit var clearInputBtn: ImageButton
-    private lateinit var scopeSelect: SearchScopeSelectView
     private lateinit var questionList: RecyclerView
     private lateinit var adapter: SearchAdapter
 
     private var viewModel: SearchViewModel? = null
 
-    private var curScope: Int = SearchScopeSelectView.SEARCH_IN_PAPER
     private var curSearchKey: String = "的"
 
     override fun onCreateDialog(savedInstanceState: Bundle?): Dialog {
@@ -54,13 +51,11 @@ class SearchSheetDialog : BottomSheetDialogFragment(), SearchScopeSelectView.Sco
         rootView = binding.searchSheetContainer
         searchInput = binding.searchKeyInput
         clearInputBtn = binding.clearContent
-        scopeSelect = binding.scopeSelectView
         questionList = binding.searchQuestionList
         clearInputBtn.setOnClickListener {
             searchInput.text.clear()
         }
         setList()
-        scopeSelect.setListener(this)
         searchInput.addTextChangedListener(this)
         viewModel = ViewModelProvider(this).get(SearchViewModel::class.java)
         viewModel?.searchResult()?.observe(this, {
@@ -106,11 +101,6 @@ class SearchSheetDialog : BottomSheetDialogFragment(), SearchScopeSelectView.Sco
         })
     }
 
-    override fun onSelect(scope: Int) {
-        this.curScope = scope
-        doSearch()
-    }
-
     override fun beforeTextChanged(p0: CharSequence?, p1: Int, p2: Int, p3: Int) {
 
     }
@@ -126,7 +116,7 @@ class SearchSheetDialog : BottomSheetDialogFragment(), SearchScopeSelectView.Sco
 
     private fun doSearch() {
         if (curSearchKey.isNotEmpty()) {
-            viewModel?.search(curScope, curSearchKey)
+            viewModel?.search(curSearchKey)
         }
     }
 

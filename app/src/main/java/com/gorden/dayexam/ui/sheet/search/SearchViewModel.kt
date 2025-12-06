@@ -9,8 +9,8 @@ import com.gorden.dayexam.repository.model.SearchItem
 class SearchViewModel: ViewModel() {
     private val searchResult = MutableLiveData<List<SearchItem>>()
 
-    fun search(scope: Int, key: String){
-        DataRepository.searchByScopeAndKey(scope, key, searchResult)
+    fun search(key: String){
+
     }
 
     fun searchResult(): LiveData<List<SearchItem>> {

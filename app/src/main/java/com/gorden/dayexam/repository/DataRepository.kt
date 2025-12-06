@@ -177,12 +177,5 @@ object DataRepository {
         }
     }
 
-    /**
-     * 搜索search相关
-     */
-    fun searchByScopeAndKey(scope: Int, key: String, liveSearchItems: MutableLiveData<List<SearchItem>>) {
-
-    }
-
 }
 
