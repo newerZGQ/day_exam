@@ -93,7 +93,7 @@
     // float button
     <string name="edit_current_question">编辑当前试题</string>
     <string name="reset_current_question">重置当前试题</string>
-    <string name="list_question">当前试题列表</string>
+    <string name="list_question">试题列表</string>
     <string name="favorite_question">收藏当前试题</string>
     <string name="show_tip">展开小贴士</string>
 

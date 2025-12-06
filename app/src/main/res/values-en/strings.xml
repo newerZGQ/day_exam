@@ -92,7 +92,7 @@
     // float button
     <string name="edit_current_question">Edit Question</string>
     <string name="reset_current_question">Reset</string>
-    <string name="list_question">ALL</string>
+    <string name="list_question">Question List</string>
     <string name="favorite_question">Star Question</string>
     <string name="show_tip">Tip</string>
 

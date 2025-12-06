@@ -42,7 +42,7 @@ class FastQuestionSelectActivity: BaseActivity() {
             val questions = viewModel.currentQuestionDetail(paperId)
             adapter?.setData(questions, currentPosition)
             (binding.questionList.layoutManager as LinearLayoutManager).scrollToPosition(currentPosition)
-            binding.toolbar.title = "要改"
+            binding.toolbar.title = getString(R.string.list_question)
         }
     }
 
