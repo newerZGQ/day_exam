@@ -151,6 +151,14 @@
     <string name="demo_template_summary">Click To Download</string>
     <string name="demo_template_link">https://gitee.com/zgq2015/dayexam_config/raw/master/%E5%A4%A9%E5%A4%A9%E8%83%8C%E9%A2%98-%E6%A8%A1%E6%9D%BF.docx</string>
 
+    <string name="gemini_api_key">gemini_api_key</string>
+    <string name="gemini_api_title">Gemini Api Key</string>
+    <string name="gemini_api_summary">Click to set your Gemini Api Key</string>
+
+    <string name="deepseek_api_key">deepseek_api_key</string>
+    <string name="deepseek_api_title">Deepseek Api Key</string>
+    <string name="deepseek_api_summary">Click to set your DeepSeek Api Key</string>
+
     <string name="letter_for_users">A letter to users\n
         Welcome to use Tiantian recitation question. Nice to meet you here!\n
         Dear users, reciting questions every day is an app dedicated to helping you brush questions for the exam. We hope to create an ad free, excellent experience and safe storage app to give you the greatest help in the exam.\n
