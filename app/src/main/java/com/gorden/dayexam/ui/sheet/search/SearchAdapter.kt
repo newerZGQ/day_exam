@@ -32,8 +32,8 @@ class SearchAdapter: RecyclerView.Adapter<SearchItemViewHolder>() {
         holder.questionType.text = NameUtils.getTypeName(searchItem.questionType)
         holder.elementContent.text = getSpannableContent(searchItem.elementContent)
         holder.itemView.setOnClickListener {
-            LiveEventBus.get(EventKey.SEARCH_RESULT_ITEM_CLICK, SearchItem::class.java)
-                .post(searchItem)
+            LiveEventBus.get(EventKey.SEARCH_RESULT_ITEM_CLICK, Int::class.java)
+                .post(searchItem.questionIndex)
         }
     }
 

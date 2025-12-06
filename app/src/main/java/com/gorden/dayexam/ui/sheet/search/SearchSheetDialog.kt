@@ -122,7 +122,7 @@ class SearchSheetDialog : BottomSheetDialogFragment(), TextWatcher {
     }
 
     private fun registerAction() {
-        LiveEventBus.get(EventKey.SEARCH_RESULT_ITEM_CLICK, SearchItem::class.java)
+        LiveEventBus.get(EventKey.SEARCH_RESULT_ITEM_CLICK, Int::class.java)
             .observe(requireActivity()) {
                 hideSoftInput()
                 dismiss()

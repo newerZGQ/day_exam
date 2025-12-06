@@ -9,7 +9,7 @@ data class PaperInfo(
     var title: String,
     var path: String,
     var position: Int,
-    val lastStudyPosition: Int = 0,
+    var lastStudyPosition: Int = 0,
     val questionCount: Int = 0,
     var hash: String
 ) {

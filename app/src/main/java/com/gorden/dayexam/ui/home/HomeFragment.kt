@@ -55,10 +55,6 @@ class HomeFragment : Fragment() {
         return questionPager.currentItem
     }
 
-    fun setCurrentPosition(position: Int) {
-        questionPager.currentItem = position
-    }
-
     private val onPageChangeCallback = object : ViewPager2.OnPageChangeCallback() {
         override fun onPageSelected(position: Int) {
             paperInfo?.let {
@@ -140,11 +136,26 @@ class HomeFragment : Fragment() {
                 val current = currentPosition()
                 if (direction == -1) {
                     if (current > 0) {
-                        setCurrentPosition(current - 1)
+                        questionPager.setCurrentItem(current - 1, true)
                     }
                 } else if (direction == 1) {
                     if (current < questions.size - 1) {
-                        setCurrentPosition(current + 1)
+                        questionPager.setCurrentItem(current + 1, true)
+                    }
+                }
+            }
+        LiveEventBus.get(EventKey.SEARCH_RESULT_ITEM_CLICK, Int::class.java)
+            .observe(viewLifecycleOwner) { questionIndex ->
+                // 切换到对应的问题
+                if (questionIndex >= 0 && questionIndex < questions.size) {
+                    questionPager.setCurrentItem(questionIndex, false)
+                    
+                    // 更新 paperInfo 的 lastStudyPosition
+                    paperInfo?.let { paper ->
+                        paper.lastStudyPosition = questionIndex
+                        viewLifecycleOwner.lifecycleScope.launch(Dispatchers.IO) {
+                            DataRepository.updatePapers(listOf(paper))
+                        }
                     }
                 }
             }
