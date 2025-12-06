@@ -2,6 +2,12 @@
     <string name="app_name">天天背题</string>
     <string name="action_settings">Settings</string>
 
+    // 欢迎页
+    <string name="welcome_title">欢迎使用天天背题</string>
+    <string name="welcome_add_paper_tip">点击左上角菜单 ➕ 添加试卷并解析</string>
+    <string name="welcome_ai_tip">在设置中配置大模型 API Key 以启用 AI 功能</string>
+    <string name="welcome_go_to_settings">前往设置</string>
+
 
 
     <string name="paper">试卷</string>

@@ -79,6 +79,14 @@ class HomeFragment : Fragment() {
         questionPager.adapter = QuestionPagerAdapter()
         questionPager.registerOnPageChangeCallback(onPageChangeCallback)
         questionPager.orientation = ORIENTATION_HORIZONTAL
+        
+        // 设置"前往设置"按钮点击事件
+        binding.goToSettingsButton.setOnClickListener {
+            val intent = Intent(requireContext(), android.provider.Settings.ACTION_SETTINGS::class.java)
+            // 实际上应该跳转到应用的设置页面
+            val settingsIntent = Intent(requireActivity(), com.gorden.dayexam.ui.settings.SettingsActivity::class.java)
+            startActivity(settingsIntent)
+        }
     }
 
     private fun showWelcome() {
