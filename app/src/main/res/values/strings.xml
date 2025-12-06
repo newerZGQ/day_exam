@@ -116,11 +116,11 @@
     <string name="confirm_recover">恢复备份</string>
     <string name="please_select_backup">请选择备份文件</string>
     <string name="privacy_key">privacy_key</string>
-    <string name="privacy_title">《隐私政策》</string>
+    <string name="privacy_title">隐私政策</string>
     <string name="privacy_summary">天天背题不会搜集您的任何隐私信息</string>
     <string name="privacy_and_help_key">privacy_and_help</string>
     <string name="privacy_and_help">隐私与帮助</string>
-    <string name="privacy_dialog_title">《隐私政策》</string>
+    <string name="privacy_dialog_title">隐私政策</string>
     <string name="privacy_dialog_content">
         天天背题隐私政策\n声明\n天天背题仅会查询以下几个信息，这些信息都与您的个人隐私无关：\n1. app的错误日志，app运行时如果出现闪退，我们会将错误日志上传至服务器，错误日志会有您的设备型号，但是不会访问您的隐私\n2. sd卡的文件，天天背题的主要功能是从您的sd卡中读取word文档并解析到数据库，该过程需要您主动选择对应文件。除此之外，天天背题不会主动访问您的sd卡内容
     </string>
