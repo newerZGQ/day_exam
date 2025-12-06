@@ -3,9 +3,13 @@ package com.gorden.dayexam.ui.home
 import android.os.Bundle
 import androidx.appcompat.app.AppCompatActivity
 import androidx.viewpager2.widget.ViewPager2
+import com.gorden.dayexam.ContextHolder
 import com.gorden.dayexam.databinding.ActivityImagePreviewLayoutBinding
+import com.gorden.dayexam.repository.DataRepository
+import com.gorden.dayexam.repository.PaperDetailCache
 import com.gorden.dayexam.ui.EventKey
 import com.jeremyliao.liveeventbus.LiveEventBus
+import java.io.File
 
 class ImagePreviewActivity: AppCompatActivity() {
 
@@ -26,13 +30,16 @@ class ImagePreviewActivity: AppCompatActivity() {
         setImageList()
         LiveEventBus
             .get(EventKey.IMAGE_PREVIEW_CLICKED, String::class.java)
-            .observe(this, {
+            .observe(this) {
                 finish()
-            })
+            }
     }
 
     private fun setImageList() {
-        val imageList = intent.getStringArrayListExtra(IMAGE_LIST_DATA_KEY)
+        val paperHash = PaperDetailCache.get(DataRepository.getCurPaperId().value ?: -1)?.paperInfo?.hash
+        val imageList = intent.getStringArrayListExtra(IMAGE_LIST_DATA_KEY)?.map {
+            File(ContextHolder.application.cacheDir, "/${paperHash}/image/${it}").absolutePath
+        }
         binding.imageList.let {
             if (imageList?.isNotEmpty() == true) {
                 (it.adapter as ImagePreviewAdapter).setData(imageList)
