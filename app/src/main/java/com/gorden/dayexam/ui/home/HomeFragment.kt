@@ -17,6 +17,7 @@ import com.gorden.dayexam.utils.SharedPreferenceUtil
 import com.gorden.dayexam.db.entity.PaperInfo
 import com.gorden.dayexam.db.entity.StudyRecord
 import com.gorden.dayexam.repository.DataRepository
+import com.gorden.dayexam.repository.PaperDetailCache
 import com.gorden.dayexam.repository.model.QuestionDetail
 import com.gorden.dayexam.ui.EventKey
 import com.jeremyliao.liveeventbus.LiveEventBus
@@ -166,6 +167,7 @@ class HomeFragment : Fragment() {
                     Toast.makeText(requireContext(), requireContext().getString(R.string.toast_questions_file_not_found), Toast.LENGTH_SHORT).show()
                     return@launch
                 }
+                PaperDetailCache.put(paperId, paperDetail)
                 // 更新试题列表与 UI（主线程）
                 questions = paperDetail.question
                 paperInfo = paperDetail.paperInfo

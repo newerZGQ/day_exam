@@ -13,6 +13,7 @@ import android.widget.EditText
 import android.widget.ImageButton
 import android.widget.LinearLayout
 import androidx.coordinatorlayout.widget.CoordinatorLayout
+import androidx.fragment.app.FragmentManager
 import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.DividerItemDecoration
 import androidx.recyclerview.widget.LinearLayoutManager
@@ -42,7 +43,7 @@ class SearchSheetDialog : BottomSheetDialogFragment(), TextWatcher {
 
     private var viewModel: SearchViewModel? = null
 
-    private var curSearchKey: String = "的"
+    private var curSearchKey: String = ""
 
     override fun onCreateDialog(savedInstanceState: Bundle?): Dialog {
         val dialog = BottomSheetDialog(requireActivity(), 0)

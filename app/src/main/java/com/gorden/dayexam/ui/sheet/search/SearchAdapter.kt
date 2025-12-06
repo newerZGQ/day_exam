@@ -1,5 +1,6 @@
 package com.gorden.dayexam.ui.sheet.search
 
+import android.annotation.SuppressLint
 import android.text.SpannableString
 import android.text.Spanned
 import android.text.style.BackgroundColorSpan
@@ -25,9 +26,9 @@ class SearchAdapter: RecyclerView.Adapter<SearchItemViewHolder>() {
         return SearchItemViewHolder(itemView)
     }
 
+    @SuppressLint("SetTextI18n")
     override fun onBindViewHolder(holder: SearchItemViewHolder, position: Int) {
         val searchItem = data[position]
-        holder.paperTitle.text = "《" + searchItem.paperTitle + "》"
         holder.questionType.text = NameUtils.getTypeName(searchItem.questionType)
         holder.elementContent.text = getSpannableContent(searchItem.elementContent)
         holder.itemView.setOnClickListener {
