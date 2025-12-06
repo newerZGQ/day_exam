@@ -21,13 +21,10 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import com.gorden.dayexam.R
 import com.gorden.dayexam.databinding.FragmentPaperListLayoutBinding
 import com.gorden.dayexam.db.entity.PaperInfo
-import com.gorden.dayexam.executor.AppExecutors
-import com.gorden.dayexam.parser.PaperParser
+import com.gorden.dayexam.parser.FormatedPaperParser
 import com.gorden.dayexam.repository.DataRepository
-import com.gorden.dayexam.ui.EventKey
 import com.gorden.dayexam.ui.dialog.EditTextDialog
 import com.google.android.material.bottomsheet.BottomSheetDialog
-import com.jeremyliao.liveeventbus.LiveEventBus
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
@@ -291,7 +288,7 @@ class PaperListFragment : Fragment() {
                         }
                     }
                     // Check if paper already exists before parsing
-                    if (PaperParser.checkExist(destFile.absolutePath)) {
+                    if (FormatedPaperParser.checkExist(destFile.absolutePath)) {
                         withContext(Dispatchers.Main) {
                             Toast.makeText(
                                 context,
@@ -304,7 +301,7 @@ class PaperListFragment : Fragment() {
 
                     // TODO: 使用 AI 解析原始文档
                     // 暂时使用 PaperParser 解析拷贝到缓存目录的文件
-                    PaperParser.parseFromFile(destFile.absolutePath)
+                    FormatedPaperParser.parseFromFile(destFile.absolutePath)
                 }
             } catch (e: Exception) {
                 e.printStackTrace()
@@ -336,7 +333,7 @@ class PaperListFragment : Fragment() {
                         }
                     }
                     // Check if paper already exists before parsing
-                    if (PaperParser.checkExist(destFile.absolutePath)) {
+                    if (FormatedPaperParser.checkExist(destFile.absolutePath)) {
                         withContext(Dispatchers.Main) {
                             Toast.makeText(
                                 context,
@@ -348,7 +345,7 @@ class PaperListFragment : Fragment() {
                     }
 
                     // 使用模版格式解析
-                    PaperParser.parseFromFile(destFile.absolutePath)
+                    FormatedPaperParser.parseFromFile(destFile.absolutePath)
                 }
             } catch (e: Exception) {
                 e.printStackTrace()

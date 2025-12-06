@@ -15,9 +15,8 @@ import java.io.FileInputStream
 import java.io.FileOutputStream
 import java.lang.StringBuilder
 import java.security.MessageDigest
-import kotlin.streams.toList
 
-object PaperParser {
+object FormatedPaperParser {
 
     /**
      * Check if a paper already exists in the database by its file hash.
