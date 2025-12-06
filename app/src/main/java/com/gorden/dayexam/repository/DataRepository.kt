@@ -40,6 +40,10 @@ object DataRepository {
         return getPaperById(curPaperIdLiveData.value ?: -1)
     }
 
+    fun hasShowingPaper(): Boolean {
+        return (curPaperIdLiveData.value.takeIf { it != null } ?: -1) >= 0
+    }
+
     /**
      * study status相关
      */

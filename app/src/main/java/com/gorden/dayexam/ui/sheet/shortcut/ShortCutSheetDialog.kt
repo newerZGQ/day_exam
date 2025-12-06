@@ -46,6 +46,15 @@ class ShortCutSheetDialog : BottomSheetDialogFragment() {
         initSearchAction()
         initKeepScreenSwitch()
         initExitStudy()
+
+        if (!DataRepository.hasShowingPaper()) {
+            binding.copyContentContainer.visibility = View.GONE
+            binding.searchContentContainer.visibility = View.GONE
+            binding.rememberContentContainer.visibility = View.GONE
+            binding.keepScreenContentContainer.visibility = View.GONE
+            binding.exitStudyContainer.visibility = View.GONE
+        }
+        
         return rootView
     }
 
