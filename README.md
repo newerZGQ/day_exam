@@ -12,7 +12,7 @@ A powerful Android application designed to help you efficiently manage and study
 
 ## ✨ Key Features
 
-* **Question Management** - Supports importing and organizing various exam questions.
+* **Question Management** - Supports importing and organizing various exam questions by AI.
 * **Multiple Question Types** - Supports single-choice, multiple-choice, and other question formats.
 * **Focus Mode** - Provides an immersive, distraction-free learning experience.
 
