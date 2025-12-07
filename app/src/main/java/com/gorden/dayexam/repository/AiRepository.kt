@@ -149,7 +149,7 @@ object AiRepository {
 			val url = "https://api.deepseek.com/chat/completions"
 			val promptText = buildPrompt(documentText)
 			val requestMap = mapOf(
-				"model" to "deepseek-reasoner",
+				"model" to "deepseek-chat",
 				"messages" to listOf(
 					mapOf(
 						"role" to "system",
@@ -162,7 +162,7 @@ object AiRepository {
 				),
 				"stream" to false,
 				"temperature" to 0.1,
-				"max_tokens" to 64000
+				"max_tokens" to 8000
 			)
 			val requestJson = gson.toJson(requestMap)
 
