@@ -206,4 +206,5 @@
     <string name="ai_model_gemini">Gemini</string>
     <string name="ai_model_deepseek">DeepSeek</string>
 
+    <string name="settings_already_set">Already Set</string>
 </resources>

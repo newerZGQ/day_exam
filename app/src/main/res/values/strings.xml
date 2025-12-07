@@ -196,4 +196,5 @@
     <string name="ai_model_gemini">Gemini</string>
     <string name="ai_model_deepseek">DeepSeek</string>
 
+    <string name="settings_already_set">已设置</string>
 </resources>

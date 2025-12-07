@@ -41,12 +41,12 @@ class SettingsFragment: PreferenceFragmentCompat() {
         geminiPref?.let { pref ->
             // set initial summary
             val saved = SharedPreferenceUtil.getString(geminiKey)
-            pref.summary = if (saved.isNotEmpty()) "${resources.getString(R.string.gemini_api_title)}(已设置)" else getString(R.string.gemini_api_summary)
+            pref.summary = if (saved.isNotEmpty()) "${resources.getString(R.string.gemini_api_title)}(${resources.getString(R.string.settings_already_set)})" else getString(R.string.gemini_api_summary)
             pref.setOnPreferenceClickListener {
                 EditTextDialog(requireActivity(), resources.getString(R.string.gemini_api_title), "", saved, getString(R.string.please_input), editCallBack = object : EditTextDialog.EditCallBack {
                     override fun onConfirmContent(dialog: EditTextDialog, content: String, subContent: String) {
                         SharedPreferenceUtil.setString(geminiKey, content)
-                        pref.summary = if (content.isNotEmpty()) "${resources.getString(R.string.gemini_api_title)}(已设置)" else getString(R.string.gemini_api_summary)
+                        pref.summary = if (content.isNotEmpty()) "${resources.getString(R.string.gemini_api_title)}(${resources.getString(R.string.settings_already_set)})" else getString(R.string.gemini_api_summary)
                     }
                 }).show()
                 return@setOnPreferenceClickListener true
@@ -58,12 +58,12 @@ class SettingsFragment: PreferenceFragmentCompat() {
         val deepseekPref = findPreference<Preference>(deepseekKey)
         deepseekPref?.let { pref ->
             val saved = SharedPreferenceUtil.getString(deepseekKey)
-            pref.summary = if (saved.isNotEmpty()) "${resources.getString(R.string.deepseek_api_title)}(已设置)" else getString(R.string.deepseek_api_summary)
+            pref.summary = if (saved.isNotEmpty()) "${resources.getString(R.string.deepseek_api_title)}(${resources.getString(R.string.settings_already_set)})" else getString(R.string.deepseek_api_summary)
             pref.setOnPreferenceClickListener {
                 EditTextDialog(requireActivity(), resources.getString(R.string.deepseek_api_title), "", saved, getString(R.string.please_input), editCallBack = object : EditTextDialog.EditCallBack {
                     override fun onConfirmContent(dialog: EditTextDialog, content: String, subContent: String) {
                         SharedPreferenceUtil.setString(deepseekKey, content)
-                        pref.summary = if (content.isNotEmpty()) "${resources.getString(R.string.deepseek_api_title)}(已设置)" else getString(R.string.deepseek_api_summary)
+                        pref.summary = if (content.isNotEmpty()) "${resources.getString(R.string.deepseek_api_title)}(${resources.getString(R.string.settings_already_set)})" else getString(R.string.deepseek_api_summary)
                     }
                 }).show()
                 return@setOnPreferenceClickListener true
