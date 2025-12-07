@@ -1,5 +1,6 @@
 package com.gorden.dayexam.parser
 
+import androidx.preference.PreferenceManager
 import com.gorden.dayexam.ContextHolder
 import com.gorden.dayexam.R
 import com.gorden.dayexam.repository.AiRepository
@@ -60,7 +61,8 @@ object AiPaperParser {
         // Get API keys and selected model
         val context = ContextHolder.application
 
-        val selectedModel = SharedPreferenceUtil.getString(context.getString(R.string.ai_model_key))
+        // CustomListPreference设置的值保存在PreferenceManager.getDefaultSharedPreferences(context)中
+        val selectedModel = PreferenceManager.getDefaultSharedPreferences(context).getString(context.getString(R.string.ai_model_key), "deepseek")
 
         // Split text into overlapping chunks
         val chunks = splitTextIntoOverlappingChunks(documentText)
