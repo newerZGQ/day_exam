@@ -190,5 +190,8 @@
     <string name="ai_extract_text_failed">Failed to extract text from document: </string>
     <string name="ai_api_call_failed">AI API call failed: </string>
     <string name="ai_save_cache_failed">Failed to save questions to cache: </string>
+    <string name="ai_error_dialog_title">Please copy and report on GitHub</string>
+    <string name="action_copy">Copy</string>
+    <string name="toast_copy_success">Copied to clipboard</string>
 
 </resources>

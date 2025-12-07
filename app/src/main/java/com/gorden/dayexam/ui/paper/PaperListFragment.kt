@@ -11,8 +11,13 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.Toast
+import android.view.View.MeasureSpec
+import android.content.ClipData
+import android.content.ClipboardManager
+import android.content.Context
 import androidx.activity.result.ActivityResultLauncher
 import androidx.activity.result.contract.ActivityResultContracts
+import androidx.appcompat.app.AlertDialog
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.lifecycleScope
@@ -317,48 +322,7 @@ class PaperListFragment : Fragment() {
                     }.onFailure { e ->
                         withContext(Dispatchers.Main) {
                             hideProgress()
-                            when (e) {
-                                is AiNetworkException -> {
-                                    Toast.makeText(
-                                        context,
-                                        context.getString(R.string.error_ai_network, e.message),
-                                        Toast.LENGTH_LONG
-                                    ).show()
-                                }
-
-                                is AiResponseParseException -> {
-                                    Toast.makeText(
-                                        context,
-                                        context.getString(
-                                            R.string.error_ai_response_parse,
-                                            e.message
-                                        ),
-                                        Toast.LENGTH_LONG
-                                    ).show()
-                                }
-
-                                is AiNoApiKeyException -> {
-                                    Toast.makeText(
-                                        context,
-                                        e.message ?: context.getString(R.string.ai_api_key_missing),
-                                        Toast.LENGTH_LONG
-                                    ).show()
-                                }
-
-                                else -> {
-                                    val message =
-                                        if (e.message?.startsWith(context.getString(R.string.ai_parse_failed_prefix)) == true) {
-                                            e.message
-                                        } else {
-                                            context.getString(R.string.ai_parse_failed_prefix) + e.message
-                                        }
-                                    Toast.makeText(
-                                        context,
-                                        message,
-                                        Toast.LENGTH_LONG
-                                    ).show()
-                                }
-                            }
+                            showAiErrorDialog(e)
                         }
                     }
 
@@ -424,6 +388,55 @@ class PaperListFragment : Fragment() {
             }
         }
         return null
+    }
+
+    private fun showAiErrorDialog(e: Throwable) {
+        val context = requireContext()
+        val userMessage = when (e) {
+            is AiNetworkException -> context.getString(R.string.error_ai_network, e.message)
+            is AiResponseParseException -> context.getString(R.string.error_ai_response_parse, e.message)
+            is AiNoApiKeyException -> e.message ?: context.getString(R.string.ai_api_key_missing)
+            else -> {
+                if (e.message?.startsWith(context.getString(R.string.ai_parse_failed_prefix)) == true) {
+                    e.message
+                } else {
+                    context.getString(R.string.ai_parse_failed_prefix) + e.message
+                }
+            }
+        } ?: "Unknown Error"
+
+        val fullErrorMessage = "$userMessage\n\n${e.stackTraceToString()}"
+
+        // Custom ScrollView with max height (50% of screen height)
+        val scrollView = object : android.widget.ScrollView(context) {
+            override fun onMeasure(widthMeasureSpec: Int, heightMeasureSpec: Int) {
+                val maxHeight = (resources.displayMetrics.heightPixels * 0.5).toInt()
+                val heightSpec = MeasureSpec.makeMeasureSpec(maxHeight, MeasureSpec.AT_MOST)
+                super.onMeasure(widthMeasureSpec, heightSpec)
+            }
+        }
+
+        val padding = (24 * resources.displayMetrics.density).toInt()
+        val textView = android.widget.TextView(context).apply {
+            text = fullErrorMessage
+            setPadding(padding, padding / 2, padding, 0)
+            setTextIsSelectable(true)
+            textSize = 13f
+        }
+
+        scrollView.addView(textView)
+
+        AlertDialog.Builder(context)
+            .setTitle(R.string.ai_error_dialog_title)
+            .setView(scrollView)
+            .setPositiveButton(R.string.dialog_confirm, null)
+            .setNeutralButton(R.string.action_copy) { _, _ ->
+                val clipboard = context.getSystemService(Context.CLIPBOARD_SERVICE) as ClipboardManager
+                val clip = ClipData.newPlainText("Error Info", fullErrorMessage)
+                clipboard.setPrimaryClip(clip)
+                Toast.makeText(context, R.string.toast_copy_success, Toast.LENGTH_SHORT).show()
+            }
+            .show()
     }
 
 }
