@@ -104,38 +104,41 @@ object AiPaperParser {
      * Extract text content from a Word document
      */
     private fun extractTextFromDocument(filePath: String): String {
-        val textBuilder = StringBuilder()
-        
-        try {
-            FileInputStream(File(filePath)).use { inputStream ->
-                val document = XWPFDocument(inputStream)
-                
-                // Extract text from all paragraphs
-                document.paragraphs.forEach { paragraph ->
-                    if (paragraph.text.isNotBlank()) {
-                        textBuilder.append(paragraph.text)
-                        textBuilder.append("\n")
+        return try {
+            val file = File(filePath)
+            if (filePath.endsWith(".txt", ignoreCase = true)) {
+                 file.readText()
+            } else {
+                val textBuilder = StringBuilder()
+                FileInputStream(file).use { inputStream ->
+                    val document = XWPFDocument(inputStream)
+                    
+                    // Extract text from all paragraphs
+                    document.paragraphs.forEach { paragraph ->
+                        if (paragraph.text.isNotBlank()) {
+                            textBuilder.append(paragraph.text)
+                            textBuilder.append("\n")
+                        }
                     }
-                }
-                
-                // Extract text from tables if any
-                document.tables.forEach { table ->
-                    table.rows.forEach { row ->
-                        row.tableCells.forEach { cell ->
-                            if (cell.text.isNotBlank()) {
-                                textBuilder.append(cell.text)
-                                textBuilder.append("\n")
+                    
+                    // Extract text from tables if any
+                    document.tables.forEach { table ->
+                        table.rows.forEach { row ->
+                            row.tableCells.forEach { cell ->
+                                if (cell.text.isNotBlank()) {
+                                    textBuilder.append(cell.text)
+                                    textBuilder.append("\n")
+                                }
                             }
                         }
                     }
                 }
+                textBuilder.toString()
             }
         } catch (e: Exception) {
             e.printStackTrace()
-            throw RuntimeException(ContextHolder.application.getString(R.string.ai_extract_text_failed) + e.message, e)
+             throw RuntimeException(ContextHolder.application.getString(R.string.ai_extract_text_failed) + e.message, e)
         }
-        
-        return textBuilder.toString()
     }
 
     /**
