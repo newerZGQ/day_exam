@@ -1,17 +1,24 @@
 <PreferenceScreen
     xmlns:app="http://schemas.android.com/apk/res-auto">
 
-    <com.gorden.dayexam.ui.settings.preference.CustomPreference
-        app:key="@string/gemini_api_key"
+    <com.gorden.dayexam.ui.settings.preference.CustomListPreference
+        app:key="@string/ai_model_key"
         app:icon="@drawable/ic_baseline_tips_and_updates_24"
-        app:summary="@string/gemini_api_summary"
-        app:title="@string/gemini_api_title"/>
+        app:title="@string/ai_model_title"
+        app:useSimpleSummaryProvider="true"
+        app:entries="@array/ai_model_entries"
+        app:entryValues="@array/ai_model_values"
+        app:defaultValue="deepseek" />
 
     <com.gorden.dayexam.ui.settings.preference.CustomPreference
         app:key="@string/deepseek_api_key"
-        app:icon="@drawable/ic_baseline_tips_and_updates_24"
         app:summary="@string/deepseek_api_summary"
         app:title="@string/deepseek_api_title"/>
+
+    <com.gorden.dayexam.ui.settings.preference.CustomPreference
+        app:key="@string/gemini_api_key"
+        app:summary="@string/gemini_api_summary"
+        app:title="@string/gemini_api_title"/>
 
     <com.gorden.dayexam.ui.settings.preference.CustomPreference
         app:key="@string/demo_template_key"
@@ -27,7 +34,7 @@
 
     <com.gorden.dayexam.ui.settings.preference.CustomPreference
         app:key="@string/github_key"
-        app:icon="@drawable/ic_baseline_menu_book_24"
+        app:icon="@drawable/ic_baseline_favorite_24"
         app:summary="@string/github_summary"
         app:title="@string/github_title"/>
 

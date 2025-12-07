@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string-array name="ai_model_entries">
+        <item>@string/ai_model_gemini</item>
+        <item>@string/ai_model_deepseek</item>
+    </string-array>
+
+    <string-array name="ai_model_values">
+        <item>gemini</item>
+        <item>deepseek</item>
+    </string-array>
+</resources>

@@ -16,6 +16,8 @@ import android.view.View.MeasureSpec
 import android.content.ClipData
 import android.content.ClipboardManager
 import android.content.Context
+import android.widget.ScrollView
+import android.widget.TextView
 import androidx.activity.result.ActivityResultLauncher
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.appcompat.app.AlertDialog
@@ -60,13 +62,8 @@ class PaperListFragment : Fragment() {
     private val rawDocumentPickerLauncher =
         registerForActivityResult(ActivityResultContracts.StartActivityForResult()) { result ->
             if (result.resultCode == Activity.RESULT_OK) {
-                try {
-                    result.data?.data?.let { uri ->
-                        showLoadingDialog(R.string.parsing_ai_please_wait)
-                        importRawDocumentFromUri(uri)
-                    }
-                } catch (e: Exception) {
-                    dismissLoadingDialog()
+                result.data?.data?.let { uri ->
+                    importRawDocumentFromUri(uri)
                 }
             }
         }
@@ -75,13 +72,8 @@ class PaperListFragment : Fragment() {
     private val formattedDocumentPickerLauncher =
         registerForActivityResult(ActivityResultContracts.StartActivityForResult()) { result ->
             if (result.resultCode == Activity.RESULT_OK) {
-                try {
-                    result.data?.data?.let { uri ->
-                        showLoadingDialog(R.string.parsing_formatted_please_wait)
-                        importFormattedDocumentFromUri(uri)
-                    }
-                } catch (e: Exception) {
-                    dismissLoadingDialog()
+                result.data?.data?.let { uri ->
+                    importFormattedDocumentFromUri(uri)
                 }
             }
         }
@@ -200,17 +192,12 @@ class PaperListFragment : Fragment() {
         }
 
         if (loadingDialog == null) {
-            val builder = androidx.appcompat.app.AlertDialog.Builder(context)
+            val builder = AlertDialog.Builder(context)
             val view = LayoutInflater.from(context).inflate(R.layout.dialog_loading, null)
+            view.findViewById<TextView>(R.id.message).setText(messageResId)
             builder.setView(view)
             builder.setCancelable(false) // Prevent user from dismissing
             loadingDialog = builder.create()
-        }
-        
-        // Update message
-        loadingDialog?.let { dialog ->
-            val messageView = dialog.findViewById<android.widget.TextView>(R.id.message)
-            messageView?.setText(messageResId)
         }
         
         loadingDialog?.show()
@@ -285,6 +272,10 @@ class PaperListFragment : Fragment() {
                 ) {
                     viewLifecycleOwner.lifecycleScope.launch {
                         val success = paperListViewModel.deletePaper(paperInfo)
+                        if (success && currentPaperInfo?.id == paperInfo.id) {
+                            DataRepository.updateCurPaperId(-1)
+                            currentPaperInfo = null
+                        }
                         val ctxInner = context ?: return@launch
                         Toast.makeText(
                             ctxInner,
@@ -330,6 +321,10 @@ class PaperListFragment : Fragment() {
                         input.copyTo(output)
                     }
                 }
+
+                if (!destFile.exists()) {
+                    return@withContext
+                }
                 // Check if paper already exists before parsing
                 if (AiPaperParser.checkExist(destFile.absolutePath)) {
                     withContext(Dispatchers.Main) {
@@ -341,7 +336,9 @@ class PaperListFragment : Fragment() {
                     }
                     return@withContext
                 }
-
+                withContext(Dispatchers.Main) {
+                    showLoadingDialog(R.string.parsing_ai_please_wait)
+                }
                 // 使用 AI 解析原始文档
                 AiPaperParser.parseFromFile(destFile.absolutePath)
                     .onSuccess {
@@ -385,6 +382,13 @@ class PaperListFragment : Fragment() {
                         FileOutputStream(destFile).use { output ->
                             input.copyTo(output)
                         }
+                    }
+
+                    if (!destFile.exists()) {
+                        return@withContext
+                    }
+                    withContext(Dispatchers.Main) {
+                        showLoadingDialog(R.string.parsing_formatted_please_wait)
                     }
                     // Check if paper already exists before parsing
                     if (FormatedPaperParser.checkExist(destFile.absolutePath)) {
@@ -444,7 +448,7 @@ class PaperListFragment : Fragment() {
         val fullErrorMessage = "$userMessage\n\n${e.stackTraceToString()}"
 
         // Custom ScrollView with max height (50% of screen height)
-        val scrollView = object : android.widget.ScrollView(context) {
+        val scrollView = object : ScrollView(context) {
             override fun onMeasure(widthMeasureSpec: Int, heightMeasureSpec: Int) {
                 val maxHeight = (resources.displayMetrics.heightPixels * 0.5).toInt()
                 val heightSpec = MeasureSpec.makeMeasureSpec(maxHeight, MeasureSpec.AT_MOST)
@@ -453,7 +457,7 @@ class PaperListFragment : Fragment() {
         }
 
         val padding = (24 * resources.displayMetrics.density).toInt()
-        val textView = android.widget.TextView(context).apply {
+        val textView = TextView(context).apply {
             text = fullErrorMessage
             setPadding(padding, padding / 2, padding, 0)
             setTextIsSelectable(true)
