@@ -68,10 +68,10 @@ object AiPaperParser {
         // Call AI API to parse questions
         val result = when {
             geminiKey.isNotEmpty() -> {
-                callAiApiWithDocument(geminiKey, documentText, useGemini = true)
+                AiRepository.callGeminiApi(geminiKey, documentText)
             }
             deepseekKey.isNotEmpty() -> {
-                callAiApiWithDocument(deepseekKey, documentText, useGemini = false)
+                AiRepository.callDeepseekApi(deepseekKey, documentText)
             }
             else -> {
                 Result.failure(AiNoApiKeyException(ContextHolder.application.getString(R.string.ai_api_key_missing)))
@@ -138,21 +138,6 @@ object AiPaperParser {
         } catch (e: Exception) {
             e.printStackTrace()
              throw RuntimeException(ContextHolder.application.getString(R.string.ai_extract_text_failed) + e.message, e)
-        }
-    }
-
-    /**
-     * Call AI API with document text to parse questions
-     */
-    private suspend fun callAiApiWithDocument(
-        apiKey: String,
-        documentText: String,
-        useGemini: Boolean
-    ): Result<List<QuestionDetail>> {
-        return if (useGemini) {
-            AiRepository.callGeminiApi(apiKey, documentText)
-        } else {
-            AiRepository.callDeepseekApi(apiKey, documentText)
         }
     }
 
