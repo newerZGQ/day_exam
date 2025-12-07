@@ -80,6 +80,9 @@ object FormatedPaperParser {
      * @return Pair of (questions list, image hash to data map)
      */
     private fun parseDocument(filePath: String): Pair<List<QuestionDetail>, Map<String, ByteArray>> {
+        if (filePath.endsWith(".txt", ignoreCase = true)) {
+            return parseTextDocument(filePath)
+        }
         val imageHashToData = mutableMapOf<String, ByteArray>()
         val questionDetails = mutableListOf<QuestionDetail>()
         
@@ -282,6 +285,139 @@ object FormatedPaperParser {
                     val element = Element(Element.TEXT, builder.toString())
                     result.add(element)
                 }
+            }
+        }
+        return result
+    }
+
+    private fun parseTextDocument(filePath: String): Pair<List<QuestionDetail>, Map<String, ByteArray>> {
+        val questionDetails = mutableListOf<QuestionDetail>()
+        val lines = File(filePath).readLines()
+        val splitTitleSeparatorResult = splitLinesByTitleSeparator(lines)
+        splitTitleSeparatorResult.forEach { questionLines ->
+            val questionUnits = splitLinesBySeparator(questionLines)
+            val question = parseLinesToQuestion(questionUnits)
+            question?.let {
+                questionDetails.add(it)
+            }
+        }
+        return Pair(questionDetails, emptyMap())
+    }
+
+    private fun splitLinesByTitleSeparator(lines: List<String>): List<List<String>> {
+        val result = mutableListOf<List<String>>()
+        var curLines = mutableListOf<String>()
+        for (line in lines) {
+            if (line.isBlank()) continue
+            if (ParserConstants.isQuestionSeparator(line)) {
+                if (curLines.isNotEmpty()) {
+                    result.add(curLines)
+                    curLines = mutableListOf()
+                }
+            }
+            curLines.add(line)
+        }
+        if (curLines.isNotEmpty()) {
+            result.add(curLines)
+        }
+        return result
+    }
+
+    private fun splitLinesBySeparator(lines: List<String>): List<List<String>> {
+        val result = mutableListOf<List<String>>()
+        var curLines = mutableListOf<String>()
+        for (line in lines) {
+            if (line.isBlank()) continue
+            if (line.startsWith(ParserConstants.SEPARATOR)) {
+                if (curLines.isNotEmpty()) {
+                    result.add(curLines)
+                    curLines = mutableListOf()
+                }
+            }
+            curLines.add(line)
+        }
+        if (curLines.isNotEmpty()) {
+            result.add(curLines)
+        }
+        return result
+    }
+
+    private fun parseLinesToQuestion(units: List<List<String>>): QuestionDetail? {
+        var body = listOf<Element>()
+        val options = mutableListOf<OptionItems>()
+        var rawAnswer = listOf<Element>()
+        var type = QuestionType.ERROR_TYPE
+
+        units.forEach { unit ->
+            if (unit.isNotEmpty()) {
+                val text = unit[0]
+                when {
+                    ParserConstants.isQuestionSeparator(text) -> {
+                        type = parseTypeFromLines(unit)
+                        body = parseLinesToElement(unit)
+                    }
+                    ParserConstants.isOption(text) -> {
+                        options.add(OptionItems(parseLinesToElement(unit)))
+                    }
+                    ParserConstants.isAnswer(text) -> {
+                        rawAnswer = parseLinesToElement(unit)
+                    }
+                }
+            }
+        }
+
+        val answer = when (type) {
+            QuestionType.TRUE_FALSE -> {
+                Answer(
+                    tfAnswer = ParserConstants.toTrueFalseAnswer(rawAnswer.firstOrNull()?.content ?: "")
+                )
+            }
+            QuestionType.MULTIPLE_CHOICE,
+            QuestionType.SINGLE_CHOICE -> {
+                Answer(
+                    optionAnswer = if (rawAnswer.isNotEmpty()) {
+                        rawAnswer[0].content.lowercase().trim().toCharArray().map {
+                            it - 'a'
+                        }.toList()
+                    } else {
+                        emptyList()
+                    }
+                )
+            }
+            else -> {
+                Answer(
+                    commonAnswer = rawAnswer
+                )
+            }
+        }
+
+        return if (type != QuestionType.ERROR_TYPE) {
+            QuestionDetail(
+                type = type,
+                body = body,
+                options = options,
+                answer = answer
+            )
+        } else {
+            null
+        }
+    }
+
+    private fun parseTypeFromLines(lines: List<String>): Int {
+        if (lines.isEmpty()) {
+            return QuestionType.ERROR_TYPE
+        }
+        val typeText = lines[0]
+        return ParserConstants.getQuestionType(typeText)
+    }
+
+    private fun parseLinesToElement(lines: List<String>): List<Element> {
+        val result = mutableListOf<Element>()
+        lines.filter {
+            !it.startsWith(ParserConstants.SEPARATOR)
+        }.forEach { line ->
+            if (line.isNotBlank()) {
+                result.add(Element(Element.TEXT, line))
             }
         }
         return result
