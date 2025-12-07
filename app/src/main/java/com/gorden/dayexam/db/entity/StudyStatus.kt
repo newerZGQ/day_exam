@@ -4,9 +4,6 @@ import androidx.room.Entity
 import androidx.room.PrimaryKey
 import java.util.*
 
-//  Three type of StudyStatus
-const val CourseStatus = 1
-const val BookStatus = 2
 const val PaperStatus = 3
 
 @Entity(tableName = "study_status")

@@ -1,5 +1,6 @@
 package com.gorden.dayexam.ui.sheet.search
 
+import android.annotation.SuppressLint
 import android.text.SpannableString
 import android.text.Spanned
 import android.text.style.BackgroundColorSpan
@@ -11,7 +12,7 @@ import com.gorden.dayexam.ContextHolder
 import com.gorden.dayexam.R
 import com.gorden.dayexam.repository.model.SearchItem
 import com.gorden.dayexam.ui.EventKey
-import com.gorden.dayexam.utils.BookUtils
+import com.gorden.dayexam.utils.NameUtils
 import com.jeremyliao.liveeventbus.LiveEventBus
 
 class SearchAdapter: RecyclerView.Adapter<SearchItemViewHolder>() {
@@ -25,17 +26,14 @@ class SearchAdapter: RecyclerView.Adapter<SearchItemViewHolder>() {
         return SearchItemViewHolder(itemView)
     }
 
+    @SuppressLint("SetTextI18n")
     override fun onBindViewHolder(holder: SearchItemViewHolder, position: Int) {
         val searchItem = data[position]
-        holder.courseTitle.text = "课:" + searchItem.courseTitle
-        holder.bookTitle.text = "书:" + searchItem.bookTitle
-        holder.paperTitle.text = "《" + searchItem.paperTitle + "》"
-        holder.questionType.text = BookUtils.getTypeName(searchItem.questionType)
-        holder.elementType.text = BookUtils.getElementParentTypeName(searchItem.elementType)
+        holder.questionType.text = NameUtils.getTypeName(searchItem.questionType)
         holder.elementContent.text = getSpannableContent(searchItem.elementContent)
         holder.itemView.setOnClickListener {
-            LiveEventBus.get(EventKey.SEARCH_RESULT_ITEM_CLICK, SearchItem::class.java)
-                .post(searchItem)
+            LiveEventBus.get(EventKey.SEARCH_RESULT_ITEM_CLICK, Int::class.java)
+                .post(searchItem.questionIndex)
         }
     }
 

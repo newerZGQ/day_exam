@@ -9,10 +9,8 @@
     <dimen name="screen_margin_left_or_right">16dp</dimen>
     <dimen name="screen_margin_top_or_bottom">16dp</dimen>
 
-    <dimen name="book_title_font_size">15sp</dimen>
-    <dimen name="book_title_padding_bottom_top">12dp</dimen>
-    <dimen name="book_title_padding_left">12dp</dimen>
-    <dimen name="book_list_course_info_height">54dp</dimen>
+    <dimen name="paper_title_padding_left">12dp</dimen>
+    <dimen name="paper_list_info_height">54dp</dimen>
 
     <dimen name="paper_title_font_size">18sp</dimen>
 

@@ -2,13 +2,15 @@
     <string name="app_name">DayExam</string>
     <string name="action_settings">Settings</string>
 
-    // 书籍边栏
-    <string name="add_book">Add Book</string>
-    <string name="menu_home">Home</string>
-    <string name="sort">sort</string>
+    // Welcome page
+    <string name="welcome_title">Welcome to DayExam</string>
+    <string name="welcome_subtitle">AI-powered learning, carry your papers in your pocket</string>
+    <string name="welcome_add_paper_tip">Tap the menu icon ➕ in the top left to add and parse papers</string>
+    <string name="welcome_ai_tip">Configure AI model API Key in settings to enable AI features</string>
+    <string name="welcome_go_to_settings">Go to Settings</string>
 
-    <string name="course">Course</string>
-    <string name="book">Book</string>
+
+    <string name="paper">Paper</string>
     <string name="fill_blank">Completion</string>
     <string name="true_false">True False</string>
     <string name="single_choice">Single Answer</string>
@@ -20,18 +22,7 @@
 
     <string name="dialog_confirm">Confirm</string>
     <string name="dialog_cancel">Cancel</string>
-    <string name="dialog_create_book_title">Create Book</string>
-    <string name="dialog_create_book_subTitle">Book</string>
-    <string name="dialog_create_book_hint">book name</string>
-    <string name="dialog_create_course_title">Create Course</string>
-    <string name="dialog_create_course_subTitle">course</string>
-    <string name="dialog_create_course_hint">course name</string>
-    <string name="dialog_create_course_sub_hint">course description(not required)</string>
-    <string name="dialog_edit_course_title">Edit Course</string>
-    <string name="dialog_edit_course_subTitle">Course</string>
-    <string name="dialog_delete_course_title">Delete Course</string>
-    <string name="dialog_delete_course_subTitle">Course</string>
-    <string name="dialog_edit_course_sub_hint">course description(not required)</string>
+
 
     <string name="dialog_create_paper_title">Create Exam Paper</string>
     <string name="dialog_create_paper_subTitle">Exam Paper</string>
@@ -40,31 +31,32 @@
     <string name="dialog_edit_paper_title">Edit</string>
     <string name="dialog_edit_paper_subTitle">Exam Paper</string>
 
-    <string name="dialog_delete_paper_title">Delete</string>
+    <string name="dialog_delete_paper_title">Delete Paper</string>
+    <string name="dialog_delete_paper_message">Are you sure you want to delete %1$s?</string>
 
-    <string name="dialog_edit_book_title">Edit Book</string>
-    <string name="dialog_edit_book_subTitle">Book</string>
-    <string name="dialog_delete_book_title">Delete Book</string>
+    <!-- Paper edit/delete result toasts -->
+    <string name="toast_edit_paper_success">Paper updated</string>
+    <string name="toast_edit_paper_failed">Failed to update paper</string>
+    <string name="toast_delete_paper_success">Paper deleted</string>
+    <string name="toast_delete_paper_failed">Failed to delete paper</string>
+    <string name="toast_paper_already_exists">Paper already exists</string>
+
+
 
     <string name="none_question_desc">Exam paper is Empty, you can parse questions from a doc file(recommend)，or you can add question by hand</string>
 
-    // 移动Paper Dialog
-    <string name="select_target_course">Select Course</string>
-    <string name="select_target_book">Select Book</string>
-    <string name="select_target_paper">Select Exam Paper</string>
 
     // 书籍列表的学习信息
     <string name="last_study_time">Last:</string>
     <string name="total">Count:</string>
     <string name="short_question"> </string>
+    <string name="paper_question_count">Questions: %1$d</string>
     <string name="has_study">&#160;&#160;Study Times:</string>
     <string name="has_not_start_study"></string>
     <string name="count"></string>
 
     // menu
     <string name="parse_from_file">Parse From Doc</string>
-    <string name="insert_paper_after">Insert Above</string>
-    <string name="insert_paper_before">Insert Below</string>
     <string name="sort_by_hand">Sort</string>
     <string name="delete">Delete</string>
     <string name="edit_paper">Edit</string>
@@ -72,18 +64,11 @@
 
     // toast
     <string name="create_paper_empty_title_msg">Title can not be empty</string>
-    <string name="course_empty_title_msg">Title can not be empty</string>
-    <string name="course_delete_error_msg">Learning this course, can not delete</string>
-    <string name="no_course_found_msg">No Course</string>
-    <string name="no_book_found_msg">No Book</string>
-    <string name="no_paper_found_msg">No Paper</string>
+
+    <string name="toast_questions_file_not_found">Questions file not found</string>
+    <string name="toast_questions_load_failed">Failed to load questions: %1$s</string>
     <string name="screen_shot_question_success">ScreenShot Saved</string>
     <string name="screen_shot_question_failed">ScreenShot Failed</string>
-    <string name="edit_question_no_questionId_error">Error Question Id</string>
-    <string name="current_other_question_editing">Editing</string>
-    <string name="recover_failed_because_file">Please Check Backup File Is Available</string>
-    <string name="recover_image_exception">Recover Image Failed</string>
-    <string name="recover_data_exception">Recover DataBase Failed</string>
     <string name="backup_success">Backup Success</string>
 
     // 首页
@@ -99,7 +84,7 @@
     // float button
     <string name="edit_current_question">Edit Question</string>
     <string name="reset_current_question">Reset</string>
-    <string name="list_question">ALL</string>
+    <string name="list_question">Question List</string>
     <string name="favorite_question">Star Question</string>
     <string name="show_tip">Tip</string>
 
@@ -108,18 +93,13 @@
     <string name="copy_question_content">Screenshot</string>
     <string name="search_question_content">Search</string>
     <string name="delete_question_content">Move to trash</string>
-    <string name="history_question_content">History</string>
     <string name="remember_question_content">Remember</string>
-    <string name="focus_question_content">Focus</string>
-    <string name="favorite_question_content">Only Favorite</string>
-    <string name="sort_by_accuracy_question_content">Sort by accuracy</string>
     <string name="back_up_now">Backup</string>
 
     // 搜索
     <string name="search_tip"></string>
     <string name="current_paper">Current Exam</string>
-    <string name="current_book">Current Book</string>
-    <string name="current_course">Current Course</string>
+
     <string name="global">Global</string>
     <string name="recycle_bin">Trash</string>
 
@@ -142,7 +122,7 @@
     <string name="confirm_recover">Confirm</string>
     <string name="please_select_backup">Select Backup</string>
     <string name="privacy_key">privacy_key</string>
-    <string name="privacy_title">《Privacy》</string>
+    <string name="privacy_title">Privacy</string>
     <string name="privacy_summary">We guarantee not to reveal your personal information</string>
     <string name="privacy_and_help_key">privacy_and_help</string>
     <string name="privacy_and_help">Privacy And Help</string>
@@ -159,6 +139,18 @@
     <string name="demo_template_summary">Click To Download</string>
     <string name="demo_template_link">https://gitee.com/zgq2015/dayexam_config/raw/master/%E5%A4%A9%E5%A4%A9%E8%83%8C%E9%A2%98-%E6%A8%A1%E6%9D%BF.docx</string>
 
+    <string name="github_key">github_key</string>
+    <string name="github_title">GitHub</string>
+    <string name="github_summary">https://github.com/newerZGQ/day_exam</string>
+
+    <string name="gemini_api_key">gemini_api_key</string>
+    <string name="gemini_api_title">Gemini Api Key</string>
+    <string name="gemini_api_summary">Click to set your Gemini Api Key</string>
+
+    <string name="deepseek_api_key">deepseek_api_key</string>
+    <string name="deepseek_api_title">Deepseek Api Key</string>
+    <string name="deepseek_api_summary">Click to set your DeepSeek Api Key</string>
+
     <string name="letter_for_users">A letter to users\n
         Welcome to use Tiantian recitation question. Nice to meet you here!\n
         Dear users, reciting questions every day is an app dedicated to helping you brush questions for the exam. We hope to create an ad free, excellent experience and safe storage app to give you the greatest help in the exam.\n
@@ -173,15 +165,39 @@
     </string>
 
     // 默认试卷诗句
-    <string name="default_course_name">DayExam</string>
-    <string name="default_book_for_user_name">Letter To Users</string>
+
     <string name="default_guide_paper_name">Guide</string>
     <string name="default_user_paper_name">To Users</string>
 
     // 描述词
-    <string name="the_type_key"></string>
+    <string name="the_type_key">Question </string>
     <string name="short_of_question"></string>
+    <string name="question_number_format">Question %1$d</string>
     <string name="total_study_times">study:</string>
     <string name="times"></string>
+
+    <string name="exit_study_title">Exit Study</string>
+
+    // Import Paper Dialog
+    <string name="import_paper_title">Import Paper</string>
+    <string name="import_raw_document_title">Import Raw Document</string>
+    <string name="error_ai_network">Network request failed: %1$s</string>
+    <string name="error_ai_response_parse">Failed to parse AI response: %1$s</string>
+    <string name="error_ai_empty_response">AI returned empty response</string>
+    <string name="import_raw_document_desc">Parse questions with AI</string>
+    <string name="import_formatted_document_title">Import Formatted Document</string>
+    <string name="import_formatted_document_desc">Download template in settings</string>
+    <string name="ai_parse_success">AI Parsing Successful</string>
+    <string name="ai_api_key_missing">No AI API key configured. Please set Gemini or Deepseek API key in settings.</string>
+    <string name="ai_parse_failed_no_questions">AI failed to parse any questions from the document</string>
+    <string name="ai_parse_failed_prefix">AI Parse Failed: </string>
+    <string name="ai_extract_text_failed">Failed to extract text from document: </string>
+    <string name="ai_api_call_failed">AI API call failed: </string>
+    <string name="ai_save_cache_failed">Failed to save questions to cache: </string>
+    <string name="ai_error_dialog_title">Please copy and report on GitHub</string>
+    <string name="action_copy">Copy</string>
+    <string name="toast_copy_success">Copied to clipboard</string>
+    <string name="parsing_ai_please_wait">AI parsing may take time, please wait...</string>
+    <string name="parsing_formatted_please_wait">Parsing, please do not leave...</string>
 
 </resources>

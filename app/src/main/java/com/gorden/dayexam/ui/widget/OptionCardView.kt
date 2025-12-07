@@ -6,7 +6,8 @@ import android.view.LayoutInflater
 import android.widget.FrameLayout
 import android.widget.TextView
 import com.gorden.dayexam.R
-import com.gorden.dayexam.db.entity.question.Element
+import com.gorden.dayexam.db.entity.PaperInfo
+import com.gorden.dayexam.repository.model.Element
 
 class OptionCardView: FrameLayout {
     constructor(context: Context) : super(context)
@@ -17,11 +18,11 @@ class OptionCardView: FrameLayout {
         LayoutInflater.from(context).inflate(R.layout.option_card_view_layout, this)
     }
 
-    fun setContent(elements: List<Element>, optionTag: String, listener: ElementActionListener) {
+    fun setContent(paperInfo: PaperInfo, elements: List<Element>, optionTag: String, listener: ElementActionListener) {
         val elementView = findViewById<ElementsView>(R.id.option_content)
         val optionTagView = findViewById<TextView>(R.id.option_tag)
         optionTagView.text = optionTag
         elementView.textSize = 16f
-        elementView.setElements(elements, "", listener)
+        elementView.setElements(paperInfo, elements, "", listener)
     }
 }

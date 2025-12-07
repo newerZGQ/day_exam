@@ -9,6 +9,7 @@ import android.view.View
 import android.widget.EditText
 import android.widget.TextView
 import com.gorden.dayexam.R
+import com.gorden.dayexam.databinding.DialogEditTextLayoutBinding
 
 @SuppressLint("CutPasteId")
 class EditTextDialog(context: Context
@@ -24,6 +25,9 @@ class EditTextDialog(context: Context
     private var showEditText: Boolean = false
     private var showSubEditText: Boolean = false
     private var editCallBack: EditCallBack? = null
+
+    private val binding: DialogEditTextLayoutBinding =
+        DialogEditTextLayoutBinding.inflate(LayoutInflater.from(context))
 
     constructor(context: Context,
                 title: String,
@@ -98,30 +102,29 @@ class EditTextDialog(context: Context
                 }
 
     private fun init() {
-        val customView = LayoutInflater.from(context).inflate(R.layout.dialog_edit_text_layout, null)
-        setView(customView)
-        customView.findViewById<TextView>(R.id.dialog_title).text = title
-        customView.findViewById<TextView>(R.id.dialog_sub_title).text = subTitle
-        customView.findViewById<EditText>(R.id.dialog_content).setText(content)
-        customView.findViewById<EditText>(R.id.dialog_sub_content).setText(subContent)
+        setView(binding.root)
+        binding.dialogTitle.text = title
+        binding.dialogSubTitle.text = subTitle
+        binding.dialogContent.setText(content)
+        binding.dialogSubContent.setText(subContent)
         if (content?.isEmpty() == true && hint?.isNotEmpty() == true) {
-            customView.findViewById<EditText>(R.id.dialog_content).hint = hint
+            binding.dialogContent.hint = hint
         }
         if (subContent?.isEmpty() == true && subHint?.isNotEmpty() == true) {
-            customView.findViewById<EditText>(R.id.dialog_sub_content).hint = subHint
+            binding.dialogSubContent.hint = subHint
         }
         if (showEditText) {
-            customView.findViewById<EditText>(R.id.dialog_content).visibility = View.VISIBLE
+            binding.dialogContent.visibility = View.VISIBLE
             if (contentInputType > 0) {
-                customView.findViewById<EditText>(R.id.dialog_content).inputType = this.contentInputType
+                binding.dialogContent.inputType = this.contentInputType
             }
         } else {
-            customView.findViewById<EditText>(R.id.dialog_content).visibility = View.GONE
+            binding.dialogContent.visibility = View.GONE
         }
         if (showSubEditText) {
-            customView.findViewById<EditText>(R.id.dialog_sub_content).visibility = View.VISIBLE
+            binding.dialogSubContent.visibility = View.VISIBLE
         } else {
-            customView.findViewById<EditText>(R.id.dialog_sub_content).visibility = View.GONE
+            binding.dialogSubContent.visibility = View.GONE
         }
 
         setButton(DialogInterface.BUTTON_NEGATIVE, context.resources.getString(R.string.dialog_cancel))
@@ -129,8 +132,8 @@ class EditTextDialog(context: Context
 
         setButton(DialogInterface.BUTTON_POSITIVE, context.resources.getString(R.string.dialog_confirm))
         { _, _ ->
-            val content = customView.findViewById<EditText>(R.id.dialog_content).text
-            val subContent = customView.findViewById<EditText>(R.id.dialog_sub_content).text
+            val content = binding.dialogContent.text
+            val subContent = binding.dialogSubContent.text
             editCallBack?.onConfirmContent(this, content.toString(), subContent.toString())
         }
     }

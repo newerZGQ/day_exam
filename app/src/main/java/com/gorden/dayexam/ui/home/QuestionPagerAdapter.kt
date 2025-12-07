@@ -5,23 +5,22 @@ import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
 import com.gorden.dayexam.R
-import com.gorden.dayexam.db.entity.question.Question
-import com.gorden.dayexam.model.QuestionType
-import com.gorden.dayexam.repository.model.QuestionWithElement
+import com.gorden.dayexam.db.entity.PaperInfo
+import com.gorden.dayexam.repository.model.QuestionType
+import com.gorden.dayexam.repository.model.QuestionDetail
 import com.gorden.dayexam.ui.home.viewholder.*
 
 class QuestionPagerAdapter: RecyclerView.Adapter<BaseQuestionViewHolder>() {
 
-    private var data = listOf<QuestionWithElement>()
-    private var bookTitle: String = ""
-    private var paperTitle: String = ""
+    private var data = listOf<QuestionDetail>()
     private var isRememberMode: Boolean = false
 
+    private var paperInfo: PaperInfo? = null
+
     @SuppressLint("NotifyDataSetChanged")
-    fun setData(data: List<QuestionWithElement>, bookTitle: String, paperTitle: String) {
+    fun setData(paperInfo: PaperInfo, data: List<QuestionDetail>) {
         this.data = data
-        this.bookTitle = bookTitle
-        this.paperTitle = paperTitle
+        this.paperInfo = paperInfo
         this.notifyDataSetChanged()
     }
 
@@ -85,7 +84,9 @@ class QuestionPagerAdapter: RecyclerView.Adapter<BaseQuestionViewHolder>() {
     }
 
     override fun onBindViewHolder(holder: BaseQuestionViewHolder, position: Int) {
-        holder.setData(this.data[position], bookTitle, paperTitle, isRememberMode)
+        paperInfo?.let {
+            holder.setData(it, this.data[position], isRememberMode)
+        }
     }
 
     override fun getItemCount(): Int {

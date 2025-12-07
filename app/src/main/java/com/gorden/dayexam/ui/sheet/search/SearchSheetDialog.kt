@@ -6,7 +6,6 @@ import android.content.Context.INPUT_METHOD_SERVICE
 import android.os.Bundle
 import android.text.Editable
 import android.text.TextWatcher
-import android.util.Log
 import android.view.View
 import android.view.ViewGroup
 import android.view.inputmethod.InputMethodManager
@@ -14,6 +13,7 @@ import android.widget.EditText
 import android.widget.ImageButton
 import android.widget.LinearLayout
 import androidx.coordinatorlayout.widget.CoordinatorLayout
+import androidx.fragment.app.FragmentManager
 import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.DividerItemDecoration
 import androidx.recyclerview.widget.LinearLayoutManager
@@ -22,43 +22,41 @@ import com.google.android.material.bottomsheet.BottomSheetBehavior
 import com.google.android.material.bottomsheet.BottomSheetDialog
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment
 import com.gorden.dayexam.R
+import com.gorden.dayexam.databinding.SearchSheetLayoutBinding
 import com.gorden.dayexam.repository.DataRepository
 import com.gorden.dayexam.repository.model.SearchItem
 import com.gorden.dayexam.ui.EventKey
-import com.gorden.dayexam.ui.sheet.course.CourseViewModel
 import com.gorden.dayexam.utils.ScreenUtils
 import com.jeremyliao.liveeventbus.LiveEventBus
-import org.apache.poi.ss.formula.functions.Even
 
-class SearchSheetDialog : BottomSheetDialogFragment(), SearchScopeSelectView.ScopeSelectListener,
-    TextWatcher {
+class SearchSheetDialog : BottomSheetDialogFragment(), TextWatcher {
+
+    private var _binding: SearchSheetLayoutBinding? = null
+    private val binding get() = _binding!!
 
     private lateinit var rootView: View
     private lateinit var parent: View
     private lateinit var searchInput: EditText
     private lateinit var clearInputBtn: ImageButton
-    private lateinit var scopeSelect: SearchScopeSelectView
     private lateinit var questionList: RecyclerView
     private lateinit var adapter: SearchAdapter
 
     private var viewModel: SearchViewModel? = null
 
-    private var curScope: Int = SearchScopeSelectView.SEARCH_IN_PAPER
-    private var curSearchKey: String = "的"
+    private var curSearchKey: String = ""
 
     override fun onCreateDialog(savedInstanceState: Bundle?): Dialog {
         val dialog = BottomSheetDialog(requireActivity(), 0)
-        dialog.setContentView(R.layout.search_sheet_layout)
-        rootView = dialog.findViewById(R.id.search_sheet_container)!!
-        searchInput = rootView.findViewById(R.id.search_key_input)
-        clearInputBtn = rootView.findViewById(R.id.clear_content)
-        scopeSelect = rootView.findViewById(R.id.scope_select_view)
-        questionList = rootView.findViewById(R.id.searchQuestionList)
+        _binding = SearchSheetLayoutBinding.inflate(layoutInflater)
+        dialog.setContentView(binding.root)
+        rootView = binding.searchSheetContainer
+        searchInput = binding.searchKeyInput
+        clearInputBtn = binding.clearContent
+        questionList = binding.searchQuestionList
         clearInputBtn.setOnClickListener {
             searchInput.text.clear()
         }
         setList()
-        scopeSelect.setListener(this)
         searchInput.addTextChangedListener(this)
         viewModel = ViewModelProvider(this).get(SearchViewModel::class.java)
         viewModel?.searchResult()?.observe(this, {
@@ -104,11 +102,6 @@ class SearchSheetDialog : BottomSheetDialogFragment(), SearchScopeSelectView.Sco
         })
     }
 
-    override fun onSelect(scope: Int) {
-        this.curScope = scope
-        doSearch()
-    }
-
     override fun beforeTextChanged(p0: CharSequence?, p1: Int, p2: Int, p3: Int) {
 
     }
@@ -124,28 +117,31 @@ class SearchSheetDialog : BottomSheetDialogFragment(), SearchScopeSelectView.Sco
 
     private fun doSearch() {
         if (curSearchKey.isNotEmpty()) {
-            viewModel?.search(curScope, curSearchKey)
+            viewModel?.search(curSearchKey)
         }
     }
 
     private fun registerAction() {
-        LiveEventBus.get(EventKey.SEARCH_RESULT_ITEM_CLICK, SearchItem::class.java)
-            .observe(requireActivity(), {
+        LiveEventBus.get(EventKey.SEARCH_RESULT_ITEM_CLICK, Int::class.java)
+            .observe(requireActivity()) {
                 hideSoftInput()
                 dismiss()
-                DataRepository.updateDContext(it.courseId, it.bookId, it.paperId, it.questionId)
-                DataRepository.increaseContentVersion()
-            })
+            }
     }
 
     private fun hideSoftInput() {
         val imm = (requireActivity().getSystemService(INPUT_METHOD_SERVICE) as InputMethodManager)
-        imm.hideSoftInputFromWindow(questionList.windowToken, 0)
+        imm.hideSoftInputFromWindow(binding.searchQuestionList.windowToken, 0)
     }
 
     private fun showSoftInput() {
         val imm = (requireActivity().getSystemService(INPUT_METHOD_SERVICE) as InputMethodManager)
-        imm.showSoftInput(searchInput, InputMethodManager.SHOW_IMPLICIT)
+        imm.showSoftInput(binding.searchKeyInput, InputMethodManager.SHOW_IMPLICIT)
+    }
+
+    override fun onDestroyView() {
+        super.onDestroyView()
+        _binding = null
     }
 
 }

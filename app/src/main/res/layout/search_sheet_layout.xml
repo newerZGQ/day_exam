@@ -50,15 +50,6 @@
                 android:layout_marginStart="18dp"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"/>
-            <com.gorden.dayexam.ui.sheet.search.SearchScopeSelectView
-                android:id="@+id/scope_select_view"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="2dp"
-                android:layout_marginStart="16dp"
-                android:layout_marginEnd="16dp"
-                app:layout_constraintStart_toStartOf="@id/search_key_input"
-                app:layout_constraintTop_toBottomOf="@id/search_tip" />
         </androidx.constraintlayout.widget.ConstraintLayout>
         <androidx.recyclerview.widget.RecyclerView
             android:id="@+id/searchQuestionList"

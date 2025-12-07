@@ -3,13 +3,17 @@ package com.gorden.dayexam.ui.home
 import android.os.Bundle
 import androidx.appcompat.app.AppCompatActivity
 import androidx.viewpager2.widget.ViewPager2
-import com.gorden.dayexam.R
+import com.gorden.dayexam.ContextHolder
+import com.gorden.dayexam.databinding.ActivityImagePreviewLayoutBinding
+import com.gorden.dayexam.repository.DataRepository
+import com.gorden.dayexam.repository.PaperDetailCache
 import com.gorden.dayexam.ui.EventKey
 import com.jeremyliao.liveeventbus.LiveEventBus
+import java.io.File
 
 class ImagePreviewActivity: AppCompatActivity() {
 
-    private lateinit var imagePager: ViewPager2
+    private lateinit var binding: ActivityImagePreviewLayoutBinding
 
     companion object {
         const val IMAGE_LIST_DATA_KEY = "image_list"
@@ -18,28 +22,31 @@ class ImagePreviewActivity: AppCompatActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        setContentView(R.layout.activity_image_preview_layout)
+        binding = ActivityImagePreviewLayoutBinding.inflate(layoutInflater)
+        setContentView(binding.root)
         supportActionBar?.hide()
-        imagePager = findViewById(R.id.imageList)
-        imagePager.adapter = ImagePreviewAdapter()
-        imagePager.orientation = ViewPager2.ORIENTATION_HORIZONTAL
+        binding.imageList.adapter = ImagePreviewAdapter()
+        binding.imageList.orientation = ViewPager2.ORIENTATION_HORIZONTAL
         setImageList()
         LiveEventBus
             .get(EventKey.IMAGE_PREVIEW_CLICKED, String::class.java)
-            .observe(this, {
+            .observe(this) {
                 finish()
-            })
+            }
     }
 
     private fun setImageList() {
-        val imageList = intent.getStringArrayListExtra(IMAGE_LIST_DATA_KEY)
-        imagePager.let {
+        val paperHash = PaperDetailCache.get(DataRepository.getCurPaperId().value ?: -1)?.paperInfo?.hash
+        val imageList = intent.getStringArrayListExtra(IMAGE_LIST_DATA_KEY)?.map {
+            File(ContextHolder.application.cacheDir, "/${paperHash}/image/${it}").absolutePath
+        }
+        binding.imageList.let {
             if (imageList?.isNotEmpty() == true) {
                 (it.adapter as ImagePreviewAdapter).setData(imageList)
             }
         }
         val position = intent.getIntExtra(IMAGE_POSITION_KEY, 0)
-        imagePager.setCurrentItem(position, false)
+        binding.imageList.setCurrentItem(position, false)
 
     }
 }

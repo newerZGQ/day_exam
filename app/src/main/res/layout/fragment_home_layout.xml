@@ -11,4 +11,133 @@
         android:id="@+id/questionPager"
         android:layout_width="match_parent"
         android:layout_height="match_parent"/>
+
+    <ScrollView
+        android:id="@+id/welcome_container"
+        android:visibility="gone"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:fillViewport="true">
+        
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:gravity="center"
+            android:padding="32dp">
+            
+            <!-- Welcome Title -->
+            <TextView
+                android:id="@+id/welcome_title"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:fontFamily="@font/xwwk"
+                android:text="@string/welcome_title"
+                android:textColor="@color/font_common_color"
+                android:textSize="24sp"
+                android:textStyle="bold"
+                android:gravity="center"
+                android:layout_marginBottom="8dp"/>
+            
+            <!-- Welcome Subtitle -->
+            <TextView
+                android:id="@+id/welcome_subtitle"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:fontFamily="@font/xwwk"
+                android:text="@string/welcome_subtitle"
+                android:textColor="@color/setting_preference_summary_color"
+                android:textSize="14sp"
+                android:gravity="center"
+                android:layout_marginBottom="32dp"/>
+            
+            <!-- Step 1: AI Settings -->
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                android:padding="16dp"
+                android:layout_marginBottom="20dp"
+                android:background="@drawable/rounded_background">
+                
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal"
+                    android:gravity="start"
+                    android:layout_marginBottom="16dp">
+                    
+                    <TextView
+                        android:layout_width="32dp"
+                        android:layout_height="32dp"
+                        android:text="1"
+                        android:layout_gravity="center_vertical"
+                        android:fontFamily="@font/xwwk"
+                        android:textColor="@android:color/white"
+                        android:textSize="16sp"
+                        android:textStyle="bold"
+                        android:gravity="center"
+                        android:background="@drawable/circle_background"
+                        android:layout_marginEnd="16dp"/>
+                    
+                    <TextView
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:fontFamily="@font/xwwk"
+                        android:text="@string/welcome_ai_tip"
+                        android:textColor="@color/font_common_color"
+                        android:textSize="16sp"
+                        android:lineSpacingExtra="4dp"/>
+                </LinearLayout>
+                
+                <Button
+                    android:id="@+id/go_to_settings_button"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center_horizontal"
+                    android:fontFamily="@font/xwwk"
+                    android:text="@string/welcome_go_to_settings"
+                    android:textColor="@android:color/white"
+                    android:backgroundTint="@color/colorAccent"
+                    android:paddingStart="24dp"
+                    android:paddingEnd="24dp"/>
+            </LinearLayout>
+
+            <!-- Step 2: Add Paper -->
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:gravity="start"
+                android:layout_marginBottom="24dp"
+                android:padding="16dp"
+                android:background="@drawable/rounded_background">
+
+                <TextView
+                    android:layout_width="32dp"
+                    android:layout_height="32dp"
+                    android:text="2"
+                    android:fontFamily="@font/xwwk"
+                    android:textColor="@android:color/white"
+                    android:layout_gravity="center_vertical"
+                    android:textSize="16sp"
+                    android:textStyle="bold"
+                    android:gravity="center"
+                    android:background="@drawable/circle_background"
+                    android:layout_marginEnd="16dp"/>
+
+                <TextView
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:fontFamily="@font/xwwk"
+                    android:text="@string/welcome_add_paper_tip"
+                    android:textColor="@color/font_common_color"
+                    android:textSize="16sp"
+                    android:lineSpacingExtra="4dp"/>
+            </LinearLayout>
+            
+        </LinearLayout>
+    </ScrollView>
 </androidx.constraintlayout.widget.ConstraintLayout>

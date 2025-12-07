@@ -33,8 +33,8 @@
                     android:id="@+id/copy_content_icon"
                     android:layout_marginStart="16dp"
                     android:src="@drawable/ic_baseline_copy_all_24"
-                    android:layout_width="24dp"
-                    android:layout_height="24dp"/>
+                    android:layout_width="20dp"
+                    android:layout_height="20dp"/>
                 <TextView
                     android:layout_marginStart="8dp"
                     android:fontFamily="@font/xwwk"
@@ -59,8 +59,8 @@
                     android:id="@+id/search_content_icon"
                     android:layout_marginStart="16dp"
                     android:src="@drawable/ic_baseline_search_24"
-                    android:layout_width="24dp"
-                    android:layout_height="24dp"/>
+                    android:layout_width="20dp"
+                    android:layout_height="20dp"/>
                 <TextView
                     android:layout_marginStart="8dp"
                     android:fontFamily="@font/xwwk"
@@ -70,60 +70,7 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"/>
             </LinearLayout>
-            <LinearLayout
-                android:id="@+id/history_content_container"
-                style="@style/SelectableItemBackground"
-                android:orientation="horizontal"
-                android:gravity="center"
-                android:visibility="gone"
-                android:paddingTop="12dp"
-                android:paddingBottom="12dp"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@id/search_content_container"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content">
-                <ImageView
-                    android:id="@+id/history_content_icon"
-                    android:layout_marginStart="16dp"
-                    android:src="@drawable/ic_baseline_history_24"
-                    android:layout_width="24dp"
-                    android:layout_height="24dp"/>
-                <TextView
-                    android:layout_marginStart="8dp"
-                    android:fontFamily="@font/xwwk"
-                    android:textSize="16sp"
-                    android:textColor="@color/menu_title_color"
-                    android:text="@string/history_question_content"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"/>
-            </LinearLayout>
-            <LinearLayout
-                android:id="@+id/delete_content_container"
-                style="@style/SelectableItemBackground"
-                android:orientation="horizontal"
-                android:gravity="center"
-                android:paddingTop="12dp"
-                android:paddingBottom="12dp"
-                app:layout_constraintStart_toEndOf="@id/search_content_container"
-                app:layout_constraintTop_toBottomOf="@id/copy_content_container"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content">
-                <ImageView
-                    android:id="@+id/delete_content_icon"
-                    android:layout_marginStart="16dp"
-                    android:src="@drawable/ic_twotone_delete_white_24"
-                    android:layout_width="24dp"
-                    android:layout_height="24dp"/>
-                <TextView
-                    android:id="@+id/delete_title"
-                    android:layout_marginStart="8dp"
-                    android:fontFamily="@font/xwwk"
-                    android:textSize="16sp"
-                    android:textColor="@color/menu_title_color"
-                    android:text="@string/delete_question_content"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"/>
-            </LinearLayout>
+
             <LinearLayout
                 android:id="@+id/remember_content_container"
                 style="@style/SelectableItemBackground"
@@ -132,15 +79,15 @@
                 android:paddingTop="12dp"
                 android:paddingBottom="12dp"
                 app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@id/history_content_container"
+                app:layout_constraintTop_toBottomOf="@id/search_content_container"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content">
                 <ImageView
                     android:id="@+id/remember_content_icon"
                     android:layout_marginStart="16dp"
                     android:src="@drawable/ic_baseline_border_color_24"
-                    android:layout_width="24dp"
-                    android:layout_height="24dp"/>
+                    android:layout_width="20dp"
+                    android:layout_height="20dp"/>
                 <TextView
                     android:layout_marginStart="8dp"
                     android:fontFamily="@font/xwwk"
@@ -151,47 +98,16 @@
                     android:layout_height="wrap_content"/>
                 <androidx.appcompat.widget.SwitchCompat
                     android:id="@+id/remember_mode_switch"
-                    android:layout_marginStart="4dp"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"/>
-            </LinearLayout>
-            <LinearLayout
-                android:id="@+id/focus_content_container"
-                android:orientation="horizontal"
-                android:gravity="center"
-                android:paddingTop="12dp"
-                android:paddingBottom="12dp"
-                style="@style/SelectableItemBackground"
-                app:layout_constraintStart_toEndOf="@id/remember_content_container"
-                app:layout_constraintTop_toBottomOf="@id/history_content_container"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content">
-                <ImageView
-                    android:id="@+id/focus_content_icon"
                     android:layout_marginStart="16dp"
-                    android:src="@drawable/ic_baseline_center_focus_weak_24"
-                    android:layout_width="24dp"
-                    android:layout_height="24dp"/>
-                <TextView
-                    android:layout_marginStart="8dp"
-                    android:fontFamily="@font/xwwk"
-                    android:textSize="16sp"
-                    android:textColor="@color/menu_title_color"
-                    android:text="@string/focus_question_content"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"/>
-                <androidx.appcompat.widget.SwitchCompat
-                    android:id="@+id/focus_mode_switch"
-                    android:layout_marginStart="4dp"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"/>
             </LinearLayout>
+
             <LinearLayout
-                android:id="@+id/favorite_content_container"
+                android:id="@+id/keep_screen_content_container"
                 style="@style/SelectableItemBackground"
                 android:orientation="horizontal"
                 android:gravity="center"
-                android:visibility="gone"
                 android:paddingTop="12dp"
                 android:paddingBottom="12dp"
                 app:layout_constraintStart_toStartOf="parent"
@@ -199,92 +115,60 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content">
                 <ImageView
-                    android:id="@+id/favorite_content_icon"
+                    android:id="@+id/keep_screen_content_icon"
                     android:layout_marginStart="16dp"
-                    android:src="@drawable/ic_baseline_favorite_24"
-                    android:layout_width="24dp"
-                    android:layout_height="24dp"/>
+                    android:src="@drawable/ic_baseline_center_focus_weak_24"
+                    android:layout_width="20dp"
+                    android:layout_height="20dp"/>
                 <TextView
                     android:layout_marginStart="8dp"
                     android:fontFamily="@font/xwwk"
                     android:textSize="16sp"
                     android:textColor="@color/menu_title_color"
-                    android:text="@string/favorite_question_content"
+                    android:text="@string/keep_screen_light"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"/>
                 <androidx.appcompat.widget.SwitchCompat
-                    android:id="@+id/favorite_mode_switch"
-                    android:layout_marginStart="4dp"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"/>
-            </LinearLayout>
-            <LinearLayout
-                android:id="@+id/sort_by_accuracy_content_container"
-                style="@style/SelectableItemBackground"
-                android:orientation="horizontal"
-                android:gravity="center"
-                android:visibility="gone"
-                android:paddingTop="12dp"
-                android:paddingBottom="12dp"
-                app:layout_constraintStart_toEndOf="@id/favorite_content_container"
-                app:layout_constraintBottom_toBottomOf="@id/favorite_content_container"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content">
-                <ImageView
-                    android:id="@+id/sort_by_accuracy_content_icon"
+                    android:id="@+id/keep_screen_light_switch"
                     android:layout_marginStart="16dp"
-                    android:src="@drawable/ic_baseline_sort_24"
-                    android:layout_width="24dp"
-                    android:layout_height="24dp"/>
-                <TextView
-                    android:layout_marginStart="8dp"
-                    android:fontFamily="@font/xwwk"
-                    android:textSize="16sp"
-                    android:textColor="@color/menu_title_color"
-                    android:text="@string/sort_by_accuracy_question_content"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"/>
-                <androidx.appcompat.widget.SwitchCompat
-                    android:id="@+id/sort_by_accuracy_mode_switch"
-                    android:layout_marginStart="4dp"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"/>
             </LinearLayout>
+
             <LinearLayout
-                android:id="@+id/back_up_now_content_container"
+                android:id="@+id/exit_study_container"
                 style="@style/SelectableItemBackground"
                 android:orientation="horizontal"
-                android:gravity="center"
                 android:paddingTop="12dp"
                 android:paddingBottom="12dp"
                 app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@id/favorite_content_container"
-                android:layout_width="wrap_content"
+                app:layout_constraintTop_toBottomOf="@id/keep_screen_content_container"
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content">
                 <ImageView
-                    android:id="@+id/back_up_content_icon"
                     android:layout_marginStart="16dp"
-                    android:src="@drawable/ic_baseline_backup_24"
-                    android:layout_width="24dp"
-                    android:layout_height="24dp"/>
+                    android:src="@drawable/ic_baseline_exit"
+                    app:tint="@color/menu_title_color"
+                    android:layout_width="20dp"
+                    android:layout_height="20dp"/>
                 <TextView
                     android:layout_marginStart="8dp"
                     android:fontFamily="@font/xwwk"
                     android:textSize="16sp"
-                    android:textColor="@color/menu_title_color"
-                    android:text="@string/back_up_now"
+                    android:textColor="#FF5252"
+                    android:text="@string/exit_study_title"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"/>
             </LinearLayout>
+
         </androidx.constraintlayout.widget.ConstraintLayout>
         <androidx.constraintlayout.widget.ConstraintLayout
             android:id="@+id/shortcutContainer"
             android:layout_width="match_parent"
             android:layout_height="80dp">
-            <ImageView
-                android:src="@drawable/course_sheet_bottom_background"
+            <View
                 app:layout_constraintBottom_toBottomOf="parent"
-                android:scaleType="fitXY"
+                android:background="@color/colorPrimaryDark"
                 android:layout_width="match_parent"
                 android:layout_height="56dp"/>
             <androidx.constraintlayout.widget.ConstraintLayout
@@ -317,30 +201,18 @@
                     android:text="@string/shortcut" />
 
                 <ImageButton
-                    android:id="@+id/search_icon"
-                    android:src="@drawable/ic_baseline_search_24"
-                    app:layout_constraintStart_toStartOf="parent"
+                    android:id="@+id/toSetting"
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintTop_toTopOf="parent"
                     app:layout_constraintBottom_toBottomOf="parent"
-                    android:layout_marginStart="32dp"
+                    android:layout_marginEnd="25dp"
+                    android:elevation="5dp"
                     style="@style/SelectableItemBackground"
+                    android:src="@drawable/ic_baseline_settings_24"
                     android:layout_width="36dp"
-                    android:layout_height="36dp"/>
+                    android:layout_height="36dp" />
             </androidx.constraintlayout.widget.ConstraintLayout>
 
-            <ImageButton
-                android:id="@+id/toSetting"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintBottom_toBottomOf="parent"
-                android:layout_marginBottom="28dp"
-                android:layout_marginEnd="25dp"
-                android:elevation="5dp"
-                style="@style/SelectableItemBackground"
-                android:background="@drawable/round_floating_action_button_background"
-                android:src="@drawable/ic_baseline_settings_24"
-                android:layout_width="50dp"
-                android:layout_height="50dp" />
         </androidx.constraintlayout.widget.ConstraintLayout>
 
     </LinearLayout>
