@@ -62,7 +62,7 @@ class PaperListFragment : Fragment() {
             if (result.resultCode == Activity.RESULT_OK) {
                 try {
                     result.data?.data?.let { uri ->
-                        showLoadingDialog()
+                        showLoadingDialog(R.string.parsing_ai_please_wait)
                         importRawDocumentFromUri(uri)
                     }
                 } catch (e: Exception) {
@@ -77,7 +77,7 @@ class PaperListFragment : Fragment() {
             if (result.resultCode == Activity.RESULT_OK) {
                 try {
                     result.data?.data?.let { uri ->
-                        showLoadingDialog()
+                        showLoadingDialog(R.string.parsing_formatted_please_wait)
                         importFormattedDocumentFromUri(uri)
                     }
                 } catch (e: Exception) {
@@ -185,7 +185,7 @@ class PaperListFragment : Fragment() {
     private  var loadingDialog: androidx.appcompat.app.AlertDialog? = null
     private var shouldClearScreenOn = false
 
-    private fun showLoadingDialog() {
+    private fun showLoadingDialog(messageResId: Int) {
         val context = context ?: return
         val activity = activity ?: return
 
@@ -206,6 +206,13 @@ class PaperListFragment : Fragment() {
             builder.setCancelable(false) // Prevent user from dismissing
             loadingDialog = builder.create()
         }
+        
+        // Update message
+        loadingDialog?.let { dialog ->
+            val messageView = dialog.findViewById<android.widget.TextView>(R.id.message)
+            messageView?.setText(messageResId)
+        }
+        
         loadingDialog?.show()
     }
 

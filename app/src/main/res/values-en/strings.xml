@@ -197,6 +197,7 @@
     <string name="ai_error_dialog_title">Please copy and report on GitHub</string>
     <string name="action_copy">Copy</string>
     <string name="toast_copy_success">Copied to clipboard</string>
-    <string name="parsing_please_wait">Parsing, please do not leave...</string>
+    <string name="parsing_ai_please_wait">AI parsing may take time, please wait...</string>
+    <string name="parsing_formatted_please_wait">Parsing, please do not leave...</string>
 
 </resources>
