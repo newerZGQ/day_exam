@@ -275,6 +275,10 @@ class PaperListFragment : Fragment() {
                 ) {
                     viewLifecycleOwner.lifecycleScope.launch {
                         val success = paperListViewModel.deletePaper(paperInfo)
+                        if (success && currentPaperInfo?.id == paperInfo.id) {
+                            DataRepository.updateCurPaperId(-1)
+                            currentPaperInfo = null
+                        }
                         val ctxInner = context ?: return@launch
                         Toast.makeText(
                             ctxInner,

@@ -189,12 +189,14 @@ class HomeFragment : Fragment() {
             kotlin.runCatching {
                 val paperId = DataRepository.getCurPaperId().value ?: -1
                 if (paperId < 0) {
+                    showWelcome()
                     return@launch
                 }
                 val paperDetail = withContext(Dispatchers.IO) {
                     DataRepository.getPaperDetailById(paperId)
                 }
                 if (paperDetail == null) {
+                    showWelcome()
                     Toast.makeText(requireContext(), requireContext().getString(R.string.toast_questions_file_not_found), Toast.LENGTH_SHORT).show()
                     return@launch
                 }
