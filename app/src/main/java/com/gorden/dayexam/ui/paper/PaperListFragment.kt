@@ -16,6 +16,8 @@ import android.view.View.MeasureSpec
 import android.content.ClipData
 import android.content.ClipboardManager
 import android.content.Context
+import android.widget.ScrollView
+import android.widget.TextView
 import androidx.activity.result.ActivityResultLauncher
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.appcompat.app.AlertDialog
@@ -192,15 +194,10 @@ class PaperListFragment : Fragment() {
         if (loadingDialog == null) {
             val builder = AlertDialog.Builder(context)
             val view = LayoutInflater.from(context).inflate(R.layout.dialog_loading, null)
+            view.findViewById<TextView>(R.id.message).setText(messageResId)
             builder.setView(view)
             builder.setCancelable(false) // Prevent user from dismissing
             loadingDialog = builder.create()
-        }
-        
-        // Update message
-        loadingDialog?.let { dialog ->
-            val messageView = dialog.findViewById<android.widget.TextView>(R.id.message)
-            messageView?.setText(messageResId)
         }
         
         loadingDialog?.show()
@@ -451,7 +448,7 @@ class PaperListFragment : Fragment() {
         val fullErrorMessage = "$userMessage\n\n${e.stackTraceToString()}"
 
         // Custom ScrollView with max height (50% of screen height)
-        val scrollView = object : android.widget.ScrollView(context) {
+        val scrollView = object : ScrollView(context) {
             override fun onMeasure(widthMeasureSpec: Int, heightMeasureSpec: Int) {
                 val maxHeight = (resources.displayMetrics.heightPixels * 0.5).toInt()
                 val heightSpec = MeasureSpec.makeMeasureSpec(maxHeight, MeasureSpec.AT_MOST)
@@ -460,7 +457,7 @@ class PaperListFragment : Fragment() {
         }
 
         val padding = (24 * resources.displayMetrics.density).toInt()
-        val textView = android.widget.TextView(context).apply {
+        val textView = TextView(context).apply {
             text = fullErrorMessage
             setPadding(padding, padding / 2, padding, 0)
             setTextIsSelectable(true)
