@@ -139,6 +139,10 @@
     <string name="demo_template_summary">Click To Download</string>
     <string name="demo_template_link">https://gitee.com/zgq2015/dayexam_config/raw/master/%E5%A4%A9%E5%A4%A9%E8%83%8C%E9%A2%98-%E6%A8%A1%E6%9D%BF.docx</string>
 
+    <string name="github_key">github_key</string>
+    <string name="github_title">GitHub</string>
+    <string name="github_summary">https://github.com/newerZGQ/day_exam</string>
+
     <string name="gemini_api_key">gemini_api_key</string>
     <string name="gemini_api_title">Gemini Api Key</string>
     <string name="gemini_api_summary">Click to set your Gemini Api Key</string>

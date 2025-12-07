@@ -69,5 +69,12 @@ class SettingsFragment: PreferenceFragmentCompat() {
                 return@setOnPreferenceClickListener true
             }
         }
+        
+        findPreference<Preference>(getString(R.string.github_key))?.setOnPreferenceClickListener {
+            val uri = Uri.parse(getString(R.string.github_summary))
+            val intent = Intent(Intent.ACTION_VIEW, uri)
+            startActivity(intent)
+            return@setOnPreferenceClickListener true
+        }
     }
 }

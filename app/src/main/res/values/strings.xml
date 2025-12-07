@@ -147,6 +147,10 @@
     <string name="demo_template_summary">文档模板</string>
     <string name="demo_template_link">https://docs.google.com/document/d/1sgdJn-r1nEbq3Ok14oxdm4MEadWQvnoi/edit?usp=sharing&amp;ouid=116258016900543803615&amp;rtpof=true&amp;sd=true</string>
 
+    <string name="github_key">github_key</string>
+    <string name="github_title">GitHub</string>
+    <string name="github_summary">https://github.com/newerZGQ/day_exam</string>
+
     <string name="letter_for_users">致用户的一封信\n欢迎您使用天天背题，很高兴在这里见到您！\n亲爱的用户，天天背题是一款致力于帮助您考试刷题的app，我们希望打造一个无广告、体验优秀、存储安全的刷题app，给予您考试最大的帮助。\n为了方便试题管理，我们将内容分成课程、书籍、试卷、试题一共四个层级，试题是核心，也是需要您自己在word里编辑好，然后导入到试卷中。\n我们目前支持填空、判断、单选、多选、问答五种题型，每种题型都有学习和记忆两种模式。\n填空题和问答题目前还不支持手动输入答案并比较，你可以在心里默念答案后点击答案按钮进行比对。\n判断题、单选题以及多选题都支持直接选择答案并和准确答案对比。\n除了对各类题型的支持，我们还对您的学习记录做了简单统计，每日学习题目数量会显示在标题栏的右边，方便您规划学习。\n天天背题不仅仅支持文本类的题目，还支持图文混排，您需要做的仅仅是在word文档中插入需要的图片即可。\n为了方便您管理题目，天天背题还设置了废纸篓，您删除的试题会先放在废纸篓中，当您需要找回误删的试题时，可以从废纸篓中恢复。当然，如果您把废纸篓中的题目也删除，那就无法恢复了。\n天天背题同时有备份功能，将您app内某一时刻所有的试题备份在sd卡中，方便后续恢复备份。不过由于您的设备环境以及app版本升级带来的风险，还是希望您保存好word文档，以备不时之需。\n最后，预祝您考试顺利！
     </string>
 

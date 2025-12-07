@@ -25,4 +25,10 @@
         app:summary="@string/privacy_summary"
         app:title="@string/privacy_title"/>
 
+    <com.gorden.dayexam.ui.settings.preference.CustomPreference
+        app:key="@string/github_key"
+        app:icon="@drawable/ic_baseline_menu_book_24"
+        app:summary="@string/github_summary"
+        app:title="@string/github_title"/>
+
 </PreferenceScreen>
