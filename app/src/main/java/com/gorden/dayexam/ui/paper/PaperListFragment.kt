@@ -62,7 +62,6 @@ class PaperListFragment : Fragment() {
             if (result.resultCode == Activity.RESULT_OK) {
                 try {
                     result.data?.data?.let { uri ->
-                        showLoadingDialog(R.string.parsing_ai_please_wait)
                         importRawDocumentFromUri(uri)
                     }
                 } catch (e: Exception) {
@@ -77,7 +76,6 @@ class PaperListFragment : Fragment() {
             if (result.resultCode == Activity.RESULT_OK) {
                 try {
                     result.data?.data?.let { uri ->
-                        showLoadingDialog(R.string.parsing_formatted_please_wait)
                         importFormattedDocumentFromUri(uri)
                     }
                 } catch (e: Exception) {
@@ -345,7 +343,7 @@ class PaperListFragment : Fragment() {
                     }
                     return@withContext
                 }
-
+                showLoadingDialog(R.string.parsing_ai_please_wait)
                 // 使用 AI 解析原始文档
                 AiPaperParser.parseFromFile(destFile.absolutePath)
                     .onSuccess {
@@ -394,7 +392,7 @@ class PaperListFragment : Fragment() {
                     if (!destFile.exists()) {
                         return@withContext
                     }
-
+                    showLoadingDialog(R.string.parsing_formatted_please_wait)
                     // Check if paper already exists before parsing
                     if (FormatedPaperParser.checkExist(destFile.absolutePath)) {
                         withContext(Dispatchers.Main) {
