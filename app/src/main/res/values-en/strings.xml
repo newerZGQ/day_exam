@@ -200,4 +200,10 @@
     <string name="parsing_ai_please_wait">AI parsing may take time, please wait...</string>
     <string name="parsing_formatted_please_wait">Parsing, please do not leave...</string>
 
+    <string name="ai_model_key">ai_model_key</string>
+    <string name="ai_model_title">AI Model Selection</string>
+    <string name="ai_model_summary">Select AI model for document parsing</string>
+    <string name="ai_model_gemini">Gemini</string>
+    <string name="ai_model_deepseek">DeepSeek</string>
+
 </resources>

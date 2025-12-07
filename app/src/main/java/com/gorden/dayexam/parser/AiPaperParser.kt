@@ -57,37 +57,40 @@ object AiPaperParser {
             return Result.failure(e)
         }
 
-        // Get API keys from SharedPreferences
+        // Get API keys and selected model
         val context = ContextHolder.application
-        val geminiKey = SharedPreferenceUtil.getString(context.getString(R.string.gemini_api_key))
-        val deepseekKey = SharedPreferenceUtil.getString(context.getString(R.string.deepseek_api_key))
 
-        if (geminiKey.isEmpty() && deepseekKey.isEmpty()) {
-            return Result.failure(AiNoApiKeyException(ContextHolder.application.getString(R.string.ai_api_key_missing)))
-        }
+        val selectedModel = SharedPreferenceUtil.getString(context.getString(R.string.ai_model_key))
 
         // Split text into overlapping chunks
         val chunks = splitTextIntoOverlappingChunks(documentText)
         val allQuestions = mutableListOf<QuestionDetail>()
-        var hasAtLeastOneSuccess = false
         var lastError: Throwable? = null
 
         for (chunk in chunks) {
-            val result = when {
-                geminiKey.isNotEmpty() -> {
-                    AiRepository.callGeminiApi(geminiKey, chunk)
+            val result = when (selectedModel) {
+                "gemini" -> {
+                    val geminiKey = SharedPreferenceUtil.getString(context.getString(R.string.gemini_api_key))
+                    if (geminiKey.isNotEmpty()) {
+                        AiRepository.callGeminiApi(geminiKey, chunk)
+                    } else {
+                        Result.failure(AiNoApiKeyException("Gemini API Key is missing. Please set it in Settings."))
+                    }
                 }
-                deepseekKey.isNotEmpty() -> {
-                    AiRepository.callDeepseekApi(deepseekKey, chunk)
+                else -> {
+                    val deepseekKey = SharedPreferenceUtil.getString(context.getString(R.string.deepseek_api_key))
+                    if (deepseekKey.isNotEmpty()) {
+                        AiRepository.callDeepseekApi(deepseekKey, chunk)
+                    } else {
+                        Result.failure(AiNoApiKeyException("DeepSeek API Key is missing. Please set it in Settings."))
+                    }
                 }
-                else -> Result.failure(RuntimeException("No API Key")) // Should not reach here
             }
 
             result.fold(
                 onSuccess = { questions ->
                     if (questions.isNotEmpty()) {
                         allQuestions.addAll(questions)
-                        hasAtLeastOneSuccess = true
                     }
                 },
                 onFailure = { e ->

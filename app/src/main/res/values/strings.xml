@@ -190,4 +190,10 @@
     <string name="parsing_ai_please_wait">AI 解析耗时较长，请耐心等待...</string>
     <string name="parsing_formatted_please_wait">解析中，请勿离开...</string>
 
+    <string name="ai_model_key">ai_model_key</string>
+    <string name="ai_model_title">AI 模型选择</string>
+    <string name="ai_model_summary">选择用于解析文档的 AI 模型</string>
+    <string name="ai_model_gemini">Gemini</string>
+    <string name="ai_model_deepseek">DeepSeek</string>
+
 </resources>
