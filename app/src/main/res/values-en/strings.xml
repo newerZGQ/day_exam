@@ -177,8 +177,18 @@
     // Import Paper Dialog
     <string name="import_paper_title">Import Paper</string>
     <string name="import_raw_document_title">Import Raw Document</string>
+    <string name="error_ai_network">Network request failed: %1$s</string>
+    <string name="error_ai_response_parse">Failed to parse AI response: %1$s</string>
+    <string name="error_ai_empty_response">AI returned empty response</string>
     <string name="import_raw_document_desc">Parse questions with AI</string>
     <string name="import_formatted_document_title">Import Formatted Document</string>
     <string name="import_formatted_document_desc">Download template in settings</string>
+    <string name="ai_parse_success">AI Parsing Successful</string>
+    <string name="ai_api_key_missing">No AI API key configured. Please set Gemini or Deepseek API key in settings.</string>
+    <string name="ai_parse_failed_no_questions">AI failed to parse any questions from the document</string>
+    <string name="ai_parse_failed_prefix">AI Parse Failed: </string>
+    <string name="ai_extract_text_failed">Failed to extract text from document: </string>
+    <string name="ai_api_call_failed">AI API call failed: </string>
+    <string name="ai_save_cache_failed">Failed to save questions to cache: </string>
 
 </resources>

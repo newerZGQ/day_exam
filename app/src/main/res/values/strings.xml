@@ -167,8 +167,18 @@
     // 导入试卷对话框
     <string name="import_paper_title">导入试卷</string>
     <string name="import_raw_document_title">导入原始文档</string>
+    <string name="error_ai_network">网络请求失败: %1$s</string>
+    <string name="error_ai_response_parse">AI 响应解析失败: %1$s</string>
+    <string name="error_ai_empty_response">AI 返回结果为空</string>
     <string name="import_raw_document_desc">使用AI解析试题</string>
     <string name="import_formatted_document_title">导入格式化文档</string>
     <string name="import_formatted_document_desc">在设置页下载模版</string>
+    <string name="ai_parse_success">AI 解析成功</string>
+    <string name="ai_api_key_missing">未配置 AI API Key。请在设置中配置 Gemini 或 Deepseek API Key。</string>
+    <string name="ai_parse_failed_no_questions">AI 未能从文档中解析出任何试题</string>
+    <string name="ai_parse_failed_prefix">AI 解析失败: </string>
+    <string name="ai_extract_text_failed">无法从文档中提取文本: </string>
+    <string name="ai_api_call_failed">AI API 调用失败: </string>
+    <string name="ai_save_cache_failed">无法保存试题到缓存: </string>
 
 </resources>

@@ -21,10 +21,14 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import com.gorden.dayexam.R
 import com.gorden.dayexam.databinding.FragmentPaperListLayoutBinding
 import com.gorden.dayexam.db.entity.PaperInfo
+import com.gorden.dayexam.parser.AiPaperParser
 import com.gorden.dayexam.parser.FormatedPaperParser
 import com.gorden.dayexam.repository.DataRepository
+import com.gorden.dayexam.repository.AiNetworkException
+import com.gorden.dayexam.repository.AiResponseParseException
 import com.gorden.dayexam.ui.dialog.EditTextDialog
 import com.google.android.material.bottomsheet.BottomSheetDialog
+import com.gorden.dayexam.repository.AiNoApiKeyException
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
@@ -106,7 +110,7 @@ class PaperListFragment : Fragment() {
                 // 通过 EventBus 发送事件
                 DataRepository.updateCurPaperId(paperInfo.id)
             }
-            
+
             override fun onItemLongPressed(holder: PaperViewHolder, paperInfo: PaperInfo) {
                 enterEditMode()
                 // 进入编辑模式，并开始拖拽
@@ -272,41 +276,92 @@ class PaperListFragment : Fragment() {
      */
     private fun importRawDocumentFromUri(uri: Uri) {
         viewLifecycleOwner.lifecycleScope.launch {
-            try {
-                // IO operations in IO dispatcher
-                withContext(Dispatchers.IO) {
-                    val context = requireContext()
-                    val fileName = queryDisplayName(uri) ?: "paper_${System.currentTimeMillis()}.docx"
-                    val destDir = File(context.cacheDir, "imported_papers")
-                    if (!destDir.exists()) {
-                        destDir.mkdirs()
+            // IO operations in IO dispatcher
+            withContext(Dispatchers.IO) {
+                val context = requireContext()
+                val fileName =
+                    queryDisplayName(uri) ?: "paper_${System.currentTimeMillis()}.docx"
+                val destDir = File(context.cacheDir, "imported_papers")
+                if (!destDir.exists()) {
+                    destDir.mkdirs()
+                }
+                val destFile = File(destDir, fileName)
+                context.contentResolver.openInputStream(uri)?.use { input ->
+                    FileOutputStream(destFile).use { output ->
+                        input.copyTo(output)
                     }
-                    val destFile = File(destDir, fileName)
-                    context.contentResolver.openInputStream(uri)?.use { input ->
-                        FileOutputStream(destFile).use { output ->
-                            input.copyTo(output)
-                        }
+                }
+                // Check if paper already exists before parsing
+                if (AiPaperParser.checkExist(destFile.absolutePath)) {
+                    withContext(Dispatchers.Main) {
+                        Toast.makeText(
+                            context,
+                            context.getString(R.string.toast_paper_already_exists),
+                            Toast.LENGTH_SHORT
+                        ).show()
                     }
-                    // Check if paper already exists before parsing
-                    if (FormatedPaperParser.checkExist(destFile.absolutePath)) {
+                    return@withContext
+                }
+
+                // 使用 AI 解析原始文档
+                AiPaperParser.parseFromFile(destFile.absolutePath)
+                    .onSuccess {
                         withContext(Dispatchers.Main) {
+                            hideProgress()
                             Toast.makeText(
                                 context,
-                                context.getString(R.string.toast_paper_already_exists),
+                                context.getString(R.string.ai_parse_success),
                                 Toast.LENGTH_SHORT
                             ).show()
                         }
-                        return@withContext
+                    }.onFailure { e ->
+                        withContext(Dispatchers.Main) {
+                            hideProgress()
+                            when (e) {
+                                is AiNetworkException -> {
+                                    Toast.makeText(
+                                        context,
+                                        context.getString(R.string.error_ai_network, e.message),
+                                        Toast.LENGTH_LONG
+                                    ).show()
+                                }
+
+                                is AiResponseParseException -> {
+                                    Toast.makeText(
+                                        context,
+                                        context.getString(
+                                            R.string.error_ai_response_parse,
+                                            e.message
+                                        ),
+                                        Toast.LENGTH_LONG
+                                    ).show()
+                                }
+
+                                is AiNoApiKeyException -> {
+                                    Toast.makeText(
+                                        context,
+                                        e.message ?: context.getString(R.string.ai_api_key_missing),
+                                        Toast.LENGTH_LONG
+                                    ).show()
+                                }
+
+                                else -> {
+                                    val message =
+                                        if (e.message?.startsWith(context.getString(R.string.ai_parse_failed_prefix)) == true) {
+                                            e.message
+                                        } else {
+                                            context.getString(R.string.ai_parse_failed_prefix) + e.message
+                                        }
+                                    Toast.makeText(
+                                        context,
+                                        message,
+                                        Toast.LENGTH_LONG
+                                    ).show()
+                                }
+                            }
+                        }
                     }
 
-                    // TODO: 使用 AI 解析原始文档
-                    // 暂时使用 PaperParser 解析拷贝到缓存目录的文件
-                    FormatedPaperParser.parseFromFile(destFile.absolutePath)
-                }
-            } catch (e: Exception) {
-                e.printStackTrace()
-            } finally {
-                hideProgress()
             }
         }
     }
@@ -321,7 +376,8 @@ class PaperListFragment : Fragment() {
                 // IO operations in IO dispatcher
                 withContext(Dispatchers.IO) {
                     val context = requireContext()
-                    val fileName = queryDisplayName(uri) ?: "paper_${System.currentTimeMillis()}.docx"
+                    val fileName =
+                        queryDisplayName(uri) ?: "paper_${System.currentTimeMillis()}.docx"
                     val destDir = File(context.cacheDir, "imported_papers")
                     if (!destDir.exists()) {
                         destDir.mkdirs()
