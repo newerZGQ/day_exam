@@ -4,11 +4,11 @@
 
 ---
 
-# Day Exam - Exam Question Bank Management Tool
+# Day Exam - Paper Management Tool
 
 [![License: AGPL v3](https://img.shields.io/badge/License-AGPLv3-blue.svg)](https://www.gnu.org/licenses/agpl-3.0)
 
-A powerful Android application designed to help you efficiently manage and study for various exams.
+A powerful Android application designed to help you efficiently manage and study for various exams. Powered by AI.
 
 ## ✨ Key Features
 
