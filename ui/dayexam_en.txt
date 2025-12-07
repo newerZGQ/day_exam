@@ -1,0 +1,367 @@
+### Fill-in-the-Blank
+
+**Description:** This champion's basic attacks and damaging abilities mark targets. After applying 3 marks to the same target, the marks detonate, dealing **True Damage** based on the target's maximum health.
+
+**Answer:** Vayne
+
+---
+
+### Fill-in-the-Blank
+
+**Description:** This item grants its owner Ability Power, Armor, and the unique active ability **Stasis**, which makes the user untargetable and immune to damage for $2.5$ seconds.
+
+**Answer:** Zhonya's Hourglass
+
+---
+
+### True or False
+
+**Description:** The champion **Blitzcrank** can use his ultimate ability, Static Field, while being suppressed or stunned.
+
+**Answer:** False
+
+---
+
+### True or False
+
+**Description:** The champion **Darius** gains a significant Attack Damage bonus from his passive ability, Hemorrhage, when five stacks are applied to an enemy champion.
+
+**Answer:** True
+
+---
+
+### Single Choice
+
+**Description:** Which of the following ultimate abilities is classified as a **Global Ultimate** (meaning it can be cast from any point on the map to almost any other point)?
+
+**Options**
+A. Ahri's Spirit Rush (R)
+B. Pantheon's Grand Skyfall (R)
+C. Zed's Death Mark (R)
+D. Camille's The Hextech Ultimatum (R)
+
+**Answer:** B
+
+---
+
+### Single Choice
+
+**Description:** Which champion utilizes **Energy** (not Mana) as their primary resource, and restores some of that resource when an opponent is eliminated near them?
+
+**Options**
+A. Akali
+B. Shen
+C. Lee Sin
+D. Kennen
+
+**Answer:** A
+
+---
+
+### Multiple Choice
+
+**Description:** Which of the following champions have a basic ability (Q, W, or E) that grants them **Invulnerability** or makes them **Untargetable** for a short duration?
+
+**Options**
+A. Vladimir
+B. Fizz
+C. Ekko
+D. Garen
+
+**Answer:** AB
+
+---
+
+### Multiple Choice
+
+**Description:** Which of these champions' abilities can be cast while the champion is **moving**?
+
+**Options**
+A. Cassiopeia's Twin Fangs (E)
+B. Jhin's Deadly Flourish (W)
+C. Lucian's Relentless Pursuit (E)
+D. Xerath's Arcanopulse (Q)
+
+**Answer:** AC
+
+---
+
+### Question & Answer
+
+**Description:** This champion is permanently **immune to slowing effects** due to their passive ability, **Juggernaut**. Who is this champion?
+
+**Answer:** Olaf
+
+---
+
+### Question & Answer
+
+**Description:** This champion's ultimate ability instantly **executes** enemy champions whose health is below a certain threshold. Who is this champion?
+
+**Answer:** Garen
+
+Fill-in-the-Blank
+Description: Upon activating this skill, the hero dashes in the specified direction and becomes untargetable during the dash. After reaching the end point, the hero deals physical damage to enemies in a small area and gains a shield.
+
+Answer: Dark Destroyer
+
+Fill-in-the-Blank
+Description: This hero's passive grants them "Cunning". After using any skill, their next basic attack is enhanced, dealing increased damage and slowing the target.
+
+Answer: Marco Polo
+
+True or False
+Description: This hero's ultimate ability causes them to leap into the air, becoming untargetable, and then slam down, dealing damage and knocking up nearby enemies. The hero is named Zilong.
+
+Answer: False
+
+True or False
+Description: The skill description states: The hero draws their sword, dealing damage to enemies in a fan-shaped area and applying a stacking mark. When the mark reaches the maximum stack, the target is stunned. The hero is Li Xin.
+
+Answer: False
+
+Single Choice
+Description: This hero's second skill allows them to summon three rotating arrows around them for a short duration. These arrows deal physical damage to enemies they hit, and the hero gains a brief movement speed boost. Which hero is this?
+
+Options A. Luban No. 7 B. Hou Yi C. Di Renjie D. Genghis Khan
+
+Answer: D
+
+Single Choice
+Description: This hero's passive ability is "Bloody Rage". When their HP drops below 50%, they gain increased attack damage and life steal, but their basic attacks consume a small amount of current health. Which hero is this?
+
+Options A. Dian Wei B. Cheng Yaojin C. Arthur D. Lü Bu
+
+Answer: D
+
+Multiple Choice
+Description: Which of the following heroes primarily utilize Energy (not Mana) as their resource to cast skills?
+
+Options A. Luna B. Diaochan C. Li Bai D. Zhuge Liang
+
+Answer: C
+
+Multiple Choice
+Description: Which of the following ultimate abilities grant the hero Control Immunity (Crowd Control Immunity) or Invulnerability upon activation?
+
+Options A. Mozi's Ultimate B. Sun Wukong's Ultimate C. Mulan's Ultimate (Heavy Sword Stance) D. Athena's Ultimate
+
+Answer: CD
+
+Question & Answer
+Description: This hero gains a permanent stacking physical defense bonus upon killing an enemy unit (minion, monster, or hero). Which hero has this passive ability?
+
+Answer: Bai Qi
+
+Question & Answer
+Description: The hero throws a spinning shield at the target, dealing physical damage. The shield can bounce up to 6 times between nearby enemies. Which hero owns this skill?
+
+Answer: Arthur
+
+
+### Fill-in-the-Blank
+
+**Description:** This item, often built by tanks or bruisers, grants Health, Armor, and the unique passive **Immolate**, which deals continuous Magic Damage to nearby enemies.
+
+**Answer:** Sunfire Aegis
+
+---
+
+### Fill-in-the-Blank
+
+**Description:** This champion's ultimate ability causes them to throw a glowing object that attaches to the first enemy hit. After a delay, the object explodes, **suppressing** the primary target and dealing significant Magic Damage to them and nearby enemies.
+
+**Answer:** Malzahar
+
+---
+
+### True or False
+
+**Description:** The champion **Riven** can use her abilities while airborne (e.g., knocked up) to escape the crowd control effect.
+
+**Answer:** False
+
+---
+
+### True or False
+
+**Description:** The champion **Caitlyn** gains a stack of her passive, Headshot, every time she lands a basic attack, and gains 2 stacks from basic attacking enemies trapped in her nets or traps.
+
+**Answer:** True
+
+---
+
+### Single Choice
+
+**Description:** Which of the following champions has an ability that allows them to **swap positions** with a targeted enemy champion?
+
+**Options**
+A. Sett
+B. Sion
+C. Tahm Kench
+D. Skarner
+
+**Answer:** C
+
+---
+
+### Single Choice
+
+**Description:** The champion **Aatrox** deals extra damage with his three casts of The Darkin Blade (Q) if the enemy champion is hit by which part of the swing?
+
+**Options**
+A. The center of the sword
+B. The hilt of the sword
+C. The edge (Sweetspot) of the sword
+D. The ground impact area
+
+**Answer:** C
+
+---
+
+### Multiple Choice
+
+**Description:** Which of the following champions' abilities can be used to **jump over thick walls or terrain**?
+
+**Options**
+A. Vayne's Tumble (Q)
+B. Rek'Sai's Tunnel (E)
+C. Talon's Assassin's Path (E)
+D. Zac's Elastic Slingshot (E)
+
+**Answer:** BCD
+
+---
+
+### Multiple Choice
+
+**Description:** Which of these champions utilizes **Health** as their resource to cast certain basic abilities?
+
+**Options**
+A. Mordekaiser
+B. Dr. Mundo
+C. Vladimir
+D. Zac
+
+**Answer:** BC
+
+---
+
+### Question & Answer
+
+**Description:** This champion's ultimate ability causes them to **disarm** all enemy champions in a target area for a short duration, preventing them from using basic attacks. Who is this champion?
+
+**Answer:** Renata Glasc
+
+---
+
+### Question & Answer
+
+**Description:** This champion gains a permanent, stacking bonus to their **Ability Power** when they kill an enemy unit (minion, monster, or champion) with their Q ability, Baleful Strike. Who is this champion?
+
+**Answer:** Veigar
+
+
+---
+
+### Fill-in-the-Blank
+
+**Description:** This champion's passive ability grants them **Adaptive Force** for every unique enemy champion they kill or assist in killing. This bonus is permanent and stacks indefinitely.
+
+**Answer:** Swain
+
+---
+
+### Fill-in-the-Blank
+
+**Description:** This champion can mark an enemy champion with a stackable debuff called **"Expose Weakness"** (W), which causes the marked target to take increased damage from all subsequent sources.
+
+**Answer:** Soraka
+
+---
+
+### True or False
+
+**Description:** The ultimate ability **Chrono Shift** grants the champion **Control Immunity** upon activation and causes them to instantly revert to their health and mana levels from 4 seconds prior after a fatal blow.
+
+**Answer:** True
+
+---
+
+### True or False
+
+**Description:** The champion **Irelia** gains bonus attack speed based on the number of enemy champions near her, up to a maximum of 4 stacks.
+
+**Answer:** True
+
+---
+
+### Single Choice
+
+**Description:** Which champion can use their ultimate ability **Unstoppable Force** to charge through the map, knocking up enemies they collide with, and can interrupt this charge at any time?
+
+**Options**
+A. Sion
+B. Hecarim
+C. Kled
+D. Skarner
+
+**Answer:** A
+
+---
+
+### Single Choice
+
+**Description:** The champion **Braum** gains stacks of his passive, **Concussive Blows**, on enemies he basic attacks or hits with his Q ability. After 4 stacks are applied, the target is instantly:
+
+**Options**
+A. Slowed
+B. Rooted
+C. Stunned
+D. Suppressed
+
+**Answer:** C
+
+---
+
+### Multiple Choice
+
+**Description:** Which of the following champions can **switch forms** (Melee to Ranged or vice versa) using a basic ability or ultimate?
+
+**Options**
+A. Jayce
+B. Elise
+C. Nidalee
+D. Graves
+
+**Answer:** ABC
+
+---
+
+### Multiple Choice
+
+**Description:** Which of these champions' ultimate abilities can be used to **"Execute"** enemies (instantly kill them below a certain health threshold)?
+
+**Options**
+A. Darius' Noxian Guillotine (R)
+B. Urgot's Fear Beyond Death (R)
+C. Jhin's Curtain Call (R)
+D. Mordekaiser's Realm of Death (R)
+
+**Answer:** AB
+
+---
+
+### Question & Answer
+
+**Description:** This champion's passive ability causes them to **"Unleash"** their shield after taking a specific number of hits from enemies, dealing area-of-effect Magic Damage. Who is this champion?
+
+**Answer:** Galio
+
+---
+
+### Question & Answer
+
+**Description:** This champion's ultimate ability summons a ghostly ring that expands outward and applies **Frenzy** to all enemy champions caught in the ring. Who is this champion?
+
+**Answer:** Kalista
