@@ -1,13 +1,11 @@
-Day Exam is a powerful exam preparation app that helps you efficiently manage and study exam questions.
+Day Exam is a powerful exam preparation app that helps you efficiently manage and study exam questions. It now features advanced AI capabilities to parse documents and automatically generate test papers.
 
 Key Features:
 • Question Management - Import and organize various exam questions
-• Exam Simulation - Practice in a simulated real exam environment
+• AI-Powered Test Paper Generation - Automatically parse documents to create test papers.
+
 • Learning Tracking - Record learning progress and answer statistics
 • Multiple Question Types - Support for single choice, multiple choice, and more
-• Course Classification - Organize questions by courses and test papers
-• Wrong Answer Review - Focus on reviewing incorrectly answered questions
 • Focus Mode - Immersive learning experience
-• Data Import - Import question banks from files
 
 This app is completely open source, respects your privacy, and contains no tracking or advertisements.

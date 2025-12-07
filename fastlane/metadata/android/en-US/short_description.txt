@@ -1,1 +1,1 @@
-Exam question bank management and learning tool
+Exam question bank management and learning tool with AI-powered document parsing.
