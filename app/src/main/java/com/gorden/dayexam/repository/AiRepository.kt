@@ -83,7 +83,7 @@ object AiRepository {
 	 */
 	suspend fun callGeminiApi(apiKey: String, documentText: String): Result<List<QuestionDetail>> = withContext(Dispatchers.IO) {
 		try {
-			val model = "gemini-1.5-flash"
+			val model = "gemini-2.5-flash-lite"
 			val url = "https://generativelanguage.googleapis.com/v1beta/models/$model:generateContent?key=$apiKey"
 
 			val promptText = buildPrompt(documentText)
@@ -99,7 +99,7 @@ object AiRepository {
 				),
 				"generationConfig" to mapOf(
 					"temperature" to 0.1,
-					"maxOutputTokens" to 8192
+					"maxOutputTokens" to 65536
 				)
 			)
 			val requestJson = gson.toJson(requestMap)
@@ -136,11 +136,7 @@ object AiRepository {
 			}
 		} catch (e: Exception) {
 			e.printStackTrace()
-			if (e is AiNetworkException || e is AiResponseParseException) {
-				Result.failure(e)
-			} else {
-				Result.failure(AiNetworkException("Gemini network error: ${e.message}", e))
-			}
+			Result.failure(e)
 		}
 	}
 

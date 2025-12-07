@@ -8,10 +8,10 @@ import com.gorden.dayexam.repository.model.QuestionDetail
 import com.gorden.dayexam.utils.SharedPreferenceUtil
 import com.google.gson.Gson
 import com.gorden.dayexam.repository.AiNoApiKeyException
+import com.gorden.dayexam.utils.FileUtils
 import org.apache.poi.xwpf.usermodel.XWPFDocument
 import java.io.File
 import java.io.FileInputStream
-import java.security.MessageDigest
 
 object AiPaperParser {
 
@@ -22,12 +22,7 @@ object AiPaperParser {
      * @return true if the paper already exists, false otherwise
      */
     fun checkExist(filePath: String): Boolean {
-        val file = File(filePath)
-        if (!file.exists()) {
-            return false
-        }
-        
-        val fileHash = generateHash(filePath)
+        val fileHash = FileUtils.generateHash(filePath)
         val existingPaper = DataRepository.getPaperByHash(fileHash)
         
         return existingPaper != null
@@ -49,7 +44,7 @@ object AiPaperParser {
         }
 
         // Generate hash from file path
-        val fileHash = generateHash(filePath)
+        val fileHash = FileUtils.generateHash(filePath)
         ParserContext.prepare(fileHash)
 
         // Extract text content from document
@@ -139,15 +134,6 @@ object AiPaperParser {
             e.printStackTrace()
              throw RuntimeException(ContextHolder.application.getString(R.string.ai_extract_text_failed) + e.message, e)
         }
-    }
-
-    /**
-     * Generate a hash string from the input string
-     */
-    private fun generateHash(input: String): String {
-        val md = MessageDigest.getInstance("MD5")
-        val digest = md.digest(input.toByteArray())
-        return digest.joinToString("") { "%02x".format(it) }
     }
 
     /**

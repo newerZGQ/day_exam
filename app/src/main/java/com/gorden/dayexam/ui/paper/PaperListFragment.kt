@@ -330,6 +330,10 @@ class PaperListFragment : Fragment() {
                         input.copyTo(output)
                     }
                 }
+
+                if (!destFile.exists()) {
+                    return@withContext
+                }
                 // Check if paper already exists before parsing
                 if (AiPaperParser.checkExist(destFile.absolutePath)) {
                     withContext(Dispatchers.Main) {
@@ -386,6 +390,11 @@ class PaperListFragment : Fragment() {
                             input.copyTo(output)
                         }
                     }
+
+                    if (!destFile.exists()) {
+                        return@withContext
+                    }
+
                     // Check if paper already exists before parsing
                     if (FormatedPaperParser.checkExist(destFile.absolutePath)) {
                         withContext(Dispatchers.Main) {

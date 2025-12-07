@@ -8,13 +8,13 @@ import com.gorden.dayexam.repository.model.OptionItems
 import com.gorden.dayexam.repository.model.QuestionDetail
 import com.google.gson.Gson
 import com.gorden.dayexam.repository.model.Answer
+import com.gorden.dayexam.utils.FileUtils
 import org.apache.poi.xwpf.usermodel.XWPFDocument
 import org.apache.poi.xwpf.usermodel.XWPFParagraph
 import java.io.File
 import java.io.FileInputStream
 import java.io.FileOutputStream
 import java.lang.StringBuilder
-import java.security.MessageDigest
 
 object FormatedPaperParser {
 
@@ -25,12 +25,7 @@ object FormatedPaperParser {
      * @return true if the paper already exists, false otherwise
      */
     fun checkExist(filePath: String): Boolean {
-        val file = File(filePath)
-        if (!file.exists()) {
-            return false
-        }
-        
-        val fileHash = generateHash(filePath)
+        val fileHash = FileUtils.generateHash(filePath)
         val existingPaper = DataRepository.getPaperByHash(fileHash)
         
         return existingPaper != null
@@ -49,7 +44,7 @@ object FormatedPaperParser {
         }
         
         // Generate hash from file path
-        val fileHash = generateHash(filePath)
+        val fileHash = FileUtils.generateHash(filePath)
         ParserContext.prepare(fileHash)
         // Parse the document to get questions and image data
         val (questionDetails, imageHashToData) = parseDocument(filePath)
@@ -104,24 +99,6 @@ object FormatedPaperParser {
         }
         
         return Pair(questionDetails, imageHashToData)
-    }
-
-    /**
-     * Generate a hash string from the input string
-     */
-    private fun generateHash(input: String): String {
-        val md = MessageDigest.getInstance("MD5")
-        val digest = md.digest(input.toByteArray())
-        return digest.joinToString("") { "%02x".format(it) }
-    }
-
-    /**
-     * Generate a hash string from the input string
-     */
-    private fun generateHash(input: ByteArray): String {
-        val md = MessageDigest.getInstance("MD5")
-        val digest = md.digest(input)
-        return digest.joinToString("") { "%02x".format(it) }
     }
 
     /**
@@ -274,7 +251,7 @@ object FormatedPaperParser {
                         builder.clear()
                     }
                     run.embeddedPictures.forEach { picture ->
-                        val imageHash = generateHash(picture.pictureData.data)
+                        val imageHash = FileUtils.generateHash(picture.pictureData.data)
                         imageHashToData[imageHash] = picture.pictureData.data
                         // Store just the hash in content, path will be constructed when saving
                         val element = Element(Element.PICTURE, imageHash)

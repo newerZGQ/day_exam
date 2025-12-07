@@ -3,10 +3,46 @@ package com.gorden.dayexam.utils
 import net.lingala.zip4j.ZipFile
 import net.lingala.zip4j.model.ZipParameters
 import java.io.File
+import java.io.FileInputStream
 import java.io.InputStream
+import java.security.MessageDigest
 import java.util.stream.Stream
 
 object FileUtils {
+
+    /**
+     * Generate a hash string from the file content at the given path
+     */
+    fun generateHash(filePath: String): String {
+        val md = MessageDigest.getInstance("MD5")
+        return try {
+            val file = File(filePath)
+            if (!file.exists()) return ""
+            FileInputStream(file).use {
+                val buffer = ByteArray(8192)
+                var bytesRead: Int
+                while (it.read(buffer).also { bytesRead = it } != -1) {
+                    md.update(buffer, 0, bytesRead)
+                }
+            }
+            val digest = md.digest()
+            digest.joinToString("") { "%02x".format(it) }
+        } catch (e: Exception) {
+            e.printStackTrace()
+            ""
+        }
+    }
+
+    /**
+     * Generate a hash string from the input string
+     */
+    fun generateHash(input: ByteArray): String {
+        val md = MessageDigest.getInstance("MD5")
+        val digest = md.digest(input)
+        return digest.joinToString("") { "%02x".format(it) }
+    }
+
+
     fun zip(files: List<String>, destinationFilePath: String) {
         try {
             val zipFile = ZipFile(destinationFilePath)
