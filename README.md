@@ -13,13 +13,8 @@ A powerful Android application designed to help you efficiently manage and study
 ## ✨ Key Features
 
 * **Question Management** - Supports importing and organizing various exam questions.
-* **Simulated Exams** - Practice in a simulated, realistic testing environment.
-* **Learning Tracking** - Records study progress and tracks answer statistics.
 * **Multiple Question Types** - Supports single-choice, multiple-choice, and other question formats.
-* **Course Classification** - Organizes questions by courses and test papers.
-* **Mistake Review** - Focus on reviewing and practicing incorrect answers.
 * **Focus Mode** - Provides an immersive, distraction-free learning experience.
-* **Data Import** - Supports importing question banks from Excel files.
 
 ## ⬇️ Download
 
