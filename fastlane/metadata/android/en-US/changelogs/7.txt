@@ -1,0 +1,3 @@
+1. Added AI document parsing to generate test questions.
+2. Removed Course, Book, and Recycle Bin features.
+3. Added tap-to-turn-page functionality.
