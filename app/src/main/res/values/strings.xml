@@ -187,5 +187,6 @@
     <string name="ai_error_dialog_title">请复制并在 GitHub 反馈</string>
     <string name="action_copy">复制</string>
     <string name="toast_copy_success">已复制到剪切板</string>
+    <string name="parsing_please_wait">解析中，请勿离开...</string>
 
 </resources>

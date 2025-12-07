@@ -11,6 +11,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.Toast
+import android.view.WindowManager
 import android.view.View.MeasureSpec
 import android.content.ClipData
 import android.content.ClipboardManager
@@ -61,11 +62,11 @@ class PaperListFragment : Fragment() {
             if (result.resultCode == Activity.RESULT_OK) {
                 try {
                     result.data?.data?.let { uri ->
-                        showProgress()
+                        showLoadingDialog()
                         importRawDocumentFromUri(uri)
                     }
                 } catch (e: Exception) {
-                    hideProgress()
+                    dismissLoadingDialog()
                 }
             }
         }
@@ -76,11 +77,11 @@ class PaperListFragment : Fragment() {
             if (result.resultCode == Activity.RESULT_OK) {
                 try {
                     result.data?.data?.let { uri ->
-                        showProgress()
+                        showLoadingDialog()
                         importFormattedDocumentFromUri(uri)
                     }
                 } catch (e: Exception) {
-                    hideProgress()
+                    dismissLoadingDialog()
                 }
             }
         }
@@ -181,14 +182,40 @@ class PaperListFragment : Fragment() {
         }
     }
 
-    private fun showProgress() {
-        binding.parsingProgress.visibility = View.VISIBLE
+    private  var loadingDialog: androidx.appcompat.app.AlertDialog? = null
+    private var shouldClearScreenOn = false
+
+    private fun showLoadingDialog() {
+        val context = context ?: return
+        val activity = activity ?: return
+
+        // Screen On Logic
+        val window = activity.window
+        val flags = window.attributes.flags
+        if ((flags and WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON) == 0) {
+            window.addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON)
+            shouldClearScreenOn = true
+        } else {
+            shouldClearScreenOn = false
+        }
+
+        if (loadingDialog == null) {
+            val builder = androidx.appcompat.app.AlertDialog.Builder(context)
+            val view = LayoutInflater.from(context).inflate(R.layout.dialog_loading, null)
+            builder.setView(view)
+            builder.setCancelable(false) // Prevent user from dismissing
+            loadingDialog = builder.create()
+        }
+        loadingDialog?.show()
     }
 
-    private fun hideProgress() {
-        binding.root.postDelayed({
-            binding.parsingProgress.visibility = View.GONE
-        }, 1000)
+    private fun dismissLoadingDialog() {
+        loadingDialog?.dismiss()
+        val activity = activity ?: return
+        if (shouldClearScreenOn) {
+            activity.window.clearFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON)
+            shouldClearScreenOn = false
+        }
     }
 
     private fun enterEditMode() {
@@ -312,7 +339,7 @@ class PaperListFragment : Fragment() {
                 AiPaperParser.parseFromFile(destFile.absolutePath)
                     .onSuccess {
                         withContext(Dispatchers.Main) {
-                            hideProgress()
+                            dismissLoadingDialog()
                             Toast.makeText(
                                 context,
                                 context.getString(R.string.ai_parse_success),
@@ -321,7 +348,7 @@ class PaperListFragment : Fragment() {
                         }
                     }.onFailure { e ->
                         withContext(Dispatchers.Main) {
-                            hideProgress()
+                            dismissLoadingDialog()
                             showAiErrorDialog(e)
                         }
                     }
@@ -370,7 +397,9 @@ class PaperListFragment : Fragment() {
             } catch (e: Exception) {
                 e.printStackTrace()
             } finally {
-                hideProgress()
+                withContext(Dispatchers.Main) {
+                    dismissLoadingDialog()
+                }
             }
         }
     }
