@@ -37,6 +37,8 @@ object AiPaperParser {
      * @throws IllegalStateException if no API key is configured
      * @throws RuntimeException if parsing fails
      */
+    private const val MAX_CHUNK_SIZE = 4000
+
     suspend fun parseFromFile(filePath: String): Result<Unit> {
         val file = File(filePath)
         if (!file.exists()) {
@@ -60,39 +62,131 @@ object AiPaperParser {
         val geminiKey = SharedPreferenceUtil.getString(context.getString(R.string.gemini_api_key))
         val deepseekKey = SharedPreferenceUtil.getString(context.getString(R.string.deepseek_api_key))
 
-        // Call AI API to parse questions
-        val result = when {
-            geminiKey.isNotEmpty() -> {
-                AiRepository.callGeminiApi(geminiKey, documentText)
-            }
-            deepseekKey.isNotEmpty() -> {
-                AiRepository.callDeepseekApi(deepseekKey, documentText)
-            }
-            else -> {
-                Result.failure(AiNoApiKeyException(ContextHolder.application.getString(R.string.ai_api_key_missing)))
-            }
+        if (geminiKey.isEmpty() && deepseekKey.isEmpty()) {
+            return Result.failure(AiNoApiKeyException(ContextHolder.application.getString(R.string.ai_api_key_missing)))
         }
 
-        return result.fold(
-            onSuccess = { questionDetails ->
-                if (questionDetails.isEmpty()) {
-                    return@fold Result.failure(RuntimeException(ContextHolder.application.getString(R.string.ai_parse_failed_no_questions)))
+        // Split text into overlapping chunks
+        val chunks = splitTextIntoOverlappingChunks(documentText)
+        val allQuestions = mutableListOf<QuestionDetail>()
+        var hasAtLeastOneSuccess = false
+        var lastError: Throwable? = null
+
+        for (chunk in chunks) {
+            val result = when {
+                geminiKey.isNotEmpty() -> {
+                    AiRepository.callGeminiApi(geminiKey, chunk)
                 }
-                // Save all data after parsing is complete
-                DataRepository.insertPaperWithHash(
-                    title = file.nameWithoutExtension,
-                    path = filePath,
-                    hash = fileHash,
-                    questionCount = questionDetails.size
-                )
-                // 2. Save questions to JSON file
-                saveQuestionsToCache(questionDetails)
-                Result.success(Unit)
-            },
-            onFailure = { e ->
-                Result.failure(e)
+                deepseekKey.isNotEmpty() -> {
+                    AiRepository.callDeepseekApi(deepseekKey, chunk)
+                }
+                else -> Result.failure(RuntimeException("No API Key")) // Should not reach here
             }
+
+            result.fold(
+                onSuccess = { questions ->
+                    if (questions.isNotEmpty()) {
+                        allQuestions.addAll(questions)
+                        hasAtLeastOneSuccess = true
+                    }
+                },
+                onFailure = { e ->
+                    lastError = e
+                    e.printStackTrace()
+                    // Continue to next chunk even if one fails
+                }
+            )
+        }
+
+        if (allQuestions.isEmpty()) {
+            val error = lastError ?: RuntimeException(ContextHolder.application.getString(R.string.ai_parse_failed_no_questions))
+            return Result.failure(error)
+        }
+
+        // Deduplicate questions
+        val uniqueQuestions = deduplicateQuestions(allQuestions)
+
+        // Save all data after parsing is complete
+        DataRepository.insertPaperWithHash(
+            title = file.nameWithoutExtension,
+            path = filePath,
+            hash = fileHash,
+            questionCount = uniqueQuestions.size
         )
+        // 2. Save questions to JSON file
+        saveQuestionsToCache(uniqueQuestions)
+        return Result.success(Unit)
+    }
+
+    private const val CHUNK_LINES = 80
+    private const val OVERLAP_LINES = 20
+
+    private fun splitTextIntoOverlappingChunks(text: String): List<String> {
+        val lines = text.lines()
+        val chunks = mutableListOf<String>()
+        var startLine = 0
+
+        while (startLine < lines.size) {
+            val endLine = minOf(startLine + CHUNK_LINES, lines.size)
+            val chunkLines = lines.subList(startLine, endLine)
+            val chunkText = chunkLines.joinToString("\n")
+            
+            if (chunkText.isNotBlank()) {
+                chunks.add(chunkText)
+            }
+
+            if (endLine == lines.size) {
+                break
+            }
+            startLine += (CHUNK_LINES - OVERLAP_LINES)
+        }
+        return chunks
+    }
+
+    private fun deduplicateQuestions(questions: List<QuestionDetail>): List<QuestionDetail> {
+        val uniqueList = mutableListOf<QuestionDetail>()
+        for (question in questions) {
+            if (uniqueList.none { isSameQuestion(it, question) }) {
+                uniqueList.add(question)
+            }
+        }
+        return uniqueList
+    }
+
+    private fun isSameQuestion(q1: QuestionDetail, q2: QuestionDetail): Boolean {
+        if (q1.type != q2.type) return false
+        
+        // Compare body content (text only for simplicity, or full structure)
+        if (!elementsEquals(q1.body, q2.body)) return false
+        
+        // Compare options
+        if (q1.options.size != q2.options.size) return false
+        for (i in q1.options.indices) {
+             if (!elementsEquals(q1.options[i].element, q2.options[i].element)) return false
+        }
+        
+        // Compare answer
+        if (!answerEquals(q1.answer, q2.answer)) return false
+
+        return true
+    }
+
+    private fun elementsEquals(list1: List<com.gorden.dayexam.repository.model.Element>, list2: List<com.gorden.dayexam.repository.model.Element>): Boolean {
+        if (list1.size != list2.size) return false
+        for (i in list1.indices) {
+            val e1 = list1[i]
+            val e2 = list2[i]
+            if (e1.elementType != e2.elementType) return false
+            if (e1.content != e2.content) return false
+        }
+        return true
+    }
+    
+    private fun answerEquals(a1: com.gorden.dayexam.repository.model.Answer, a2: com.gorden.dayexam.repository.model.Answer): Boolean {
+        if (a1.tfAnswer != a2.tfAnswer) return false
+        if (a1.optionAnswer != a2.optionAnswer) return false
+        if (!elementsEquals(a1.commonAnswer, a2.commonAnswer)) return false
+        return true
     }
 
     /**
