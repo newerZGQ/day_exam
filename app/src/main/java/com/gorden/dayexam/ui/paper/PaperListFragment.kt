@@ -60,12 +60,8 @@ class PaperListFragment : Fragment() {
     private val rawDocumentPickerLauncher =
         registerForActivityResult(ActivityResultContracts.StartActivityForResult()) { result ->
             if (result.resultCode == Activity.RESULT_OK) {
-                try {
-                    result.data?.data?.let { uri ->
-                        importRawDocumentFromUri(uri)
-                    }
-                } catch (e: Exception) {
-                    dismissLoadingDialog()
+                result.data?.data?.let { uri ->
+                    importRawDocumentFromUri(uri)
                 }
             }
         }
@@ -74,12 +70,8 @@ class PaperListFragment : Fragment() {
     private val formattedDocumentPickerLauncher =
         registerForActivityResult(ActivityResultContracts.StartActivityForResult()) { result ->
             if (result.resultCode == Activity.RESULT_OK) {
-                try {
-                    result.data?.data?.let { uri ->
-                        importFormattedDocumentFromUri(uri)
-                    }
-                } catch (e: Exception) {
-                    dismissLoadingDialog()
+                result.data?.data?.let { uri ->
+                    importFormattedDocumentFromUri(uri)
                 }
             }
         }
@@ -198,7 +190,7 @@ class PaperListFragment : Fragment() {
         }
 
         if (loadingDialog == null) {
-            val builder = androidx.appcompat.app.AlertDialog.Builder(context)
+            val builder = AlertDialog.Builder(context)
             val view = LayoutInflater.from(context).inflate(R.layout.dialog_loading, null)
             builder.setView(view)
             builder.setCancelable(false) // Prevent user from dismissing
@@ -343,7 +335,9 @@ class PaperListFragment : Fragment() {
                     }
                     return@withContext
                 }
-                showLoadingDialog(R.string.parsing_ai_please_wait)
+                withContext(Dispatchers.Main) {
+                    showLoadingDialog(R.string.parsing_ai_please_wait)
+                }
                 // 使用 AI 解析原始文档
                 AiPaperParser.parseFromFile(destFile.absolutePath)
                     .onSuccess {
@@ -392,7 +386,9 @@ class PaperListFragment : Fragment() {
                     if (!destFile.exists()) {
                         return@withContext
                     }
-                    showLoadingDialog(R.string.parsing_formatted_please_wait)
+                    withContext(Dispatchers.Main) {
+                        showLoadingDialog(R.string.parsing_formatted_please_wait)
+                    }
                     // Check if paper already exists before parsing
                     if (FormatedPaperParser.checkExist(destFile.absolutePath)) {
                         withContext(Dispatchers.Main) {
