@@ -73,6 +73,7 @@ object AiRepository {
 
 			append("### 待解析文档内容\n")
 			append(documentText)
+            append("\n\n重要提示：\n- 严格不要把选项内容放到题干（`body`）中。所有选项文本必须只出现在 `options` 列表中。\n- 如果原始文本中选项出现在题干内，请把这些选项移出并放入 `options`，同时从 `body` 中删除重复内容。\n- 若无法判断，优先将可疑短句归入 `options` 而不是 `body`，以避免重复。\n\n")
             append("\n\n请直接返回 JSON 数组，无需Markdown标记。")
 		}.toString()
 	}
@@ -127,7 +128,7 @@ object AiRepository {
 				// 尝试从响应中提取 JSON 数组
 				val jsonArray = extractJsonArray(textContent) ?: textContent
 
-				val list = tryParseQuestionList(jsonArray) 
+				val list = tryParseQuestionList(jsonArray)
 				if (list != null) {
 					Result.success(list)
 				} else {
