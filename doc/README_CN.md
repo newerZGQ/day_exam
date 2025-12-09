@@ -50,5 +50,5 @@ cd day_exam
 如有问题或建议，欢迎通过微信联系：
 
 <div align="center">
-  <img src="../image/image.png" alt="微信二维码" width="200"/>
+  <img src="./image/image.png" alt="微信二维码" width="200"/>
 </div>
