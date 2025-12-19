@@ -40,7 +40,7 @@ object AiPaperParser {
      */
     private const val MAX_CHUNK_SIZE = 4000
 
-    suspend fun parseFromFile(filePath: String): Result<Unit> {
+    suspend fun parseFromFile(filePath: String, progressCallback: (suspend (Int, Int) -> Unit)? = null): Result<Unit> {
         val file = File(filePath)
         if (!file.exists()) {
             return Result.failure(IllegalArgumentException("File does not exist: $filePath"))
@@ -68,8 +68,10 @@ object AiPaperParser {
         val chunks = splitTextIntoOverlappingChunks(documentText)
         val allQuestions = mutableListOf<QuestionDetail>()
         var lastError: Throwable? = null
+        // notify initial progress 0/N
+        progressCallback?.invoke(0, chunks.size)
 
-        for (chunk in chunks) {
+        for ((idx, chunk) in chunks.withIndex()) {
             val result = when (selectedModel) {
                 "gemini" -> {
                     val geminiKey = SharedPreferenceUtil.getString(context.getString(R.string.gemini_api_key))
@@ -101,6 +103,9 @@ object AiPaperParser {
                     // Continue to next chunk even if one fails
                 }
             )
+            // After processing this chunk, report progress using the loop index (idx)
+            val processedChunks = idx + 1
+            progressCallback?.invoke(processedChunks, chunks.size)
         }
 
         if (allQuestions.isEmpty()) {

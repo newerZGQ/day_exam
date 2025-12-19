@@ -12,10 +12,10 @@
 
     <string name="paper">Paper</string>
     <string name="fill_blank">Completion</string>
-    <string name="true_false">True False</string>
-    <string name="single_choice">Single Answer</string>
-    <string name="multiple_choice">Multiple Answer</string>
-    <string name="essay_question">Discussion Essays</string>
+    <string name="true_false">T/F</string>
+    <string name="single_choice">MCQ</string>
+    <string name="multiple_choice">MSQ</string>
+    <string name="essay_question">FRQ</string>
     <string name="answer">Answer</string>
     <string name="current_answer">Your</string>
     <string name="search">search</string>

@@ -212,6 +212,14 @@ class PaperListFragment : Fragment() {
         }
     }
 
+    private fun updateLoadingMessage(done: Int, total: Int) {
+        val ctx = context ?: return
+        val messageView = loadingDialog?.findViewById<TextView>(R.id.message)
+        val base = ctx.getString(R.string.parsing_ai_please_wait)
+        val text = "($done/$total) $base"
+        messageView?.text = text
+    }
+
     private fun enterEditMode() {
         if (isInEditMode) return
         isInEditMode = true
@@ -339,8 +347,12 @@ class PaperListFragment : Fragment() {
                 withContext(Dispatchers.Main) {
                     showLoadingDialog(R.string.parsing_ai_please_wait)
                 }
-                // 使用 AI 解析原始文档
-                AiPaperParser.parseFromFile(destFile.absolutePath)
+                // 使用 AI 解析原始文档，并在每个分块解析完成时更新进度
+                AiPaperParser.parseFromFile(destFile.absolutePath, progressCallback = { done, total ->
+                    withContext(Dispatchers.Main) {
+                        updateLoadingMessage(done, total)
+                    }
+                })
                     .onSuccess {
                         withContext(Dispatchers.Main) {
                             dismissLoadingDialog()
