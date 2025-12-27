@@ -4,7 +4,7 @@
     android:id="@+id/search_sheet_container"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="#212121">
+    android:background="@color/colorPrimary">
 
     <LinearLayout
         android:minHeight="700dp"
@@ -24,9 +24,9 @@
                 android:hint="@string/search"
                 android:layout_marginStart="16dp"
                 android:layout_marginEnd="16dp"
-                android:backgroundTint="#D0D0D0"
-                android:textColor="@color/font_common_color"
-                android:textColorHint="#63FFFFFF"
+                android:backgroundTint="@color/divider_color"
+                android:textColor="@color/text_primary_variant"
+                android:textColorHint="@color/semi_transparent_white_39"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"/>
             <ImageButton
@@ -44,7 +44,7 @@
                 android:textSize="14sp"
                 android:visibility="gone"
                 android:fontFamily="@font/xwwk"
-                android:textColor="#63FFFFFF"
+                android:textColor="@color/semi_transparent_white_39"
                 app:layout_constraintTop_toBottomOf="@id/search_key_input"
                 app:layout_constraintStart_toStartOf="@id/search_key_input"
                 android:layout_marginStart="18dp"

@@ -33,7 +33,7 @@
                 android:layout_height="wrap_content"
                 android:fontFamily="@font/xwwk"
                 android:text="@string/welcome_title"
-                android:textColor="@color/font_common_color"
+                android:textColor="@color/text_primary_variant"
                 android:textSize="24sp"
                 android:textStyle="bold"
                 android:gravity="center"
@@ -46,7 +46,7 @@
                 android:layout_height="wrap_content"
                 android:fontFamily="@font/xwwk"
                 android:text="@string/welcome_subtitle"
-                android:textColor="@color/setting_preference_summary_color"
+                android:textColor="@color/text_secondary"
                 android:textSize="14sp"
                 android:gravity="center"
                 android:layout_marginBottom="32dp"/>
@@ -86,7 +86,7 @@
                         android:layout_weight="1"
                         android:fontFamily="@font/xwwk"
                         android:text="@string/welcome_ai_tip"
-                        android:textColor="@color/font_common_color"
+                        android:textColor="@color/text_primary_variant"
                         android:textSize="16sp"
                         android:lineSpacingExtra="4dp"/>
                 </LinearLayout>
@@ -133,7 +133,7 @@
                     android:layout_weight="1"
                     android:fontFamily="@font/xwwk"
                     android:text="@string/welcome_add_paper_tip"
-                    android:textColor="@color/font_common_color"
+                    android:textColor="@color/text_primary_variant"
                     android:textSize="16sp"
                     android:lineSpacingExtra="4dp"/>
             </LinearLayout>

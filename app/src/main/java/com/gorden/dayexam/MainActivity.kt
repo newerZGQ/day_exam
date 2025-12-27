@@ -7,32 +7,31 @@ import android.content.Intent
 import android.os.Bundle
 import android.text.SpannableString
 import android.text.SpannableStringBuilder
-import android.view.*
+import android.view.Gravity
+import android.view.Menu
+import android.view.MenuItem
+import android.view.View
+import android.view.WindowManager
 import android.view.animation.AccelerateInterpolator
 import android.widget.TextView
 import androidx.appcompat.app.ActionBarDrawerToggle
 import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.widget.Toolbar
 import androidx.constraintlayout.widget.ConstraintLayout
-import androidx.core.content.res.ResourcesCompat
 import androidx.drawerlayout.widget.DrawerLayout
-import androidx.preference.PreferenceManager
 import com.gorden.dayexam.databinding.ActivityMainBinding
 import com.gorden.dayexam.repository.DataRepository
+import com.gorden.dayexam.repository.PaperDetailCache
 import com.gorden.dayexam.ui.Constants
 import com.gorden.dayexam.ui.Constants.Companion.HAS_AGREE_PRIVACY_KEY
 import com.gorden.dayexam.ui.EventKey
-import com.gorden.dayexam.ui.paper.PaperListFragment
 import com.gorden.dayexam.ui.home.HomeFragment
-import com.gorden.dayexam.ui.home.shortcut.FastQuestionSelectActivity
-import com.gorden.dayexam.ui.home.shortcut.FastQuestionSelectActivity.Companion.CURRENT_POSITION
-import com.gorden.dayexam.ui.home.shortcut.FastQuestionSelectActivity.Companion.PAPER_ID_KEY
 import com.gorden.dayexam.ui.home.shortcut.SimpleQuestionViewHolder
+import com.gorden.dayexam.ui.paper.PaperListFragment
 import com.gorden.dayexam.ui.sheet.search.SearchSheetDialog
 import com.gorden.dayexam.ui.sheet.shortcut.ShortCutSheetDialog
 import com.gorden.dayexam.utils.SharedPreferenceUtil
 import com.jeremyliao.liveeventbus.LiveEventBus
-import com.leinardi.android.speeddial.SpeedDialActionItem
 import com.leinardi.android.speeddial.SpeedDialView
 
 
@@ -102,47 +101,27 @@ class MainActivity : BaseActivity() {
 
     private fun initFab() {
         val fab: SpeedDialView = binding.homeMainLayout.fab
-        fab.addActionItem(
-            SpeedDialActionItem.Builder(
-                R.id.float_button_list_question_item,
-                R.drawable.ic_outline_format_list_numbered_24
-            )
-                .setFabBackgroundColor(
-                    ResourcesCompat.getColor(
-                        resources,
-                        R.color.colorPrimaryDark,
-                        theme
-                    )
-                )
-                .setFabImageTintColor(
-                    ResourcesCompat.getColor(
-                        resources,
-                        R.color.float_button_item_icon_color,
-                        theme
-                    )
-                )
-                .setLabel(getString(R.string.list_question))
-                .setLabelClickable(false)
-                .setTheme(R.style.FloatButtonTextAppearance)
-                .create()
-        )
-        fab.setOnActionSelectedListener {
-            when (it.id) {
-                R.id.float_button_favorite_question_item -> {
-                    LiveEventBus.get(EventKey.FAVORITE_QUESTION, Int::class.java).post(0)
-                    fab.close()
+        // Remove all action items to make it a single button
+        fab.clearActionItems()
+        
+        // Set OnChangeListener to handle main FAB click when it doesn't expand
+        // OR better: set OnMainFabChangeListener
+        fab.setOnChangeListener(object : SpeedDialView.OnChangeListener {
+            override fun onMainActionSelected(): Boolean {
+                val detail = PaperDetailCache.get(curPaperId)
+                if (detail != null) {
+                     val sheet = com.gorden.dayexam.ui.sheet.question.QuestionListBottomSheet
+                        .newInstance(curPaperId, homeFragment.currentPosition())
+                     sheet.setData(detail)
+                     sheet.show(supportFragmentManager, "QuestionList")
                 }
-                R.id.float_button_list_question_item -> {
-                    val intent = Intent(this, FastQuestionSelectActivity::class.java)
-                    intent.putExtra(PAPER_ID_KEY, curPaperId)
-                    lastHomepagePosition = homeFragment.currentPosition()
-                    intent.putExtra(CURRENT_POSITION, lastHomepagePosition)
-                    startActivityForResult(intent, SELECT_QUESTION_REQUEST_CODE)
-                    fab.close()
-                }
+                return false // Return false to keep it closed or true? Usually false if we handle it.
             }
-            return@setOnActionSelectedListener true
-        }
+
+            override fun onToggleChanged(isOpen: Boolean) {
+                // Do nothing
+            }
+        })
     }
 
     private fun initFragment() {

@@ -13,7 +13,7 @@
 
         <TextView
             android:id="@+id/question_info"
-            android:textColor="#747474"
+            android:textColor="@color/text_tertiary"
             android:fontFamily="@font/xwwk"
             app:layout_constraintTop_toTopOf="parent"
             app:layout_constraintLeft_toLeftOf="parent"
@@ -56,7 +56,7 @@
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             android:layout_marginTop="16dp"
-            android:background="#1CD6CDCD"
+            android:background="@color/surface_overlay"
             android:layout_width="match_parent"
             android:layout_height="wrap_content">
             <TextView
@@ -68,7 +68,7 @@
                 android:gravity="center"
                 android:layout_width="match_parent"
                 android:layout_height="87dp"
-                android:textColor="@color/action_text_color"
+                android:textColor="@color/text_primary"
                 style="@style/SelectableItemBackground">
             </TextView>
         </FrameLayout>

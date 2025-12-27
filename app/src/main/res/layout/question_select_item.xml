@@ -13,7 +13,7 @@
         app:layout_constraintStart_toStartOf="parent"
         android:fontFamily="@font/xwwk"
         android:maxLines="3"
-        android:textColor="#CCFFFFFF"
+        android:textColor="@color/semi_transparent_white_80"
         android:textSize="16sp"
         android:layout_width="match_parent"
         android:layout_height="wrap_content" />
@@ -21,7 +21,7 @@
         android:id="@+id/question_tag"
         android:maxLines="1"
         android:textSize="12sp"
-        android:textColor="#8FFFFFFF"
+        android:textColor="@color/semi_transparent_white_56"
         android:fontFamily="@font/xwwk"
         app:layout_constraintStart_toStartOf="@id/question_content"
         app:layout_constraintTop_toBottomOf="@id/question_content"

@@ -98,7 +98,7 @@ class MultipleChoiceViewHolder(itemView: View): BaseQuestionViewHolder(itemView)
         question.options.forEachIndexed { index, optionItemWithElement ->
             val optionTag = (index + 'A'.toInt()).toChar()
             val optionCardView = OptionCardView(itemView.context)
-            optionCardView.setBackgroundColor(itemView.context.getColor(R.color.option_default_color))
+            optionCardView.setBackgroundColor(itemView.context.getColor(R.color.state_default))
             optionCardView.setContent(paperInfo, optionItemWithElement.element, optionTag.toString(), ElementViewListener())
             val layoutParams = LinearLayout.LayoutParams(
                 LinearLayout.LayoutParams.MATCH_PARENT,
@@ -108,10 +108,10 @@ class MultipleChoiceViewHolder(itemView: View): BaseQuestionViewHolder(itemView)
             optionCardView.setOnClickListener {
                 if (selectedOptions.contains(index)) {
                     selectedOptions.remove(index)
-                    optionCardView.setBackgroundColor(itemView.context.getColor(R.color.option_default_color))
+                    optionCardView.setBackgroundColor(itemView.context.getColor(R.color.state_default))
                 } else {
                     selectedOptions.add(index)
-                    optionCardView.setBackgroundColor(itemView.context.getColor(R.color.option_select_correct_color))
+                    optionCardView.setBackgroundColor(itemView.context.getColor(R.color.state_success))
                 }
             }
         }
@@ -134,16 +134,16 @@ class MultipleChoiceViewHolder(itemView: View): BaseQuestionViewHolder(itemView)
         question.options.forEachIndexed { index, optionItemWithElement ->
             if (answer.contains(index) && selectedOptions.contains(index)) {
                 optionContainer.getChildAt(index)
-                    .setBackgroundColor(context.getColor(R.color.option_select_correct_color))
+                    .setBackgroundColor(context.getColor(R.color.state_success))
             } else if (answer.contains(index) && !selectedOptions.contains(index)) {
                 optionContainer.getChildAt(index)
-                    .setBackgroundColor(context.getColor(R.color.option_select_missed_color))
+                    .setBackgroundColor(context.getColor(R.color.state_warning))
             } else if (!answer.contains(index) && selectedOptions.contains(index)) {
                 optionContainer.getChildAt(index)
-                    .setBackgroundColor(context.getColor(R.color.option_select_incorrect_color))
+                    .setBackgroundColor(context.getColor(R.color.state_error))
             } else {
                 optionContainer.getChildAt(index)
-                    .setBackgroundColor(context.getColor(R.color.option_default_color))
+                    .setBackgroundColor(context.getColor(R.color.state_default))
             }
             optionContainer.getChildAt(index).setOnClickListener {  }
         }
@@ -156,9 +156,9 @@ class MultipleChoiceViewHolder(itemView: View): BaseQuestionViewHolder(itemView)
             val optionTag = (index + 'A'.toInt()).toChar()
             val optionCardView = OptionCardView(itemView.context)
             if (correctAnswer.contains(index)) {
-                optionCardView.setBackgroundColor(itemView.context.getColor(R.color.option_select_correct_color))
+                optionCardView.setBackgroundColor(itemView.context.getColor(R.color.state_success))
             } else {
-                optionCardView.setBackgroundColor(itemView.context.getColor(R.color.option_default_color))
+                optionCardView.setBackgroundColor(itemView.context.getColor(R.color.state_default))
             }
             optionCardView.setContent(paperInfo, optionItemWithElement.element, optionTag.toString(), ElementViewListener())
             val layoutParams = LinearLayout.LayoutParams(

@@ -12,7 +12,7 @@
         android:padding="14dp"
         android:fontFamily="@font/xwwk"
         android:layout_gravity="center_vertical"
-        android:textColor="@color/menu_title_color"
+        android:textColor="@color/text_primary"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"/>
     <TextView
@@ -22,7 +22,7 @@
         android:padding="14dp"
         android:fontFamily="@font/xwwk"
         android:layout_gravity="center_vertical"
-        android:textColor="@color/menu_title_color"
+        android:textColor="@color/text_primary"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"/>
 

@@ -59,8 +59,8 @@ class TrueFalseViewHolder(itemView: View): BaseQuestionViewHolder(itemView) {
 
     private fun switchToCommonOptionsView(paperInfo: PaperInfo, question: QuestionDetail) {
         val resources = itemView.resources
-        correctOption.setBackgroundColor(resources.getColor(R.color.option_default_color))
-        inCorrectOption.setBackgroundColor(resources.getColor(R.color.option_default_color))
+        correctOption.setBackgroundColor(resources.getColor(R.color.state_default))
+        inCorrectOption.setBackgroundColor(resources.getColor(R.color.state_default))
         correctOption.setOnClickListener {
             question.realAnswer = Answer(tfAnswer = true)
             resetAllStatus()
@@ -83,19 +83,19 @@ class TrueFalseViewHolder(itemView: View): BaseQuestionViewHolder(itemView) {
         if (question.realAnswer != null) {
             if (question.realAnswer?.tfAnswer == answer){
                 if (answer) {
-                    correctOption.setBackgroundColor(context.getColor(R.color.option_select_correct_color))
-                    inCorrectOption.setBackgroundColor(context.getColor(R.color.option_default_color))
+                    correctOption.setBackgroundColor(context.getColor(R.color.state_success))
+                    inCorrectOption.setBackgroundColor(context.getColor(R.color.state_default))
                 } else {
-                    correctOption.setBackgroundColor(context.getColor(R.color.option_default_color))
-                    inCorrectOption.setBackgroundColor(context.getColor(R.color.option_select_correct_color))
+                    correctOption.setBackgroundColor(context.getColor(R.color.state_default))
+                    inCorrectOption.setBackgroundColor(context.getColor(R.color.state_success))
                 }
             } else {
                 if (answer) {
-                    correctOption.setBackgroundColor(context.getColor(R.color.option_select_correct_color))
-                    inCorrectOption.setBackgroundColor(context.getColor(R.color.option_select_incorrect_color))
+                    correctOption.setBackgroundColor(context.getColor(R.color.state_success))
+                    inCorrectOption.setBackgroundColor(context.getColor(R.color.state_error))
                 } else {
-                    correctOption.setBackgroundColor(context.getColor(R.color.option_select_incorrect_color))
-                    inCorrectOption.setBackgroundColor(context.getColor(R.color.option_select_correct_color))
+                    correctOption.setBackgroundColor(context.getColor(R.color.state_error))
+                    inCorrectOption.setBackgroundColor(context.getColor(R.color.state_success))
                 }
             }
         }
@@ -108,11 +108,11 @@ class TrueFalseViewHolder(itemView: View): BaseQuestionViewHolder(itemView) {
         val answer = question.answer.tfAnswer
         val resources = itemView.resources
         if (answer) {
-            correctOption.setBackgroundColor(resources.getColor(R.color.option_select_correct_color))
-            inCorrectOption.setBackgroundColor(resources.getColor(R.color.option_default_color))
+            correctOption.setBackgroundColor(resources.getColor(R.color.state_success))
+            inCorrectOption.setBackgroundColor(resources.getColor(R.color.state_default))
         } else {
-            correctOption.setBackgroundColor(resources.getColor(R.color.option_default_color))
-            inCorrectOption.setBackgroundColor(resources.getColor(R.color.option_select_correct_color))
+            correctOption.setBackgroundColor(resources.getColor(R.color.state_default))
+            inCorrectOption.setBackgroundColor(resources.getColor(R.color.state_success))
         }
         correctOption.setOnClickListener(null)
         inCorrectOption.setOnClickListener(null)

@@ -24,7 +24,7 @@
 
         <TextView
             android:id="@+id/PaperTitle"
-            android:textColor="@color/font_common_color"
+            android:textColor="@color/text_primary_variant"
             android:textSize="@dimen/paper_title_font_size"
             android:maxLines="1"
             android:fontFamily="@font/xwwk"
@@ -44,7 +44,7 @@
             android:layout_marginTop="11dp"
             android:fontFamily="@font/xwwk"
             android:textSize="12sp"
-            android:textColor="#8FFFFFFF"
+            android:textColor="@color/semi_transparent_white_56"
             android:layout_width="0dp"
             android:layout_height="wrap_content" />
     </androidx.constraintlayout.widget.ConstraintLayout>

@@ -24,7 +24,7 @@
 
     <style name="XWWKBoldTextAppearance">
         <item name="android:fontFamily">@font/xwwk</item>
-        <item name="android:textColor">#FFFFFF</item>
+        <item name="android:textColor">@color/text_primary</item>
         <item name="android:textSize">20sp</item>
     </style>
 
@@ -42,7 +42,7 @@
     </style>
 
     <style name="SelectableItemTheme">
-        <item name="colorControlHighlight">#35FFFFFF</item>
+        <item name="colorControlHighlight">@color/semi_transparent_white_20</item>
     </style>
     <style name="SelectableItemBackground">
         <item name="android:theme">@style/SelectableItemTheme</item>

@@ -16,7 +16,7 @@
             android:scaleType="center"
             app:corner_radius="10dp"
             app:border_width="2dp"
-            app:border_color="#ffffff"
+            app:border_color="@color/icon_primary"
             android:src="@drawable/edit_element_default_picture"
             android:layout_width="match_parent"
             android:layout_height="wrap_content" />
@@ -57,7 +57,7 @@
             android:layout_marginStart="48dp"
             android:text="下方插入"
             android:fontFamily="@font/xwwk"
-            android:textColor="@color/font_common_color"
+            android:textColor="@color/text_primary_variant"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"/>
         <ImageButton

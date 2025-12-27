@@ -27,7 +27,7 @@
             android:id="@+id/courseTitle"
             android:textSize="18sp"
             android:fontFamily="@font/xwwk"
-            android:textColor="@color/course_title_color"
+            android:textColor="@color/text_primary"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content" />
         <TextView
@@ -35,7 +35,7 @@
             android:textSize="12sp"
             android:fontFamily="@font/xwwk"
             android:layout_marginTop="6dp"
-            android:textColor="@color/course_title_color"
+            android:textColor="@color/text_primary"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content" />
     </LinearLayout>

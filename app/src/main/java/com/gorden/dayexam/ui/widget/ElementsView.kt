@@ -101,7 +101,7 @@ class ElementsView: LinearLayout {
         val contentTv = TextView(context)
         contentTv.text = text
         contentTv.typeface = resources.getFont(R.font.xwwk)
-        contentTv.setTextColor(context.getColor(R.color.font_common_color))
+        contentTv.setTextColor(context.getColor(R.color.text_primary_variant))
         contentTv.setTextSize(TypedValue.COMPLEX_UNIT_SP, textSize)
         val layoutParams = LayoutParams(LayoutParams.MATCH_PARENT, LayoutParams.WRAP_CONTENT)
         addView(contentTv, layoutParams)

@@ -61,12 +61,12 @@ class SearchAdapter: RecyclerView.Adapter<SearchItemViewHolder>() {
         }
         val result = SpannableString(newContent)
         result.setSpan(
-            BackgroundColorSpan(ContextHolder.application.resources.getColor(R.color.search_item_key_background)),
+            BackgroundColorSpan(ContextHolder.application.resources.getColor(R.color.highlight_background)),
             index,
             index + searchKey.length,
             Spanned.SPAN_INCLUSIVE_EXCLUSIVE)
         result.setSpan(
-            ForegroundColorSpan(ContextHolder.application.resources.getColor(R.color.font_common_color)),
+            ForegroundColorSpan(ContextHolder.application.resources.getColor(R.color.text_primary_variant)),
             index,
             index + searchKey.length,
             Spanned.SPAN_INCLUSIVE_EXCLUSIVE)

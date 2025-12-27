@@ -12,7 +12,7 @@
     <TextView
         android:id="@+id/question_type"
         android:fontFamily="@font/xwwk"
-        android:textColor="#ffffff"
+        android:textColor="@color/icon_primary"
         android:textSize="14sp"
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintStart_toStartOf="parent"
@@ -23,7 +23,7 @@
         android:id="@+id/element_content"
         android:fontFamily="@font/xwwk"
         android:layout_marginTop="4dp"
-        android:textColor="#D8D8D8"
+        android:textColor="@color/surface_variant"
         android:textSize="14sp"
         android:maxLines="3"
         app:layout_constraintStart_toStartOf="parent"

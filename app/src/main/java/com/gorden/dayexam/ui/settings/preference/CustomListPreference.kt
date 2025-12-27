@@ -21,10 +21,10 @@ class CustomListPreference : ListPreference {
         titleView?.setTextColor(Color.WHITE)
         titleView?.typeface = FontUtils[FontUtils.XWWK_FONT]
         val summaryView: TextView? = holder?.itemView?.findViewById(android.R.id.summary)
-        summaryView?.setTextColor(context.resources.getColor(R.color.setting_preference_summary_color, null))
+        summaryView?.setTextColor(context.resources.getColor(R.color.text_secondary, null))
         summaryView?.typeface = FontUtils[FontUtils.XWWK_FONT]
 
         val iconView = holder?.itemView?.findViewById(android.R.id.icon) as? android.widget.ImageView
-        iconView?.setColorFilter(context.resources.getColor(R.color.setting_preference_summary_color, null))
+        iconView?.setColorFilter(context.resources.getColor(R.color.text_secondary, null))
     }
 }
