@@ -16,6 +16,7 @@ import com.gorden.dayexam.R
 import com.gorden.dayexam.databinding.DialogQuestionListBinding
 import com.gorden.dayexam.repository.PaperDetailCache
 import com.gorden.dayexam.repository.model.PaperDetail
+import com.gorden.dayexam.repository.model.QuestionDetail
 import com.gorden.dayexam.ui.EventKey
 import com.gorden.dayexam.ui.home.shortcut.QuestionListAdapter
 import com.gorden.dayexam.ui.sheet.status.AnswerStatusAdapter
@@ -26,8 +27,6 @@ class QuestionListBottomSheet : BottomSheetDialogFragment() {
     private var _binding: DialogQuestionListBinding? = null
     private val binding get() = _binding!!
     private var isGridView = false
-    private var listAdapter: QuestionListAdapter? = null
-    private var gridAdapter: AnswerStatusAdapter? = null
     private var paperDetail: PaperDetail? = null
     
     fun setData(detail: PaperDetail) {
@@ -103,16 +102,8 @@ class QuestionListBottomSheet : BottomSheetDialogFragment() {
             return
         }
         initHeader()
-        initList(currentPosition)
-        initGrid(currentPosition)
-
-        listAdapter?.setData(questions, currentPosition)
-        gridAdapter = AnswerStatusAdapter(questions) { position ->
-            selectQuestion(position)
-        }
-        
-        binding.questionGrid.adapter = gridAdapter
-        
+        initList(questions, currentPosition)
+        initGrid(questions)
         binding.questionList.isNestedScrollingEnabled = !isGridView
         binding.questionGrid.isNestedScrollingEnabled = isGridView
 
@@ -152,24 +143,27 @@ class QuestionListBottomSheet : BottomSheetDialogFragment() {
         }
     }
 
-    private fun initList(initialPosition: Int) {
+    private fun initList(questions: List<QuestionDetail>, currentPosition: Int) {
         binding.questionList.layoutManager = LinearLayoutManager(context)
         binding.questionList.setHasFixedSize(true)
-        listAdapter = QuestionListAdapter()
-        
+        val listAdapter = QuestionListAdapter()
+        listAdapter.setData(questions, currentPosition)
         val divider = DividerItemDecoration(context, LinearLayout.VERTICAL)
         divider.setDrawable(resources.getDrawable(R.drawable.question_group_inset_recyclerview_divider))
         binding.questionList.addItemDecoration(divider)
         binding.questionList.adapter = listAdapter
-
         LiveEventBus.get(EventKey.SELECT_QUESTION, Int::class.java).observe(viewLifecycleOwner) {
-             selectQuestion(it)
+            selectQuestion(it)
         }
     }
 
-    private fun initGrid(initialPosition: Int) {
-        val layoutManager = GridLayoutManager(context, 7)
+    private fun initGrid(questions: List<QuestionDetail>) {
+        val layoutManager = GridLayoutManager(context, 6)
         binding.questionGrid.layoutManager = layoutManager
+        val gridAdapter = AnswerStatusAdapter(questions) { position ->
+            selectQuestion(position)
+        }
+        binding.questionGrid.adapter = gridAdapter
         binding.questionGrid.setHasFixedSize(true)
     }
 
