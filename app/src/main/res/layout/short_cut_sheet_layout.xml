@@ -4,7 +4,7 @@
     android:id="@+id/course_sheet_container"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="#212121">
+    android:background="@color/colorPrimary">
 
     <LinearLayout
         android:id="@+id/content"
@@ -156,7 +156,7 @@
                     android:layout_marginStart="8dp"
                     android:fontFamily="@font/xwwk"
                     android:textSize="16sp"
-                    android:textColor="#FF5252"
+                    android:textColor="@color/error_bright"
                     android:text="@string/exit_study_title"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"/>

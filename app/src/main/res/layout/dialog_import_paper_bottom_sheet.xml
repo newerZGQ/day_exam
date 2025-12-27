@@ -3,7 +3,7 @@
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:orientation="vertical"
-    android:background="#212121">
+    android:background="@color/colorPrimary">
 
     <!-- 顶部拖动条 -->
     <ImageView

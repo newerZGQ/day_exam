@@ -13,7 +13,7 @@
 
         <TextView
             android:id="@+id/question_info"
-            android:textColor="#747474"
+            android:textColor="@color/text_tertiary"
             android:fontFamily="@font/xwwk"
             app:layout_constraintTop_toTopOf="parent"
             app:layout_constraintLeft_toLeftOf="parent"
