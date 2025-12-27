@@ -9,10 +9,10 @@ import androidx.recyclerview.widget.RecyclerView
 import com.gorden.dayexam.R
 import com.gorden.dayexam.repository.model.QuestionDetail
 
-class PaperStatusAdapter(
+class AnswerStatusAdapter(
     private val questions: List<QuestionDetail>,
     private val onItemClick: (Int) -> Unit
-) : RecyclerView.Adapter<PaperStatusAdapter.ViewHolder>() {
+) : RecyclerView.Adapter<AnswerStatusAdapter.ViewHolder>() {
 
     class ViewHolder(view: android.view.View) : RecyclerView.ViewHolder(view) {
         val textView: TextView = view.findViewById(R.id.tv_status_index)
@@ -58,12 +58,6 @@ class PaperStatusAdapter(
             // Simple comparison of lists
             return real.optionAnswer.sorted() == correct.optionAnswer.sorted()
         }
-        // For other types (Fill blank, Essay) usually manual judgment or specific logic
-        // Assuming if realAnswer is present it might be correct if it matches commonAnswer?
-        // But for FillBlank/Essay, auto-grading might be hard. 
-        // Based on user request: "Green correct, Red incorrect, Grey unanswered". 
-        // If the app doesn't auto-grade fill-blank, we might treat it as correct or specific state.
-        // Let's assume strict comparison for now or just check if realAnswer exists for non-auto-graded.
         return real.optionAnswer == correct.optionAnswer && real.tfAnswer == correct.tfAnswer
     }
 }

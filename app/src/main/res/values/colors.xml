@@ -5,6 +5,7 @@
     <color name="colorPrimary">#212121</color>
     <color name="colorPrimaryDark">#000000</color>
     <color name="colorAccent">#03DAC5</color>
+    <color name="colorDialogTitle">#5F5F5F</color>
 
     <!--action bar-->
     <color name="action_bar_font_color">#ffffff</color>

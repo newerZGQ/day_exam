@@ -1,30 +1,25 @@
 package com.gorden.dayexam.ui.sheet.question
 
 import android.app.Dialog
-import android.content.Intent
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.LinearLayout
-import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.DividerItemDecoration
 import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.google.android.material.bottomsheet.BottomSheetBehavior
 import com.google.android.material.bottomsheet.BottomSheetDialog
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment
-import com.gorden.dayexam.MainActivity
 import com.gorden.dayexam.R
 import com.gorden.dayexam.databinding.DialogQuestionListBinding
 import com.gorden.dayexam.repository.PaperDetailCache
 import com.gorden.dayexam.repository.model.PaperDetail
 import com.gorden.dayexam.ui.EventKey
 import com.gorden.dayexam.ui.home.shortcut.QuestionListAdapter
-import com.gorden.dayexam.ui.home.shortcut.SimpleQuestionViewHolder
-import com.gorden.dayexam.ui.sheet.status.PaperStatusAdapter
+import com.gorden.dayexam.ui.sheet.status.AnswerStatusAdapter
 import com.jeremyliao.liveeventbus.LiveEventBus
-import kotlinx.coroutines.launch
 
 class QuestionListBottomSheet : BottomSheetDialogFragment() {
 
@@ -32,7 +27,7 @@ class QuestionListBottomSheet : BottomSheetDialogFragment() {
     private val binding get() = _binding!!
     private var isGridView = false
     private var listAdapter: QuestionListAdapter? = null
-    private var gridAdapter: PaperStatusAdapter? = null
+    private var gridAdapter: AnswerStatusAdapter? = null
     private var paperDetail: PaperDetail? = null
     
     fun setData(detail: PaperDetail) {
@@ -63,8 +58,10 @@ class QuestionListBottomSheet : BottomSheetDialogFragment() {
                 behavior.skipCollapsed = true
                 
                 // Allow full height
+                val displayMetrics = resources.displayMetrics
+                val height = displayMetrics.heightPixels - (80 * displayMetrics.density).toInt()
                 val layoutParams = sheet.layoutParams
-                layoutParams.height = ViewGroup.LayoutParams.MATCH_PARENT
+                layoutParams.height = height
                 sheet.layoutParams = layoutParams
             }
         }
@@ -105,7 +102,7 @@ class QuestionListBottomSheet : BottomSheetDialogFragment() {
         initGrid(currentPosition)
 
         listAdapter?.setData(questions, currentPosition)
-        gridAdapter = PaperStatusAdapter(questions) { position ->
+        gridAdapter = AnswerStatusAdapter(questions) { position ->
             selectQuestion(position)
         }
         
