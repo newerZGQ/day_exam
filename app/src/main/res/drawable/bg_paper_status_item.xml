@@ -2,5 +2,5 @@
 <shape xmlns:android="http://schemas.android.com/apk/res/android"
     android:shape="rectangle">
     <corners android:radius="8dp" />
-    <solid android:color="@color/status_unanswered" />
+    <solid android:color="@color/state_inactive" />
 </shape>

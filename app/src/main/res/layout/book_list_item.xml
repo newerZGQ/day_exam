@@ -23,7 +23,7 @@
             android:layout_height="36dp"/>
         <TextView
             android:id="@+id/bookTitle"
-            android:textColor="@color/paper_title_color"
+            android:textColor="@color/text_secondary_variant"
             android:textSize="16sp"
             android:layout_marginLeft="4dp"
             app:layout_constraintTop_toTopOf="parent"

@@ -29,9 +29,9 @@ class AnswerStatusAdapter(
         holder.textView.text = "${position + 1}"
 
         val colorResId = when {
-            question.realAnswer == null -> R.color.status_unanswered
-            isCorrect(question) -> R.color.option_select_correct_color
-            else -> R.color.option_select_incorrect_color
+            question.realAnswer == null -> R.color.state_inactive
+            isCorrect(question) -> R.color.state_success
+            else -> R.color.state_error
         }
 
         holder.textView.backgroundTintList = ColorStateList.valueOf(

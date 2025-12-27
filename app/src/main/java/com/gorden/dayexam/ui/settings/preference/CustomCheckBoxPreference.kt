@@ -30,10 +30,10 @@ class CustomCheckBoxPreference: CheckBoxPreference {
             ContextCompat.getColorStateList(context, com.gorden.dayexam.R.color.checkbox_tinit_style)
         CompoundButtonCompat.setButtonTintList(checkBox, darkStateList)
         val summaryView: TextView? = holder.itemView.findViewById(android.R.id.summary)
-        summaryView?.setTextColor(context.resources.getColor(com.gorden.dayexam.R.color.setting_preference_summary_color))
+        summaryView?.setTextColor(context.resources.getColor(com.gorden.dayexam.R.color.text_secondary))
         summaryView?.typeface = FontUtils[FontUtils.XWWK_FONT]
 
         val iconView = holder.itemView.findViewById(R.id.icon) as? android.widget.ImageView
-        iconView?.setColorFilter(context.resources.getColor(R.color.setting_preference_summary_color))
+        iconView?.setColorFilter(context.resources.getColor(R.color.text_secondary))
     }
 }

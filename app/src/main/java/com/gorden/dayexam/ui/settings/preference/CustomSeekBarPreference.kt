@@ -27,7 +27,7 @@ class CustomSeekBarPreference: SeekBarPreference {
         val seekBar = holder?.findViewById(androidx.preference.R.id.seekbar) as SeekBar?
         seekBar?.max = 9
         val summaryView = holder?.itemView?.findViewById(R.id.summary) as TextView?
-        summaryView?.setTextColor(context.resources.getColor(com.gorden.dayexam.R.color.setting_preference_summary_color))
+        summaryView?.setTextColor(context.resources.getColor(com.gorden.dayexam.R.color.text_secondary))
         summaryView?.typeface = FontUtils[FontUtils.XWWK_FONT]
     }
 }

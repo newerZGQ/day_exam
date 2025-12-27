@@ -73,7 +73,7 @@ class SingleChoiceViewHolder(itemView: View): BaseQuestionViewHolder(itemView) {
         question.options.forEachIndexed { index, optionItemWithElement ->
             val optionTag = (index + 'A'.toInt()).toChar().toString()
             val optionCardView = OptionCardView(itemView.context)
-            optionCardView.setBackgroundColor(itemView.context.getColor(R.color.option_default_color))
+            optionCardView.setBackgroundColor(itemView.context.getColor(R.color.state_default))
             optionCardView.setContent(paperInfo, optionItemWithElement.element, optionTag, ElementViewListener())
             val layoutParams = LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT,LinearLayout.LayoutParams.WRAP_CONTENT)
             layoutParams.topMargin = ScreenUtils.dp2px(8f)
@@ -96,11 +96,11 @@ class SingleChoiceViewHolder(itemView: View): BaseQuestionViewHolder(itemView) {
 
             val optionCardView = optionContainer.getChildAt(index)
             if (correctAnswer == index) {
-                optionCardView.setBackgroundColor(itemView.context.getColor(R.color.option_select_correct_color))
+                optionCardView.setBackgroundColor(itemView.context.getColor(R.color.state_success))
             } else if (realAnswer == index) {
-                optionCardView.setBackgroundColor(itemView.context.getColor(R.color.option_select_incorrect_color))
+                optionCardView.setBackgroundColor(itemView.context.getColor(R.color.state_error))
             } else {
-                optionCardView.setBackgroundColor(itemView.context.getColor(R.color.option_default_color))
+                optionCardView.setBackgroundColor(itemView.context.getColor(R.color.state_default))
             }
             optionCardView.setOnClickListener {}
         }
@@ -113,9 +113,9 @@ class SingleChoiceViewHolder(itemView: View): BaseQuestionViewHolder(itemView) {
             val optionTag = (index + 'A'.toInt()).toChar().toString()
             val optionCardView = OptionCardView(itemView.context)
             if (correctAnswer == index) {
-                optionCardView.setBackgroundColor(itemView.context.getColor(R.color.option_select_correct_color))
+                optionCardView.setBackgroundColor(itemView.context.getColor(R.color.state_success))
             } else {
-                optionCardView.setBackgroundColor(itemView.context.getColor(R.color.option_default_color))
+                optionCardView.setBackgroundColor(itemView.context.getColor(R.color.state_default))
             }
             optionCardView.setContent(paperInfo, optionItemWithElement.element, optionTag, ElementViewListener())
             optionCardView.setOnClickListener {}

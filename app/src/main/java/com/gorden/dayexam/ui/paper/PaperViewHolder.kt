@@ -35,7 +35,7 @@ class PaperViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
             title.setTextColor(resources.getColor(android.R.color.holo_green_light))
         } else {
             container.setBackgroundColor(resources.getColor(R.color.colorPrimary))
-            title.setTextColor(resources.getColor(R.color.font_common_color))
+            title.setTextColor(resources.getColor(R.color.text_primary_variant))
         }
 
         // 点击进入试卷 - 通过回调传递给 Fragment

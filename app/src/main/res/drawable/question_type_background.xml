@@ -2,7 +2,7 @@
 <shape xmlns:android="http://schemas.android.com/apk/res/android">
     <!-- 设置蓝色背景色 -->
     <solid
-        android:color="@color/tag_background_color">
+        android:color="@color/surface_variant">
     </solid>
     <size
         android:height="8dp" />

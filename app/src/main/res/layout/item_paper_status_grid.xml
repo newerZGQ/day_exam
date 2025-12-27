@@ -11,7 +11,7 @@
         android:layout_height="0dp"
         android:background="@drawable/bg_paper_status_item"
         android:gravity="center"
-        android:textColor="@color/action_text_color"
+        android:textColor="@color/text_primary"
         android:textSize="14sp"
         android:textStyle="bold"
         app:layout_constraintDimensionRatio="1:1"

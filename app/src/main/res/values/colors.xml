@@ -1,55 +1,83 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
 
+    <!-- ============================================ -->
+    <!-- Theme Colors - Core theme colors -->
+    <!-- ============================================ -->
     <color name="colorTransparent">#00FFFFFF</color>
     <color name="colorPrimary">#212121</color>
     <color name="colorPrimaryDark">#000000</color>
     <color name="colorAccent">#03DAC5</color>
     <color name="colorDialogTitle">#5F5F5F</color>
 
-    <!--action bar-->
-    <color name="action_bar_font_color">#ffffff</color>
+    <!-- ============================================ -->
+    <!-- Text Colors - For all text elements -->
+    <!-- ============================================ -->
+    <!-- Primary text color - White, used for main content -->
+    <color name="text_primary">#FFFFFF</color>
+    <!-- Primary text color variant - Off-white, slightly softer -->
+    <color name="text_primary_variant">#F5F5F5</color>
+    <!-- Secondary text color - Semi-transparent white for less emphasis -->
+    <color name="text_secondary">#7FFFFFFF</color>
+    <!-- Secondary text variant - More transparent white -->
+    <color name="text_secondary_variant">#A8FFFFFF</color>
+    <!-- Accent text color - Orange, for selected or highlighted text -->
+    <color name="text_accent">#FF5722</color>
+    <!-- Text on light backgrounds - Black -->
+    <color name="text_on_light">#000000</color>
 
-    <!--font colors-->
-    <color name="font_common_color">#f5f5f5</color>
-    <color name="font_selected_color">#FF5722</color>
-    <color name="paper_title_color">#A8FFFFFF</color>
-    <color name="menu_title_color">#FFFFFF</color>
-    <color name="course_title_color">#FFFFFF</color>
-    <color name="tag_text_color">#000000</color>
-    <color name="tag_background_color">#D8D8D8</color>
-    <color name="tag_border_color">#979797</color>
+    <!-- ============================================ -->
+    <!-- State Colors - For interactive elements -->
+    <!-- ============================================ -->
+    <!-- Success state - Semi-transparent green for correct answers -->
+    <color name="state_success">#6F3BE716</color>
+    <!-- Error state - Semi-transparent red for incorrect answers -->
+    <color name="state_error">#70B40909</color>
+    <!-- Warning state - Semi-transparent yellow for missed items -->
+    <color name="state_warning">#1CFFEF00</color>
+    <!-- Default state - Semi-transparent black for neutral state -->
+    <color name="state_default">#2B000000</color>
+    <!-- Inactive state - Gray for unanswered or disabled items -->
+    <color name="state_inactive">#909E9E9E</color>
 
-    <color name="card_view_background_color">#21D6CDCD</color>
+    <!-- ============================================ -->
+    <!-- Surface Colors - For backgrounds and containers -->
+    <!-- ============================================ -->
+    <!-- Primary surface - White, for cards and dialogs -->
+    <color name="surface">#FFFFFF</color>
+    <!-- Surface variant - Light gray, for tags and chips -->
+    <color name="surface_variant">#D8D8D8</color>
+    <!-- Surface overlay - Semi-transparent overlay for cards -->
+    <color name="surface_overlay">#21D6CDCD</color>
+    <!-- Selected surface - Dark green tint for selected items -->
+    <color name="surface_selected">#990D4324</color>
+    <!-- Scrim - Semi-transparent black for overlays and masks -->
+    <color name="scrim">#80000000</color>
+    <!-- Scrim variant - Lighter semi-transparent black -->
+    <color name="scrim_variant">#4D000000</color>
 
-    <!-- 题选项颜色 -->
-    <color name="option_select_correct_color">#6F3BE716</color>
-    <color name="option_select_incorrect_color">#70B40909</color>
-    <color name="option_select_missed_color">#1CFFEF00</color>
-    <color name="option_default_color">#2B000000</color>
+    <!-- ============================================ -->
+    <!-- Outline Colors - For borders and dividers -->
+    <!-- ============================================ -->
+    <!-- Primary outline - Medium gray for borders -->
+    <color name="outline">#979797</color>
 
-    <!-- action -->
-    <color name="action_text_color">#FFFFFF</color>
+    <!-- ============================================ -->
+    <!-- Icon Colors - For icons and symbols -->
+    <!-- ============================================ -->
+    <!-- Primary icon color - White -->
+    <color name="icon_primary">#FFFFFF</color>
 
-    <!-- float button-->
-    <color name="float_button_item_icon_color">#FFFFFF</color>
-    <color name="float_button_item_label_color">#FFFFFF</color>
-    <color name="float_button_overlay_color">#4D000000</color>
+    <!-- ============================================ -->
+    <!-- Action Colors - For buttons and interactive elements -->
+    <!-- ============================================ -->
+    <!-- Disabled action - Semi-transparent white for disabled buttons -->
+    <color name="action_disabled">#7FFFFFFF</color>
 
-    <color name="course_selected_background">#990D4324</color>
-
-    <color name="search_item_key_background">#AD6700</color>
-
-    // 编辑
-    <color name="edit_element_dialog_background">#80000000</color>
-    <color name="edit_element_action_btn_background">#ffffff</color>
-
-    // shortcut
-    <color name="short_cut_delete_disable_color">#7FFFFFFF</color>
-
-    // 设置
-    <color name="setting_preference_summary_color">#7FFFFFFF</color>
-
-    <color name="status_unanswered">#909E9E9E</color>
+    <!-- ============================================ -->
+    <!-- Highlight Colors - For search and emphasis -->
+    <!-- ============================================ -->
+    <!-- Highlight background - Orange for search results -->
+    <color name="highlight_background">#AD6700</color>
 
 </resources>

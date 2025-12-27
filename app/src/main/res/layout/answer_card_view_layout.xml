@@ -2,7 +2,7 @@
 <androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:orientation="horizontal"
-    android:background="@color/card_view_background_color"
+    android:background="@color/surface_overlay"
     android:layout_width="match_parent"
     android:layout_height="match_parent">
 
@@ -11,7 +11,7 @@
         android:fontFamily="@font/xwwk"
         android:text="@string/answer"
         android:background="@drawable/tag_round_background"
-        android:textColor="@color/tag_text_color"
+        android:textColor="@color/text_on_light"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
         android:layout_marginTop="12dp"
@@ -41,7 +41,7 @@
         android:id="@+id/real_answer_tag"
         android:fontFamily="@font/xwwk"
         android:text="@string/current_answer"
-        android:textColor="@color/tag_text_color"
+        android:textColor="@color/text_on_light"
         android:background="@drawable/tag_round_background"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@id/answer_content"
@@ -59,7 +59,7 @@
     <TextView
         android:id="@+id/real_answer_content"
         android:fontFamily="@font/xwwk"
-        android:textColor="@color/font_common_color"
+        android:textColor="@color/text_primary_variant"
         app:layout_constraintStart_toEndOf="@id/real_answer_tag"
         app:layout_constraintTop_toBottomOf="@id/answer_content"
         app:layout_constraintBottom_toBottomOf="parent"

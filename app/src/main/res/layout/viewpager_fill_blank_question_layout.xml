@@ -68,7 +68,7 @@
                 android:gravity="center"
                 android:layout_width="match_parent"
                 android:layout_height="87dp"
-                android:textColor="@color/action_text_color"
+                android:textColor="@color/text_primary"
                 style="@style/SelectableItemBackground">
             </TextView>
         </FrameLayout>
