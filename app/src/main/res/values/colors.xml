@@ -49,4 +49,9 @@
     // 设置
     <color name="setting_preference_summary_color">#7FFFFFFF</color>
 
+    <color name="status_correct">#4CAF50</color>
+    <color name="status_incorrect">#F44336</color>
+    <color name="status_unanswered">#9E9E9E</color>
+    <color name="status_text_color">#FFFFFF</color>
+
 </resources>
