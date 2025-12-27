@@ -7,6 +7,9 @@ open class BaseActivity: AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         ContextHolder.onActivityCreated(this, savedInstanceState)
+        
+        // Set navigation bar color to match page background
+        window.navigationBarColor = getColor(R.color.colorPrimary)
     }
 
     override fun onStart() {

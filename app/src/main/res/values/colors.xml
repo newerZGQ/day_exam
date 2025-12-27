@@ -34,7 +34,7 @@
     <!-- Error state - Semi-transparent red for incorrect answers -->
     <color name="state_error">#70B40909</color>
     <!-- Warning state - Semi-transparent yellow for missed items -->
-    <color name="state_warning">#1CFFEF00</color>
+    <color name="state_warning">#70FFEF00</color>
     <!-- Default state - Semi-transparent black for neutral state -->
     <color name="state_default">#2B000000</color>
     <!-- Inactive state - Gray for unanswered or disabled items -->
