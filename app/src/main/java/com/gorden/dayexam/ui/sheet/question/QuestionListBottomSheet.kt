@@ -50,22 +50,27 @@ class QuestionListBottomSheet : BottomSheetDialogFragment() {
 
     override fun onCreateDialog(savedInstanceState: Bundle?): Dialog {
         val dialog = super.onCreateDialog(savedInstanceState) as BottomSheetDialog
-        dialog.setOnShowListener {
-            val bottomSheet = dialog.findViewById<View>(R.id.design_bottom_sheet)
-            bottomSheet?.let { sheet ->
-                val behavior = BottomSheetBehavior.from(sheet)
-                behavior.state = BottomSheetBehavior.STATE_EXPANDED
-                behavior.skipCollapsed = true
-                
-                // Allow full height
-                val displayMetrics = resources.displayMetrics
-                val height = displayMetrics.heightPixels - (80 * displayMetrics.density).toInt()
-                val layoutParams = sheet.layoutParams
-                layoutParams.height = height
-                sheet.layoutParams = layoutParams
-            }
-        }
         return dialog
+    }
+
+    override fun onStart() {
+        super.onStart()
+        val dialog = dialog as? BottomSheetDialog
+        val bottomSheet = dialog?.findViewById<View>(com.google.android.material.R.id.design_bottom_sheet)
+        bottomSheet?.let { sheet ->
+            val behavior = BottomSheetBehavior.from(sheet)
+            behavior.state = BottomSheetBehavior.STATE_EXPANDED
+            behavior.skipCollapsed = true
+            behavior.isHideable = true
+            behavior.isDraggable = true
+            
+            // Allow full height
+            val displayMetrics = resources.displayMetrics
+            val height = displayMetrics.heightPixels - (80 * displayMetrics.density).toInt()
+            val layoutParams = sheet.layoutParams
+            layoutParams.height = height
+            sheet.layoutParams = layoutParams
+        }
     }
 
     override fun onCreateView(
@@ -107,6 +112,10 @@ class QuestionListBottomSheet : BottomSheetDialogFragment() {
         }
         
         binding.questionGrid.adapter = gridAdapter
+        
+        binding.questionList.isNestedScrollingEnabled = !isGridView
+        binding.questionGrid.isNestedScrollingEnabled = isGridView
+
         centerSelection(currentPosition)
     }
     
@@ -129,11 +138,15 @@ class QuestionListBottomSheet : BottomSheetDialogFragment() {
         if (isGridView) {
             binding.questionList.visibility = View.GONE
             binding.questionGrid.visibility = View.VISIBLE
+            binding.questionList.isNestedScrollingEnabled = false
+            binding.questionGrid.isNestedScrollingEnabled = true
             binding.ivToggle.setImageResource(R.drawable.ic_outline_format_list_numbered_24)
             binding.tvTitle.text = getString(R.string.paper_status_title)
         } else {
             binding.questionList.visibility = View.VISIBLE
             binding.questionGrid.visibility = View.GONE
+            binding.questionList.isNestedScrollingEnabled = true
+            binding.questionGrid.isNestedScrollingEnabled = false
             binding.ivToggle.setImageResource(R.drawable.ic_baseline_apps_24)
             binding.tvTitle.text = getString(R.string.list_question)
         }
@@ -157,14 +170,7 @@ class QuestionListBottomSheet : BottomSheetDialogFragment() {
     private fun initGrid(initialPosition: Int) {
         val layoutManager = GridLayoutManager(context, 7)
         binding.questionGrid.layoutManager = layoutManager
-        // Center for Grid as well logic:
-        // Position / SpanCount = Row Index
-        // This simple calculation approximates.
-        binding.questionGrid.post {
-             val height = binding.questionGrid.height
-             // For grid, offset shifts the row top. Center roughly
-             layoutManager.scrollToPositionWithOffset(initialPosition, height / 2)
-        }
+        binding.questionGrid.setHasFixedSize(true)
     }
 
     private fun selectQuestion(position: Int) {
