@@ -23,8 +23,8 @@
     <color name="card_view_background_color">#21D6CDCD</color>
 
     <!-- 题选项颜色 -->
-    <color name="option_select_correct_color">#1C3BE716</color>
-    <color name="option_select_incorrect_color">#1CB40909</color>
+    <color name="option_select_correct_color">#6F3BE716</color>
+    <color name="option_select_incorrect_color">#70B40909</color>
     <color name="option_select_missed_color">#1CFFEF00</color>
     <color name="option_default_color">#2B000000</color>
 
@@ -50,9 +50,6 @@
     // 设置
     <color name="setting_preference_summary_color">#7FFFFFFF</color>
 
-    <color name="status_correct">#4CAF50</color>
-    <color name="status_incorrect">#F44336</color>
-    <color name="status_unanswered">#9E9E9E</color>
-    <color name="status_text_color">#FFFFFF</color>
+    <color name="status_unanswered">#909E9E9E</color>
 
 </resources>
