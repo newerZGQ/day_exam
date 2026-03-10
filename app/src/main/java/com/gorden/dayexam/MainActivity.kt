@@ -64,6 +64,7 @@ class MainActivity : BaseActivity() {
         binding = ActivityMainBinding.inflate(layoutInflater)
         setContentView(binding.root)
         drawerLayout = binding.drawerLayout
+        initDrawerWidth()
         initToolBar()
         initFab()
         initFragment()
@@ -77,6 +78,13 @@ class MainActivity : BaseActivity() {
 
     fun closeDrawerLayout() {
         drawerLayout.closeDrawer(Gravity.LEFT)
+    }
+
+    private fun initDrawerWidth() {
+        val screenWidth = resources.displayMetrics.widthPixels
+        val drawerParams = binding.paperListContainer.layoutParams
+        drawerParams.width = screenWidth * 4 / 5
+        binding.paperListContainer.layoutParams = drawerParams
     }
 
     private fun initToolBar() {

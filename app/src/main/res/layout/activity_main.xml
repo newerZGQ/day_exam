@@ -16,7 +16,7 @@
 
     <FrameLayout
         android:id="@+id/paper_list_container"
-        android:layout_width="350dp"
+        android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:background="@color/colorPrimary"
         android:orientation="vertical"
