@@ -11,9 +11,15 @@ import com.gorden.dayexam.utils.SharedPreferenceUtil
 import com.google.gson.Gson
 import com.gorden.dayexam.repository.AiNoApiKeyException
 import com.gorden.dayexam.utils.FileUtils
+import kotlinx.coroutines.async
+import kotlinx.coroutines.awaitAll
+import kotlinx.coroutines.coroutineScope
+import kotlinx.coroutines.sync.Semaphore
+import kotlinx.coroutines.sync.withPermit
 import org.apache.poi.xwpf.usermodel.XWPFDocument
 import java.io.File
 import java.io.FileInputStream
+import java.util.concurrent.atomic.AtomicInteger
 
 object AiPaperParser {
     private const val TAG = "AiPaperParser"
@@ -47,10 +53,15 @@ object AiPaperParser {
      * @throws RuntimeException if parsing fails
      */
     private const val MAX_CHUNK_SIZE = 500
+    private const val AI_PARSE_CONCURRENCY = 3
     private data class AiParseInput(
         val type: String,
         val sourceSize: Int,
         val chunks: List<String>
+    )
+    private data class ChunkParseResult(
+        val index: Int,
+        val result: Result<List<QuestionDetail>>
     )
 
     suspend fun parseFromFile(filePath: String, progressCallback: (suspend (Int, Int) -> Unit)? = null): Result<Unit> {
@@ -82,33 +93,21 @@ object AiPaperParser {
         val selectedModel = PreferenceManager.getDefaultSharedPreferences(context).getString(context.getString(R.string.ai_model_key), "deepseek")
 
         val chunks = parseInput.chunks
-        Log.d(TAG, "parse start type=${parseInput.type} model=$selectedModel sourceSize=${parseInput.sourceSize} chunks=${chunks.size}")
-        val allQuestions = mutableListOf<QuestionDetail>()
-        var lastError: Throwable? = null
+        Log.d(TAG, "parse start type=${parseInput.type} model=$selectedModel sourceSize=${parseInput.sourceSize} chunks=${chunks.size} concurrency=$AI_PARSE_CONCURRENCY")
         // notify initial progress 0/N
         progressCallback?.invoke(0, chunks.size)
 
-        for ((idx, chunk) in chunks.withIndex()) {
-            val result = when (selectedModel) {
-                "gemini" -> {
-                    val geminiKey = SharedPreferenceUtil.getString(context.getString(R.string.gemini_api_key))
-                    if (geminiKey.isNotEmpty()) {
-                        AiRepository.callGeminiApi(geminiKey, chunk)
-                    } else {
-                        Result.failure(AiNoApiKeyException("Gemini API Key is missing. Please set it in Settings."))
-                    }
-                }
-                else -> {
-                    val deepseekKey = SharedPreferenceUtil.getString(context.getString(R.string.deepseek_api_key))
-                    if (deepseekKey.isNotEmpty()) {
-                        AiRepository.callDeepseekApi(deepseekKey, chunk)
-                    } else {
-                        Result.failure(AiNoApiKeyException("DeepSeek API Key is missing. Please set it in Settings."))
-                    }
-                }
-            }
+        val chunkResults = parseChunksConcurrently(
+            chunks = chunks,
+            selectedModel = selectedModel,
+            context = context,
+            progressCallback = progressCallback
+        )
 
-            result.fold(
+        val allQuestions = mutableListOf<QuestionDetail>()
+        var lastError: Throwable? = null
+        for (chunkResult in chunkResults) {
+            chunkResult.result.fold(
                 onSuccess = { questions ->
                     if (questions.isNotEmpty()) {
                         allQuestions.addAll(questions)
@@ -116,13 +115,9 @@ object AiPaperParser {
                 },
                 onFailure = { e ->
                     lastError = e
-                    Log.e(TAG, "chunk ${idx + 1}/${chunks.size} failed", e)
-                    // Continue to next chunk even if one fails
+                    Log.e(TAG, "chunk ${chunkResult.index + 1}/${chunks.size} failed", e)
                 }
             )
-            // After processing this chunk, report progress using the loop index (idx)
-            val processedChunks = idx + 1
-            progressCallback?.invoke(processedChunks, chunks.size)
         }
 
         if (allQuestions.isEmpty()) {
@@ -145,6 +140,55 @@ object AiPaperParser {
         saveQuestionsToCache(uniqueQuestions)
         Log.d(TAG, "parse success questions=${uniqueQuestions.size} raw=${allQuestions.size}")
         return Result.success(Unit)
+    }
+
+    private suspend fun parseChunksConcurrently(
+        chunks: List<String>,
+        selectedModel: String?,
+        context: android.content.Context,
+        progressCallback: (suspend (Int, Int) -> Unit)?
+    ): List<ChunkParseResult> = coroutineScope {
+        val semaphore = Semaphore(AI_PARSE_CONCURRENCY)
+        val completedCount = AtomicInteger(0)
+        chunks.mapIndexed { index, chunk ->
+            async {
+                semaphore.withPermit {
+                    val result = callAiForChunk(
+                        selectedModel = selectedModel,
+                        context = context,
+                        chunk = chunk
+                    )
+                    val completed = completedCount.incrementAndGet()
+                    progressCallback?.invoke(completed, chunks.size)
+                    ChunkParseResult(index = index, result = result)
+                }
+            }
+        }.awaitAll().sortedBy { it.index }
+    }
+
+    private suspend fun callAiForChunk(
+        selectedModel: String?,
+        context: android.content.Context,
+        chunk: String
+    ): Result<List<QuestionDetail>> {
+        return when (selectedModel) {
+            "gemini" -> {
+                val geminiKey = SharedPreferenceUtil.getString(context.getString(R.string.gemini_api_key))
+                if (geminiKey.isNotEmpty()) {
+                    AiRepository.callGeminiApi(geminiKey, chunk)
+                } else {
+                    Result.failure(AiNoApiKeyException("Gemini API Key is missing. Please set it in Settings."))
+                }
+            }
+            else -> {
+                val deepseekKey = SharedPreferenceUtil.getString(context.getString(R.string.deepseek_api_key))
+                if (deepseekKey.isNotEmpty()) {
+                    AiRepository.callDeepseekApi(deepseekKey, chunk)
+                } else {
+                    Result.failure(AiNoApiKeyException("DeepSeek API Key is missing. Please set it in Settings."))
+                }
+            }
+        }
     }
 
     private const val CHUNK_LINES = 20
