@@ -26,6 +26,9 @@ object FormatedPaperParser {
      */
     fun checkExist(filePath: String): Boolean {
         val fileHash = FileUtils.generateHash(filePath)
+        if (fileHash.isBlank()) {
+            return false
+        }
         val existingPaper = DataRepository.getPaperByHash(fileHash)
         
         return existingPaper != null
@@ -45,6 +48,9 @@ object FormatedPaperParser {
         
         // Generate hash from file path
         val fileHash = FileUtils.generateHash(filePath)
+        if (fileHash.isBlank()) {
+            throw IllegalStateException("Failed to generate file hash")
+        }
         ParserContext.prepare(fileHash)
         // Parse the document to get questions and image data
         val (questionDetails, imageHashToData) = parseDocument(filePath)
@@ -77,6 +83,9 @@ object FormatedPaperParser {
     private fun parseDocument(filePath: String): Pair<List<QuestionDetail>, Map<String, ByteArray>> {
         if (filePath.endsWith(".txt", ignoreCase = true)) {
             return parseTextDocument(filePath)
+        }
+        if (filePath.endsWith(".xls", ignoreCase = true) || filePath.endsWith(".xlsx", ignoreCase = true)) {
+            return parseExcelDocument(filePath)
         }
         val imageHashToData = mutableMapOf<String, ByteArray>()
         val questionDetails = mutableListOf<QuestionDetail>()
@@ -281,6 +290,21 @@ object FormatedPaperParser {
         return Pair(questionDetails, emptyMap())
     }
 
+    private fun parseExcelDocument(filePath: String): Pair<List<QuestionDetail>, Map<String, ByteArray>> {
+        val questionDetails = mutableListOf<QuestionDetail>()
+        val text = ExcelTextExtractor.extractText(filePath)
+        val lines = text.lines()
+        val splitTitleSeparatorResult = splitLinesByTitleSeparator(lines)
+        splitTitleSeparatorResult.forEach { questionLines ->
+            val questionUnits = splitLinesBySeparator(questionLines)
+            val question = parseLinesToQuestion(questionUnits)
+            question?.let {
+                questionDetails.add(it)
+            }
+        }
+        return Pair(questionDetails, emptyMap())
+    }
+
     private fun splitLinesByTitleSeparator(lines: List<String>): List<List<String>> {
         val result = mutableListOf<List<String>>()
         var curLines = mutableListOf<String>()
@@ -408,6 +432,7 @@ object ParserContext {
     private var paperHash: String = ""
 
     fun prepare(paperHash: String) {
+        require(paperHash.isNotBlank()) { "paperHash must not be blank" }
         val cachePaperFolder = File(ContextHolder.application.cacheDir, paperHash)
         if (!cachePaperFolder.exists()) {
             cachePaperFolder.mkdirs()
@@ -452,4 +477,3 @@ object ParserContext {
         }
     }
 }
-

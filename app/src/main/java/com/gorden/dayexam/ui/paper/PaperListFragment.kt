@@ -10,6 +10,7 @@ import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.webkit.MimeTypeMap
 import android.widget.Toast
 import android.view.WindowManager
 import android.view.View.MeasureSpec
@@ -45,6 +46,9 @@ import java.io.FileOutputStream
 import java.lang.Exception
 
 class PaperListFragment : Fragment() {
+    companion object {
+        private const val TAG = "PaperImport"
+    }
 
     private var _binding: FragmentPaperListLayoutBinding? = null
     private val binding get() = _binding!!
@@ -300,7 +304,6 @@ class PaperListFragment : Fragment() {
     }
 
     private fun openFileBrowser(launcher: ActivityResultLauncher<Intent>) {
-        Log.d("paperList", "openFileBrowser")
         val intent = Intent(Intent.ACTION_GET_CONTENT)
         intent.type = "*/*"
         intent.putExtra(Intent.EXTRA_ALLOW_MULTIPLE, true)
@@ -314,61 +317,75 @@ class PaperListFragment : Fragment() {
      */
     private fun importRawDocumentFromUri(uri: Uri) {
         viewLifecycleOwner.lifecycleScope.launch {
-            // IO operations in IO dispatcher
-            withContext(Dispatchers.IO) {
-                val context = requireContext()
-                val fileName =
-                    queryDisplayName(uri) ?: "paper_${System.currentTimeMillis()}.docx"
-                val destDir = File(context.cacheDir, "imported_papers")
-                if (!destDir.exists()) {
-                    destDir.mkdirs()
-                }
-                val destFile = File(destDir, fileName)
-                context.contentResolver.openInputStream(uri)?.use { input ->
-                    FileOutputStream(destFile).use { output ->
-                        input.copyTo(output)
+            try {
+                // IO operations in IO dispatcher
+                withContext(Dispatchers.IO) {
+                    val context = requireContext()
+                    val fileName = resolveImportFileName(uri)
+                    val destDir = File(context.cacheDir, "imported_papers")
+                    if (!destDir.exists()) {
+                        destDir.mkdirs()
                     }
-                }
+                    val destFile = File(destDir, fileName)
+                    context.contentResolver.openInputStream(uri)?.use { input ->
+                        FileOutputStream(destFile).use { output ->
+                            input.copyTo(output)
+                        }
+                    }
 
-                if (!destFile.exists()) {
-                    return@withContext
-                }
-                // Check if paper already exists before parsing
-                if (AiPaperParser.checkExist(destFile.absolutePath)) {
                     withContext(Dispatchers.Main) {
-                        Toast.makeText(
-                            context,
-                            context.getString(R.string.toast_paper_already_exists),
-                            Toast.LENGTH_SHORT
-                        ).show()
+                        showLoadingDialog(R.string.parsing_ai_please_wait)
                     }
-                    return@withContext
-                }
-                withContext(Dispatchers.Main) {
-                    showLoadingDialog(R.string.parsing_ai_please_wait)
-                }
-                // 使用 AI 解析原始文档，并在每个分块解析完成时更新进度
-                AiPaperParser.parseFromFile(destFile.absolutePath, progressCallback = { done, total ->
-                    withContext(Dispatchers.Main) {
-                        updateLoadingMessage(done, total)
+
+                    if (!destFile.exists()) {
+                        Log.e(TAG, "raw import destination file missing")
+                        return@withContext
                     }
-                })
-                    .onSuccess {
+                    // Check if paper already exists before parsing
+                    if (AiPaperParser.checkExist(destFile.absolutePath)) {
+                        Log.d(TAG, "raw import skipped: paper already exists")
                         withContext(Dispatchers.Main) {
-                            dismissLoadingDialog()
                             Toast.makeText(
                                 context,
-                                context.getString(R.string.ai_parse_success),
+                                context.getString(R.string.toast_paper_already_exists),
                                 Toast.LENGTH_SHORT
                             ).show()
                         }
-                    }.onFailure { e ->
-                        withContext(Dispatchers.Main) {
-                            dismissLoadingDialog()
-                            showAiErrorDialog(e)
-                        }
+                        return@withContext
                     }
 
+                    // 使用 AI 解析原始文档，并在每个分块解析完成时更新进度
+                    Log.d(TAG, "raw import start file=$fileName size=${destFile.length()}")
+                    AiPaperParser.parseFromFile(destFile.absolutePath, progressCallback = { done, total ->
+                        withContext(Dispatchers.Main) {
+                            updateLoadingMessage(done, total)
+                        }
+                    })
+                        .onSuccess {
+                            Log.d(TAG, "raw import success file=$fileName")
+                            withContext(Dispatchers.Main) {
+                                Toast.makeText(
+                                    context,
+                                    context.getString(R.string.ai_parse_success),
+                                    Toast.LENGTH_SHORT
+                                ).show()
+                            }
+                        }.onFailure { e ->
+                            Log.e(TAG, "raw import failed file=$fileName", e)
+                            withContext(Dispatchers.Main) {
+                                showAiErrorDialog(e)
+                            }
+                        }
+                }
+            } catch (e: Exception) {
+                Log.e(TAG, "raw import crashed", e)
+                if (isAdded) {
+                    showAiErrorDialog(e)
+                }
+            } finally {
+                withContext(Dispatchers.Main) {
+                    dismissLoadingDialog()
+                }
             }
         }
     }
@@ -383,8 +400,7 @@ class PaperListFragment : Fragment() {
                 // IO operations in IO dispatcher
                 withContext(Dispatchers.IO) {
                     val context = requireContext()
-                    val fileName =
-                        queryDisplayName(uri) ?: "paper_${System.currentTimeMillis()}.docx"
+                    val fileName = resolveImportFileName(uri)
                     val destDir = File(context.cacheDir, "imported_papers")
                     if (!destDir.exists()) {
                         destDir.mkdirs()
@@ -397,6 +413,7 @@ class PaperListFragment : Fragment() {
                     }
 
                     if (!destFile.exists()) {
+                        Log.e(TAG, "formatted import destination file missing")
                         return@withContext
                     }
                     withContext(Dispatchers.Main) {
@@ -404,6 +421,7 @@ class PaperListFragment : Fragment() {
                     }
                     // Check if paper already exists before parsing
                     if (FormatedPaperParser.checkExist(destFile.absolutePath)) {
+                        Log.d(TAG, "formatted import skipped: paper already exists")
                         withContext(Dispatchers.Main) {
                             Toast.makeText(
                                 context,
@@ -415,10 +433,12 @@ class PaperListFragment : Fragment() {
                     }
 
                     // 使用模版格式解析
+                    Log.d(TAG, "formatted import start file=$fileName size=${destFile.length()}")
                     FormatedPaperParser.parseFromFile(destFile.absolutePath)
+                    Log.d(TAG, "formatted import success file=$fileName")
                 }
             } catch (e: Exception) {
-                e.printStackTrace()
+                Log.e(TAG, "formatted import crashed", e)
             } finally {
                 withContext(Dispatchers.Main) {
                     dismissLoadingDialog()
@@ -440,6 +460,27 @@ class PaperListFragment : Fragment() {
             }
         }
         return null
+    }
+
+    private fun resolveImportFileName(uri: Uri): String {
+        val displayName = queryDisplayName(uri)
+        if (!displayName.isNullOrBlank()) {
+            return displayName
+        }
+
+        val context = context
+        val mimeType = context?.contentResolver?.getType(uri)
+        val extension = MimeTypeMap.getSingleton().getExtensionFromMimeType(mimeType)
+            ?: uri.lastPathSegment
+                ?.substringAfterLast('.', "")
+                ?.takeIf { it.isNotBlank() }
+        val normalizedExtension = extension?.trimStart('.')
+        val resolved = if (normalizedExtension.isNullOrBlank()) {
+            "paper_${System.currentTimeMillis()}"
+        } else {
+            "paper_${System.currentTimeMillis()}.$normalizedExtension"
+        }
+        return resolved
     }
 
     private fun showAiErrorDialog(e: Throwable) {

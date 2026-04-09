@@ -1,6 +1,6 @@
 package com.gorden.dayexam.repository
 
-import com.gorden.dayexam.ContextHolder
+import android.util.Log
 import com.gorden.dayexam.repository.model.QuestionDetail
 import com.google.gson.Gson
 import com.google.gson.reflect.TypeToken
@@ -18,48 +18,44 @@ class AiResponseParseException(message: String, cause: Throwable? = null) : Exce
 class AiNoApiKeyException(message: String, cause: Throwable? = null) : Exception(message, cause)
 
 object AiRepository {
-	// prompt 从 assets 加载以便运行时编辑；提供回退模板
-	private const val PROMPT_ASSET_FILE = "question_template.json"
-	private const val MAIN_PROMPT_ASSET_FILE = "parse_prompt.txt"
+	private const val TAG = "AiRepository"
+	private const val COMPACT_PROMPT = """
+你是试题解析助手。请把文档内容解析为 JSON 数组，且只能返回 JSON。
+
+每个题目对象结构：
+{
+  "type": 1|2|3|4|5,
+  "body": [{"elementType":0,"content":"题干文本"}],
+  "options": [{"element":[{"elementType":0,"content":"选项文本"}]}],
+  "answer": {
+    "commonAnswer": [{"elementType":0,"content":"答案文本"}],
+    "optionAnswer": [0,1],
+    "tfAnswer": true
+  },
+  "realAnswer": null
+}
+
+规则：
+1. type: 1填空 2判断 3单选 4多选 5问答。
+2. body 必须保留完整题干，但不要包含题号、答案标记、选项文本。
+3. 选择题的 options 只放选项；答案放 answer.optionAnswer，索引从 0 开始。
+4. 判断题答案放 answer.tfAnswer；填空和问答答案放 answer.commonAnswer。
+5. 无法确定的题不要编造；解析不到任何题时返回 []。
+"""
 
 	private val gson = Gson()
 	private val client = OkHttpClient.Builder()
-		.connectTimeout(600, java.util.concurrent.TimeUnit.SECONDS)
-		.readTimeout(600, java.util.concurrent.TimeUnit.SECONDS)
-		.writeTimeout(600, java.util.concurrent.TimeUnit.SECONDS)
+		.callTimeout(90, java.util.concurrent.TimeUnit.SECONDS)
+		.connectTimeout(30, java.util.concurrent.TimeUnit.SECONDS)
+		.readTimeout(60, java.util.concurrent.TimeUnit.SECONDS)
+		.writeTimeout(60, java.util.concurrent.TimeUnit.SECONDS)
 		.build()
 
-	private fun loadTemplate(): String {
-		return try {
-			ContextHolder.application.assets.open(PROMPT_ASSET_FILE).use { it.readBytes().toString(Charsets.UTF_8) }
-		} catch (e: Exception) {
-			e.printStackTrace()
-			return ""
-		}
-	}
-
-	private fun loadMainPrompt(): String {
-		return try {
-			ContextHolder.application.assets.open(MAIN_PROMPT_ASSET_FILE).use { it.readBytes().toString(Charsets.UTF_8) }
-		} catch (e: Exception) {
-			e.printStackTrace()
-			return ""
-		}
-	}
-
 	private fun buildPrompt(documentText: String): String {
-		val template = loadTemplate() // 使用加载的模板
-		val mainPromptContent = loadMainPrompt()
-
+		val compactPrompt = COMPACT_PROMPT.trimIndent()
 		return StringBuilder().apply {
-			append(mainPromptContent)
-			// Append the JSON example structure from question_template.json
-			append("### 示例 JSON\n")
-			append("参考以下 JSON 结构：\n")
-			append("```json\n")
-			append(template)
-			append("\n```\n\n")
-			append("### 待解析文档内容\n")
+			append(compactPrompt)
+			append("\n\n文档内容：\n")
 			append(documentText)
 		}.toString()
 	}
@@ -74,6 +70,7 @@ object AiRepository {
 			val url = "https://generativelanguage.googleapis.com/v1beta/models/$model:generateContent?key=$apiKey"
 
 			val promptText = buildPrompt(documentText)
+			Log.d(TAG, "gemini start promptChars=${promptText.length}")
 			
 			// Gemini API 使用 contents 数组格式
 			val requestMap = mapOf(
@@ -86,7 +83,7 @@ object AiRepository {
 				),
 				"generationConfig" to mapOf(
 					"temperature" to 0.1,
-					"maxOutputTokens" to 65536
+					"maxOutputTokens" to 8192
 				)
 			)
 			val requestJson = gson.toJson(requestMap)
@@ -101,8 +98,10 @@ object AiRepository {
 				.build()
 
 			client.newCall(request).execute().use { resp ->
+				Log.d(TAG, "gemini response code=${resp.code}")
 				if (!resp.isSuccessful) {
 					val errorBody = resp.body?.string() ?: "Unknown error"
+					Log.e(TAG, "gemini failed code=${resp.code} bodyLength=${errorBody.length}")
 					return@use Result.failure(AiNetworkException("Gemini API error ${resp.code}: $errorBody"))
 				}
 				val respBody = resp.body?.string() ?: return@use Result.failure(AiResponseParseException("Empty response body"))
@@ -116,13 +115,14 @@ object AiRepository {
 
 				val list = tryParseQuestionList(jsonArray)
 				if (list != null) {
+					Log.d(TAG, "gemini parsed questions=${list.size}")
 					Result.success(list)
 				} else {
 					Result.failure(AiResponseParseException("Failed to parse JSON into QuestionDetail list"))
 				}
 			}
 		} catch (e: Exception) {
-			e.printStackTrace()
+			Log.e(TAG, "gemini exception", e)
 			Result.failure(e)
 		}
 	}
@@ -135,6 +135,7 @@ object AiRepository {
 		try {
 			val url = "https://api.deepseek.com/chat/completions"
 			val promptText = buildPrompt(documentText)
+			Log.d(TAG, "deepseek start promptChars=${promptText.length}")
 			val requestMap = mapOf(
 				"model" to "deepseek-chat",
 				"messages" to listOf(
@@ -149,7 +150,7 @@ object AiRepository {
 				),
 				"stream" to false,
 				"temperature" to 0.1,
-				"max_tokens" to 8000
+				"max_tokens" to 4000
 			)
 			val requestJson = gson.toJson(requestMap)
 
@@ -164,8 +165,10 @@ object AiRepository {
 				.build()
 
 			client.newCall(request).execute().use { resp ->
+				Log.d(TAG, "deepseek response code=${resp.code}")
 				if (!resp.isSuccessful) {
 					val errorBody = resp.body?.string() ?: "Unknown error"
+					Log.e(TAG, "deepseek failed code=${resp.code} bodyLength=${errorBody.length}")
 					return@use Result.failure(AiNetworkException("Deepseek API error ${resp.code}: $errorBody"))
 				}
 				val respBody = resp.body?.string() ?: return@use Result.failure(AiResponseParseException("Empty response body"))
@@ -179,13 +182,14 @@ object AiRepository {
 
 				val list = tryParseQuestionList(jsonArray)
 				if (list != null) {
+					Log.d(TAG, "deepseek parsed questions=${list.size}")
 					Result.success(list)
 				} else {
 					Result.failure(AiResponseParseException("Failed to parse JSON into QuestionDetail list"))
 				}
 			}
 		} catch (e: Exception) {
-			e.printStackTrace()
+			Log.e(TAG, "deepseek exception", e)
 			Result.failure(e)
 		}
 	}
@@ -229,4 +233,3 @@ object AiRepository {
 		return gson.fromJson<List<QuestionDetail>>(jsonArrayString, type)
 	}
 }
-

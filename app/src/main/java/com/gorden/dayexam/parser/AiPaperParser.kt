@@ -1,5 +1,6 @@
 package com.gorden.dayexam.parser
 
+import android.util.Log
 import androidx.preference.PreferenceManager
 import com.gorden.dayexam.ContextHolder
 import com.gorden.dayexam.R
@@ -15,6 +16,9 @@ import java.io.File
 import java.io.FileInputStream
 
 object AiPaperParser {
+    private const val TAG = "AiPaperParser"
+    private const val INPUT_TYPE_EXCEL = "excel"
+    private const val INPUT_TYPE_DOCUMENT = "document"
 
     /**
      * Check if a paper already exists in the database by its file hash.
@@ -24,6 +28,10 @@ object AiPaperParser {
      */
     fun checkExist(filePath: String): Boolean {
         val fileHash = FileUtils.generateHash(filePath)
+        if (fileHash.isBlank()) {
+            Log.e(TAG, "checkExist failed: blank file hash")
+            return false
+        }
         val existingPaper = DataRepository.getPaperByHash(fileHash)
         
         return existingPaper != null
@@ -38,7 +46,12 @@ object AiPaperParser {
      * @throws IllegalStateException if no API key is configured
      * @throws RuntimeException if parsing fails
      */
-    private const val MAX_CHUNK_SIZE = 4000
+    private const val MAX_CHUNK_SIZE = 500
+    private data class AiParseInput(
+        val type: String,
+        val sourceSize: Int,
+        val chunks: List<String>
+    )
 
     suspend fun parseFromFile(filePath: String, progressCallback: (suspend (Int, Int) -> Unit)? = null): Result<Unit> {
         val file = File(filePath)
@@ -48,13 +61,17 @@ object AiPaperParser {
 
         // Generate hash from file path
         val fileHash = FileUtils.generateHash(filePath)
+        if (fileHash.isBlank()) {
+            Log.e(TAG, "parseFromFile failed: blank file hash")
+            return Result.failure(IllegalStateException("Failed to generate file hash"))
+        }
         ParserContext.prepare(fileHash)
 
         // Extract text content from document
-        val documentText = try {
-            extractTextFromDocument(filePath)
+        val parseInput = try {
+            buildAiParseInput(filePath)
         } catch (e: Exception) {
-            e.printStackTrace()
+            Log.e(TAG, "buildAiParseInput failed", e)
             return Result.failure(e)
         }
 
@@ -64,8 +81,8 @@ object AiPaperParser {
         // CustomListPreference设置的值保存在PreferenceManager.getDefaultSharedPreferences(context)中
         val selectedModel = PreferenceManager.getDefaultSharedPreferences(context).getString(context.getString(R.string.ai_model_key), "deepseek")
 
-        // Split text into overlapping chunks
-        val chunks = splitTextIntoOverlappingChunks(documentText)
+        val chunks = parseInput.chunks
+        Log.d(TAG, "parse start type=${parseInput.type} model=$selectedModel sourceSize=${parseInput.sourceSize} chunks=${chunks.size}")
         val allQuestions = mutableListOf<QuestionDetail>()
         var lastError: Throwable? = null
         // notify initial progress 0/N
@@ -99,7 +116,7 @@ object AiPaperParser {
                 },
                 onFailure = { e ->
                     lastError = e
-                    e.printStackTrace()
+                    Log.e(TAG, "chunk ${idx + 1}/${chunks.size} failed", e)
                     // Continue to next chunk even if one fails
                 }
             )
@@ -110,6 +127,7 @@ object AiPaperParser {
 
         if (allQuestions.isEmpty()) {
             val error = lastError ?: RuntimeException(ContextHolder.application.getString(R.string.ai_parse_failed_no_questions))
+            Log.e(TAG, "parse finished with no questions", error)
             return Result.failure(error)
         }
 
@@ -125,32 +143,172 @@ object AiPaperParser {
         )
         // 2. Save questions to JSON file
         saveQuestionsToCache(uniqueQuestions)
+        Log.d(TAG, "parse success questions=${uniqueQuestions.size} raw=${allQuestions.size}")
         return Result.success(Unit)
     }
 
-    private const val CHUNK_LINES = 80
-    private const val OVERLAP_LINES = 20
+    private const val CHUNK_LINES = 20
+    private const val OVERLAP_LINES = 5
 
-    private fun splitTextIntoOverlappingChunks(text: String): List<String> {
-        val lines = text.lines()
+    private fun buildAiParseInput(filePath: String): AiParseInput {
+        return if (isExcelFile(filePath)) {
+            buildExcelAiParseInput(filePath)
+        } else {
+            buildDocumentAiParseInput(filePath)
+        }
+    }
+
+    private fun buildExcelAiParseInput(filePath: String): AiParseInput {
+        val blocks = ExcelTextExtractor.extractQuestionBlocks(filePath)
+        val chunks = splitExcelBlocksIntoChunks(blocks)
+        val sourceSize = blocks.sumOf { it.length }
+        return AiParseInput(
+            type = INPUT_TYPE_EXCEL,
+            sourceSize = sourceSize,
+            chunks = chunks
+        )
+    }
+
+    private fun buildDocumentAiParseInput(filePath: String): AiParseInput {
+        val documentText = extractTextFromDocument(filePath)
+        val chunks = splitDocumentTextIntoChunks(documentText)
+        return AiParseInput(
+            type = INPUT_TYPE_DOCUMENT,
+            sourceSize = documentText.length,
+            chunks = chunks
+        )
+    }
+
+    private fun splitDocumentTextIntoChunks(text: String): List<String> {
+        val lines = normalizeDocumentLines(text)
+        if (lines.isEmpty()) {
+            Log.w(TAG, "splitDocumentTextIntoChunks found no content")
+            return emptyList()
+        }
         val chunks = mutableListOf<String>()
         var startLine = 0
 
         while (startLine < lines.size) {
-            val endLine = minOf(startLine + CHUNK_LINES, lines.size)
-            val chunkLines = lines.subList(startLine, endLine)
-            val chunkText = chunkLines.joinToString("\n")
-            
-            if (chunkText.isNotBlank()) {
-                chunks.add(chunkText)
+            val chunkLines = mutableListOf<String>()
+            var currentLength = 0
+            var endLine = startLine
+
+            while (endLine < lines.size && chunkLines.size < CHUNK_LINES) {
+                val line = lines[endLine]
+                val extraLength = if (chunkLines.isEmpty()) line.length else line.length + 1
+                if (chunkLines.isNotEmpty() && currentLength + extraLength > MAX_CHUNK_SIZE) {
+                    break
+                }
+                chunkLines.add(line)
+                currentLength += extraLength
+                endLine++
             }
 
-            if (endLine == lines.size) {
+            if (chunkLines.isEmpty()) {
+                // Keep at least one line moving forward even when a single line exceeds MAX_CHUNK_SIZE.
+                chunkLines.add(lines[startLine])
+                endLine = startLine + 1
+            }
+
+            chunks.add(chunkLines.joinToString("\n"))
+
+            if (endLine >= lines.size) {
                 break
             }
-            startLine += (CHUNK_LINES - OVERLAP_LINES)
+            startLine = (endLine - OVERLAP_LINES).coerceAtLeast(startLine + 1)
         }
         return chunks
+    }
+
+    private fun splitExcelBlocksIntoChunks(blocks: List<String>): List<String> {
+        if (blocks.isEmpty()) {
+            Log.w(TAG, "splitExcelBlocksIntoChunks found no blocks")
+            return emptyList()
+        }
+        val chunks = mutableListOf<String>()
+        var currentBlocks = mutableListOf<String>()
+        var currentLength = 0
+
+        fun flush() {
+            if (currentBlocks.isNotEmpty()) {
+                chunks.add(currentBlocks.joinToString("\n\n"))
+                currentBlocks = mutableListOf()
+                currentLength = 0
+            }
+        }
+
+        for (block in blocks) {
+            val trimmed = block.trim()
+            if (trimmed.isBlank()) {
+                continue
+            }
+            val extraLength = if (currentBlocks.isEmpty()) trimmed.length else trimmed.length + 2
+            if (currentBlocks.isNotEmpty() && currentLength + extraLength > MAX_CHUNK_SIZE) {
+                flush()
+            }
+
+            if (trimmed.length > MAX_CHUNK_SIZE) {
+                flush()
+                chunks.add(trimmed)
+                continue
+            }
+
+            currentBlocks.add(trimmed)
+            currentLength += if (currentBlocks.size == 1) trimmed.length else extraLength
+        }
+        flush()
+        return chunks
+    }
+
+    private fun isExcelFile(filePath: String): Boolean {
+        return filePath.endsWith(".xls", ignoreCase = true) ||
+            filePath.endsWith(".xlsx", ignoreCase = true)
+    }
+
+    private fun normalizeDocumentLines(text: String): List<String> {
+        return text.lines()
+            .flatMap { splitLongLine(it) }
+            .filter { it.isNotBlank() }
+    }
+
+    private fun splitLongLine(line: String): List<String> {
+        val trimmed = line.trim()
+        if (trimmed.isBlank()) {
+            return emptyList()
+        }
+        if (trimmed.length <= MAX_CHUNK_SIZE) {
+            return listOf(trimmed)
+        }
+
+        val parts = mutableListOf<String>()
+        val current = StringBuilder()
+        val words = trimmed.split(Regex("\\s+"))
+
+        for (word in words) {
+            if (word.length > MAX_CHUNK_SIZE) {
+                if (current.isNotEmpty()) {
+                    parts.add(current.toString())
+                    current.clear()
+                }
+                parts.addAll(word.chunked(MAX_CHUNK_SIZE))
+                continue
+            }
+
+            val extraLength = if (current.isEmpty()) word.length else word.length + 1
+            if (current.isNotEmpty() && current.length + extraLength > MAX_CHUNK_SIZE) {
+                parts.add(current.toString())
+                current.clear()
+            }
+            if (current.isNotEmpty()) {
+                current.append(' ')
+            }
+            current.append(word)
+        }
+
+        if (current.isNotEmpty()) {
+            parts.add(current.toString())
+        }
+        return parts
     }
 
     private fun deduplicateQuestions(questions: List<QuestionDetail>): List<QuestionDetail> {
@@ -207,6 +365,8 @@ object AiPaperParser {
             val file = File(filePath)
             if (filePath.endsWith(".txt", ignoreCase = true)) {
                  file.readText()
+            } else if (filePath.endsWith(".xls", ignoreCase = true) || filePath.endsWith(".xlsx", ignoreCase = true)) {
+                ExcelTextExtractor.extractText(filePath)
             } else {
                 val textBuilder = StringBuilder()
                 FileInputStream(file).use { inputStream ->
@@ -235,7 +395,7 @@ object AiPaperParser {
                 textBuilder.toString()
             }
         } catch (e: Exception) {
-            e.printStackTrace()
+            Log.e(TAG, "extractTextFromDocument exception", e)
              throw RuntimeException(ContextHolder.application.getString(R.string.ai_extract_text_failed) + e.message, e)
         }
     }
@@ -248,7 +408,7 @@ object AiPaperParser {
             val gson = Gson()
             ParserContext.saveQuestions(gson.toJson(questions))
         } catch (e: Exception) {
-            e.printStackTrace()
+            Log.e(TAG, "saveQuestionsToCache failed", e)
             throw RuntimeException(ContextHolder.application.getString(R.string.ai_save_cache_failed) + e.message, e)
         }
     }
