@@ -45,10 +45,10 @@ object AiRepository {
 
 	private val gson = Gson()
 	private val client = OkHttpClient.Builder()
-		.callTimeout(90, java.util.concurrent.TimeUnit.SECONDS)
+		.callTimeout(300, java.util.concurrent.TimeUnit.SECONDS)
 		.connectTimeout(30, java.util.concurrent.TimeUnit.SECONDS)
-		.readTimeout(60, java.util.concurrent.TimeUnit.SECONDS)
-		.writeTimeout(60, java.util.concurrent.TimeUnit.SECONDS)
+		.readTimeout(240, java.util.concurrent.TimeUnit.SECONDS)
+		.writeTimeout(120, java.util.concurrent.TimeUnit.SECONDS)
 		.build()
 
 	private fun buildPrompt(documentText: String): String {
