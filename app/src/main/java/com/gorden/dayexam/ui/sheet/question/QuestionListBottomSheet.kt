@@ -55,7 +55,7 @@ class QuestionListBottomSheet : BottomSheetDialogFragment() {
     override fun onStart() {
         super.onStart()
         val dialog = dialog as? BottomSheetDialog
-        val bottomSheet = dialog?.findViewById<View>(com.google.android.material.R.id.design_bottom_sheet)
+        val bottomSheet = dialog?.findViewById<View>(R.id.design_bottom_sheet)
         bottomSheet?.let { sheet ->
             val behavior = BottomSheetBehavior.from(sheet)
             behavior.state = BottomSheetBehavior.STATE_EXPANDED
