@@ -19,30 +19,6 @@ class AiNoApiKeyException(message: String, cause: Throwable? = null) : Exception
 
 object AiRepository {
 	private const val TAG = "AiRepository"
-	private const val COMPACT_PROMPT = """
-你是试题解析助手。请把文档内容解析为 JSON 数组，且只能返回 JSON。
-
-每个题目对象结构：
-{
-  "type": 1|2|3|4|5,
-  "body": [{"elementType":0,"content":"题干文本"}],
-  "options": [{"element":[{"elementType":0,"content":"选项文本"}]}],
-  "answer": {
-    "commonAnswer": [{"elementType":0,"content":"答案文本"}],
-    "optionAnswer": [0,1],
-    "tfAnswer": true
-  },
-  "realAnswer": null
-}
-
-规则：
-1. type: 1填空 2判断 3单选 4多选 5问答。
-2. body 必须保留完整题干，但不要包含题号、答案标记、选项文本。
-3. 选择题的 options 只放选项；答案放 answer.optionAnswer，索引从 0 开始。
-4. 判断题答案放 answer.tfAnswer；填空和问答答案放 answer.commonAnswer。
-5. 无法确定的题不要编造；解析不到任何题时返回 []。
-"""
-
 	private val gson = Gson()
 	private val client = OkHttpClient.Builder()
 		.callTimeout(300, java.util.concurrent.TimeUnit.SECONDS)
@@ -51,25 +27,29 @@ object AiRepository {
 		.writeTimeout(120, java.util.concurrent.TimeUnit.SECONDS)
 		.build()
 
-	private fun buildPrompt(documentText: String): String {
-		val compactPrompt = COMPACT_PROMPT.trimIndent()
-		return StringBuilder().apply {
-			append(compactPrompt)
-			append("\n\n文档内容：\n")
+	private fun buildPrompt(parsePrompt: String, questionTemplate: String, documentText: String): String {
+		val filledPrompt = if (parsePrompt.contains("```json\n\n```")) {
+			parsePrompt.replace("```json\n\n```", "```json\n$questionTemplate\n```")
+		} else {
+			parsePrompt
+		}
+		return buildString {
+			append(filledPrompt)
+			append("\n\n### 待解析文档内容\n")
 			append(documentText)
-		}.toString()
+		}
 	}
 
 	/**
 	 * 调用 Gemini API，返回解析后的 List<QuestionDetail>
 	 * 使用 Gemini 1.5 Flash 模型
 	 */
-	suspend fun callGeminiApi(apiKey: String, documentText: String): Result<List<QuestionDetail>> = withContext(Dispatchers.IO) {
+	suspend fun callGeminiApi(apiKey: String, parsePrompt: String, questionTemplate: String, documentText: String): Result<List<QuestionDetail>> = withContext(Dispatchers.IO) {
 		try {
 			val model = "gemini-2.5-flash-lite"
 			val url = "https://generativelanguage.googleapis.com/v1beta/models/$model:generateContent?key=$apiKey"
 
-			val promptText = buildPrompt(documentText)
+			val promptText = buildPrompt(parsePrompt, questionTemplate, documentText)
 			Log.d(TAG, "gemini start promptChars=${promptText.length}")
 			
 			// Gemini API 使用 contents 数组格式
@@ -131,10 +111,10 @@ object AiRepository {
 	 * 调用 Deepseek API，返回解析后的 List<QuestionDetail>
 	 * 使用 deepseek-chat 模型
 	 */
-	suspend fun callDeepseekApi(apiKey: String, documentText: String): Result<List<QuestionDetail>> = withContext(Dispatchers.IO) {
+	suspend fun callDeepseekApi(apiKey: String, parsePrompt: String, questionTemplate: String, documentText: String): Result<List<QuestionDetail>> = withContext(Dispatchers.IO) {
 		try {
 			val url = "https://api.deepseek.com/chat/completions"
-			val promptText = buildPrompt(documentText)
+			val promptText = buildPrompt(parsePrompt, questionTemplate, documentText)
 			Log.d(TAG, "deepseek start promptChars=${promptText.length}")
 			val requestMap = mapOf(
 				"model" to "deepseek-chat",

@@ -97,9 +97,14 @@ object AiPaperParser {
         // notify initial progress 0/N
         progressCallback?.invoke(0, chunks.size)
 
+        val parsePrompt = loadAssetText(context, "parse_prompt.txt")
+        val questionTemplate = loadAssetText(context, "question_template.json")
+
         val chunkResults = parseChunksConcurrently(
             chunks = chunks,
             selectedModel = selectedModel,
+            parsePrompt = parsePrompt,
+            questionTemplate = questionTemplate,
             context = context,
             progressCallback = progressCallback
         )
@@ -145,6 +150,8 @@ object AiPaperParser {
     private suspend fun parseChunksConcurrently(
         chunks: List<String>,
         selectedModel: String?,
+        parsePrompt: String,
+        questionTemplate: String,
         context: android.content.Context,
         progressCallback: (suspend (Int, Int) -> Unit)?
     ): List<ChunkParseResult> = coroutineScope {
@@ -155,6 +162,8 @@ object AiPaperParser {
                 semaphore.withPermit {
                     val result = callAiForChunk(
                         selectedModel = selectedModel,
+                        parsePrompt = parsePrompt,
+                        questionTemplate = questionTemplate,
                         context = context,
                         chunk = chunk
                     )
@@ -168,6 +177,8 @@ object AiPaperParser {
 
     private suspend fun callAiForChunk(
         selectedModel: String?,
+        parsePrompt: String,
+        questionTemplate: String,
         context: android.content.Context,
         chunk: String
     ): Result<List<QuestionDetail>> {
@@ -175,7 +186,7 @@ object AiPaperParser {
             "gemini" -> {
                 val geminiKey = SharedPreferenceUtil.getString(context.getString(R.string.gemini_api_key))
                 if (geminiKey.isNotEmpty()) {
-                    AiRepository.callGeminiApi(geminiKey, chunk)
+                    AiRepository.callGeminiApi(geminiKey, parsePrompt, questionTemplate, chunk)
                 } else {
                     Result.failure(AiNoApiKeyException("Gemini API Key is missing. Please set it in Settings."))
                 }
@@ -183,12 +194,16 @@ object AiPaperParser {
             else -> {
                 val deepseekKey = SharedPreferenceUtil.getString(context.getString(R.string.deepseek_api_key))
                 if (deepseekKey.isNotEmpty()) {
-                    AiRepository.callDeepseekApi(deepseekKey, chunk)
+                    AiRepository.callDeepseekApi(deepseekKey, parsePrompt, questionTemplate, chunk)
                 } else {
                     Result.failure(AiNoApiKeyException("DeepSeek API Key is missing. Please set it in Settings."))
                 }
             }
         }
+    }
+
+    private fun loadAssetText(context: android.content.Context, fileName: String): String {
+        return context.assets.open(fileName).use { it.bufferedReader().readText() }
     }
 
     private const val CHUNK_LINES = 20
