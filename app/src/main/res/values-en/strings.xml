@@ -88,6 +88,10 @@
     <string name="favorite_question">Star Question</string>
     <string name="show_tip">Tip</string>
 
+    // 排序
+    <string name="sort_by_type">Group by Type</string>
+    <string name="sort_mode_key">sort_mode_type_group</string>
+
     // 快捷方式
     <string name="shortcut">Shortcut</string>
     <string name="copy_question_content">Screenshot</string>
