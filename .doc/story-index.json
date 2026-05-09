@@ -1,0 +1,9 @@
+{
+  "current_story_id": "1",
+  "stories": {
+    "1": {
+      "name": "paper_sort_toggle",
+      "story_dir": "1.2_story_paper_sort_toggle"
+    }
+  }
+}

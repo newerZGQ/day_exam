@@ -28,6 +28,9 @@ class EventKey {
         // 退出学习，首页展示欢迎页
         const val EXIT_STUDY = "501"
 
+        // 排序模式切换
+        const val SORT_MODE_CHANGED = "502"
+
         // search_sheet事件
         const val SEARCH_RESULT_ITEM_CLICK = "600"
     }

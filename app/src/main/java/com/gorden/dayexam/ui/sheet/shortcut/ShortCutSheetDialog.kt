@@ -30,6 +30,7 @@ class ShortCutSheetDialog : BottomSheetDialogFragment() {
         _binding = ShortCutSheetLayoutBinding.inflate(inflater, container, false)
         rootView = binding.root
         setStudyModeListener()
+        initSortSwitch()
         initCopyQuestion()
         initSearchAction()
         initKeepScreenSwitch()
@@ -56,6 +57,16 @@ class ShortCutSheetDialog : BottomSheetDialogFragment() {
         binding.copyContentContainer.setOnClickListener {
             ScreenShotHomeQuestionAction(requireActivity()).start()
             dismiss()
+        }
+    }
+
+    private fun initSortSwitch() {
+        val key = resources.getString(R.string.sort_mode_key)
+        val typeGroup = SharedPreferenceUtil.getBoolean(key, false)
+        binding.sortModeSwitch.isChecked = typeGroup
+        binding.sortModeSwitch.setOnCheckedChangeListener { _, checked ->
+            SharedPreferenceUtil.setBoolean(key, checked)
+            LiveEventBus.get(EventKey.SORT_MODE_CHANGED, Boolean::class.java).post(checked)
         }
     }
 

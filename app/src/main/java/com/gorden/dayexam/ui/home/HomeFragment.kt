@@ -17,7 +17,9 @@ import com.gorden.dayexam.db.entity.StudyRecord
 import com.gorden.dayexam.repository.DataRepository
 import com.gorden.dayexam.repository.PaperDetailCache
 import com.gorden.dayexam.repository.model.QuestionDetail
+import com.gorden.dayexam.repository.model.QuestionType
 import com.gorden.dayexam.ui.EventKey
+import com.gorden.dayexam.utils.SharedPreferenceUtil
 import com.jeremyliao.liveeventbus.LiveEventBus
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
@@ -29,8 +31,20 @@ class HomeFragment : Fragment() {
     private val binding get() = _binding!!
 
     private lateinit var questionPager: ViewPager2
-    private var questions: List<QuestionDetail> = listOf()
+    private var originalQuestions: List<QuestionDetail> = listOf()
+    private var displayQuestions: List<QuestionDetail> = listOf()
     private var paperInfo: PaperInfo? = null
+    private var sortByType = false
+
+    companion object {
+        private val TYPE_GROUP_ORDER = listOf(
+            QuestionType.FILL_BLANK,
+            QuestionType.TRUE_FALSE,
+            QuestionType.SINGLE_CHOICE,
+            QuestionType.MULTIPLE_CHOICE,
+            QuestionType.ESSAY_QUESTION
+        )
+    }
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -43,10 +57,14 @@ class HomeFragment : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+        sortByType = SharedPreferenceUtil.getBoolean(
+            resources.getString(R.string.sort_mode_key), false
+        )
         initView()
         initData()
         registerActionEvent()
         registerRememberMode()
+        registerSortMode()
     }
 
     fun setCurrentPosition(position: Int) {
@@ -57,13 +75,21 @@ class HomeFragment : Fragment() {
         return questionPager.currentItem
     }
 
+    fun currentOriginalPosition(): Int {
+        val displayPos = questionPager.currentItem
+        return displayToOriginal(displayPos)
+    }
+
+    fun getDisplayQuestions(): List<QuestionDetail> = displayQuestions
+
     private val onPageChangeCallback = object : ViewPager2.OnPageChangeCallback() {
         override fun onPageSelected(position: Int) {
             paperInfo?.let {
-                if (position < questions.size) {
+                if (position < displayQuestions.size) {
+                    val originalPos = displayToOriginal(position)
                     lifecycleScope.launch {
                         withContext(Dispatchers.IO) {
-                            paperInfo?.lastStudyPosition = position
+                            paperInfo?.lastStudyPosition = originalPos
                             DataRepository.updatePapers(listOfNotNull(paperInfo))
                         }
                     }
@@ -77,11 +103,9 @@ class HomeFragment : Fragment() {
         questionPager.adapter = QuestionPagerAdapter()
         questionPager.registerOnPageChangeCallback(onPageChangeCallback)
         questionPager.orientation = ORIENTATION_HORIZONTAL
-        
-        // 设置"前往设置"按钮点击事件
+
         binding.goToSettingsButton.setOnClickListener {
             val intent = Intent(requireContext(), android.provider.Settings.ACTION_SETTINGS::class.java)
-            // 实际上应该跳转到应用的设置页面
             val settingsIntent = Intent(requireActivity(), com.gorden.dayexam.ui.settings.SettingsActivity::class.java)
             startActivity(settingsIntent)
         }
@@ -98,7 +122,6 @@ class HomeFragment : Fragment() {
     }
 
     private fun initData() {
-        // 如果已设置退出学习，则展示欢迎页
         val showWelcome = (DataRepository.getCurPaperId().value ?: -1) < 0
         if (showWelcome) {
             showWelcome()
@@ -158,20 +181,19 @@ class HomeFragment : Fragment() {
                         questionPager.setCurrentItem(current - 1, true)
                     }
                 } else if (direction == 1) {
-                    if (current < questions.size - 1) {
+                    if (current < displayQuestions.size - 1) {
                         questionPager.setCurrentItem(current + 1, true)
                     }
                 }
             }
         LiveEventBus.get(EventKey.SEARCH_RESULT_ITEM_CLICK, Int::class.java)
-            .observe(viewLifecycleOwner) { questionIndex ->
-                // 切换到对应的问题
-                if (questionIndex >= 0 && questionIndex < questions.size) {
-                    questionPager.setCurrentItem(questionIndex, false)
-                    
-                    // 更新 paperInfo 的 lastStudyPosition
+            .observe(viewLifecycleOwner) { originalIndex ->
+                val displayPos = originalToDisplay(originalIndex)
+                if (displayPos in 0 until displayQuestions.size) {
+                    questionPager.setCurrentItem(displayPos, false)
+
                     paperInfo?.let { paper ->
-                        paper.lastStudyPosition = questionIndex
+                        paper.lastStudyPosition = originalIndex
                         viewLifecycleOwner.lifecycleScope.launch(Dispatchers.IO) {
                             DataRepository.updatePapers(listOf(paper))
                         }
@@ -179,10 +201,7 @@ class HomeFragment : Fragment() {
                 }
             }
     }
-    
-    /**
-     * 从 Repository 加载试卷及其问题
-     */
+
     private fun startLoad() {
         viewLifecycleOwner.lifecycleScope.launch {
             kotlin.runCatching {
@@ -200,14 +219,15 @@ class HomeFragment : Fragment() {
                     return@launch
                 }
                 PaperDetailCache.put(paperId, paperDetail)
-                // 更新试题列表与 UI（主线程）
-                questions = paperDetail.question
+                originalQuestions = paperDetail.question
                 paperInfo = paperDetail.paperInfo
+                displayQuestions = computeDisplayQuestions()
                 (questionPager.adapter as QuestionPagerAdapter).setData(
                     paperDetail.paperInfo,
-                    questions
+                    displayQuestions
                 )
-                questionPager.setCurrentItem(paperDetail.paperInfo.lastStudyPosition, false)
+                val displayPos = originalToDisplay(paperDetail.paperInfo.lastStudyPosition)
+                questionPager.setCurrentItem(displayPos, false)
                 hideWelcome()
             }.onFailure {
                 it.printStackTrace()
@@ -228,4 +248,43 @@ class HomeFragment : Fragment() {
         }
     }
 
+    private fun registerSortMode() {
+        LiveEventBus.get(EventKey.SORT_MODE_CHANGED, Boolean::class.java)
+            .observe(viewLifecycleOwner) { typeGroup ->
+                if (sortByType == typeGroup) return@observe
+                sortByType = typeGroup
+                val currentOriginalPos = displayToOriginal(questionPager.currentItem)
+                displayQuestions = computeDisplayQuestions()
+                (questionPager.adapter as QuestionPagerAdapter).setData(
+                    paperInfo ?: return@observe,
+                    displayQuestions
+                )
+                val newDisplayPos = originalToDisplay(currentOriginalPos)
+                questionPager.setCurrentItem(newDisplayPos, false)
+            }
+    }
+
+    private fun computeDisplayQuestions(): List<QuestionDetail> {
+        if (!sortByType) return originalQuestions
+        return originalQuestions
+            .withIndex()
+            .sortedWith(compareBy({ typeGroupOrder(it.value.type) }, { it.index }))
+            .map { it.value }
+    }
+
+    private fun typeGroupOrder(type: Int): Int {
+        return TYPE_GROUP_ORDER.indexOf(type).let { if (it == -1) Int.MAX_VALUE else it }
+    }
+
+    private fun displayToOriginal(displayPos: Int): Int {
+        if (!sortByType) return displayPos
+        val question = displayQuestions.getOrNull(displayPos) ?: return displayPos
+        return originalQuestions.indexOf(question)
+    }
+
+    private fun originalToDisplay(originalPos: Int): Int {
+        if (!sortByType) return originalPos
+        val question = originalQuestions.getOrNull(originalPos) ?: return originalPos
+        return displayQuestions.indexOf(question)
+    }
 }

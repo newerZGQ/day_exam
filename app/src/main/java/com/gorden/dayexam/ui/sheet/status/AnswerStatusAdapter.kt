@@ -11,6 +11,7 @@ import com.gorden.dayexam.repository.model.QuestionDetail
 
 class AnswerStatusAdapter(
     private val questions: List<QuestionDetail>,
+    private val originalIndices: List<Int>,
     private val onItemClick: (Int) -> Unit
 ) : RecyclerView.Adapter<AnswerStatusAdapter.ViewHolder>() {
 
@@ -26,7 +27,8 @@ class AnswerStatusAdapter(
 
     override fun onBindViewHolder(holder: ViewHolder, position: Int) {
         val question = questions[position]
-        holder.textView.text = "${position + 1}"
+        val originalIndex = originalIndices.getOrElse(position) { position }
+        holder.textView.text = "${originalIndex + 1}"
 
         val colorResId = when {
             question.realAnswer == null -> R.color.state_inactive
@@ -39,7 +41,7 @@ class AnswerStatusAdapter(
         )
 
         holder.itemView.setOnClickListener {
-            onItemClick(position)
+            onItemClick(originalIndex)
         }
     }
 
@@ -48,14 +50,11 @@ class AnswerStatusAdapter(
     private fun isCorrect(question: QuestionDetail): Boolean {
         val real = question.realAnswer ?: return false
         val correct = question.answer
-        
-        // Compare based on question type logic usually found in ViewHolders
-        // For simplicity, we check if optionAnswer or tfAnswer matches
-        if (question.type == 2) { // True/False
+
+        if (question.type == 2) {
              return real.tfAnswer == correct.tfAnswer
         }
-        if (question.type == 3 || question.type == 4) { // Single/Multiple Choice
-            // Simple comparison of lists
+        if (question.type == 3 || question.type == 4) {
             return real.optionAnswer.sorted() == correct.optionAnswer.sorted()
         }
         return real.optionAnswer == correct.optionAnswer && real.tfAnswer == correct.tfAnswer

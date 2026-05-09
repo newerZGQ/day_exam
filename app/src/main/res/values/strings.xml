@@ -89,6 +89,10 @@
     <string name="favorite_question">收藏当前试题</string>
     <string name="show_tip">展开小贴士</string>
 
+    // 排序
+    <string name="sort_by_type">按类型分组排序</string>
+    <string name="sort_mode_key">sort_mode_type_group</string>
+
     // 快捷方式
     <string name="shortcut">快捷</string>
     <string name="copy_question_content">截屏本题内容</string>

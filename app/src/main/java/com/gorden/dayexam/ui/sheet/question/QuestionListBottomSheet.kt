@@ -17,9 +17,11 @@ import com.gorden.dayexam.databinding.DialogQuestionListBinding
 import com.gorden.dayexam.repository.PaperDetailCache
 import com.gorden.dayexam.repository.model.PaperDetail
 import com.gorden.dayexam.repository.model.QuestionDetail
+import com.gorden.dayexam.repository.model.QuestionType
 import com.gorden.dayexam.ui.EventKey
 import com.gorden.dayexam.ui.home.shortcut.QuestionListAdapter
 import com.gorden.dayexam.ui.sheet.status.AnswerStatusAdapter
+import com.gorden.dayexam.utils.SharedPreferenceUtil
 import com.jeremyliao.liveeventbus.LiveEventBus
 
 class QuestionListBottomSheet : BottomSheetDialogFragment() {
@@ -28,12 +30,20 @@ class QuestionListBottomSheet : BottomSheetDialogFragment() {
     private val binding get() = _binding!!
     private var isGridView = false
     private var paperDetail: PaperDetail? = null
-    
+
     fun setData(detail: PaperDetail) {
         this.paperDetail = detail
     }
 
     companion object {
+        private val TYPE_GROUP_ORDER = listOf(
+            QuestionType.FILL_BLANK,
+            QuestionType.TRUE_FALSE,
+            QuestionType.SINGLE_CHOICE,
+            QuestionType.MULTIPLE_CHOICE,
+            QuestionType.ESSAY_QUESTION
+        )
+
         const val PAPER_ID_KEY = "paper_id"
         const val CURRENT_POSITION_KEY = "current_position"
 
@@ -62,8 +72,7 @@ class QuestionListBottomSheet : BottomSheetDialogFragment() {
             behavior.skipCollapsed = true
             behavior.isHideable = true
             behavior.isDraggable = true
-            
-            // Allow full height
+
             val displayMetrics = resources.displayMetrics
             val height = displayMetrics.heightPixels - (80 * displayMetrics.density).toInt()
             val layoutParams = sheet.layoutParams
@@ -83,33 +92,46 @@ class QuestionListBottomSheet : BottomSheetDialogFragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        
-        // Transparent connection to make rounded corners visible if root has them
+
         (view.parent as? View)?.setBackgroundColor(resources.getColor(android.R.color.transparent))
 
         val paperId = arguments?.getInt(PAPER_ID_KEY) ?: -1
         val currentPosition = arguments?.getInt(CURRENT_POSITION_KEY) ?: 0
-        
+
         if (paperId == -1) {
             dismiss()
             return
         }
         paperDetail = PaperDetailCache.get(paperId)
 
-        val questions = paperDetail?.question
-        if (questions == null) {
+        val originalQuestions = paperDetail?.question
+        if (originalQuestions == null) {
             dismiss()
             return
         }
+
+        val sortByType = SharedPreferenceUtil.getBoolean(
+            resources.getString(R.string.sort_mode_key), false
+        )
+        val displayQuestions = if (sortByType) {
+            originalQuestions
+                .withIndex()
+                .sortedWith(compareBy({ typeGroupOrder(it.value.type) }, { it.index }))
+                .map { it.value }
+        } else {
+            originalQuestions
+        }
+        val originalIndices = displayQuestions.map { originalQuestions.indexOf(it) }
+
         initHeader()
-        initList(questions, currentPosition)
-        initGrid(questions)
+        initList(displayQuestions, currentPosition)
+        initGrid(displayQuestions, originalIndices)
         binding.questionList.isNestedScrollingEnabled = !isGridView
         binding.questionGrid.isNestedScrollingEnabled = isGridView
 
         centerSelection(currentPosition)
     }
-    
+
     private fun centerSelection(position: Int) {
          binding.questionList.post {
             val layoutManager = binding.questionList.layoutManager as LinearLayoutManager
@@ -152,29 +174,35 @@ class QuestionListBottomSheet : BottomSheetDialogFragment() {
         divider.setDrawable(resources.getDrawable(R.drawable.question_group_inset_recyclerview_divider))
         binding.questionList.addItemDecoration(divider)
         binding.questionList.adapter = listAdapter
-        LiveEventBus.get(EventKey.SELECT_QUESTION, Int::class.java).observe(viewLifecycleOwner) {
-            selectQuestion(it)
+        LiveEventBus.get(EventKey.SELECT_QUESTION, Int::class.java).observe(viewLifecycleOwner) { displayPos ->
+            selectQuestion(displayPos, questions)
         }
     }
 
-    private fun initGrid(questions: List<QuestionDetail>) {
+    private fun initGrid(questions: List<QuestionDetail>, originalIndices: List<Int>) {
         val layoutManager = GridLayoutManager(context, 6)
         binding.questionGrid.layoutManager = layoutManager
-        val gridAdapter = AnswerStatusAdapter(questions) { position ->
-            selectQuestion(position)
+        val gridAdapter = AnswerStatusAdapter(questions, originalIndices) { originalIndex ->
+            selectQuestion(originalIndex, questions)
         }
         binding.questionGrid.adapter = gridAdapter
         binding.questionGrid.setHasFixedSize(true)
     }
 
-    private fun selectQuestion(position: Int) {
-        // Post event to MainActivity to scroll HomeFragment
-        LiveEventBus.get(EventKey.SEARCH_RESULT_ITEM_CLICK, Int::class.java).post(position)
+    private fun selectQuestion(position: Int, questions: List<QuestionDetail>) {
+        val question = questions.getOrNull(position) ?: return
+        val originalQuestions = paperDetail?.question ?: return
+        val originalIndex = originalQuestions.indexOf(question)
+        LiveEventBus.get(EventKey.SEARCH_RESULT_ITEM_CLICK, Int::class.java).post(originalIndex)
         dismiss()
     }
 
     override fun onDestroyView() {
         super.onDestroyView()
         _binding = null
+    }
+
+    private fun typeGroupOrder(type: Int): Int {
+        return TYPE_GROUP_ORDER.indexOf(type).let { if (it == -1) Int.MAX_VALUE else it }
     }
 }
