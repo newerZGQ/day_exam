@@ -56,6 +56,3 @@ This application is built with privacy in mind:
 ## 🤝 Contribution
 Contributions are welcome! Feel free to submit Issues and Pull Requests.
 
-## 📧 Contact
-If you have any questions or suggestions, please feel free to contact the author via telegram:
-[Join our Telegram Group!](https://t.me/+ndYqXt30AYA4Yzhl)
