@@ -38,7 +38,7 @@ class ImagePreviewActivity: AppCompatActivity() {
     private fun setImageList() {
         val paperHash = PaperDetailCache.get(DataRepository.getCurPaperId().value ?: -1)?.paperInfo?.hash
         val imageList = intent.getStringArrayListExtra(IMAGE_LIST_DATA_KEY)?.map {
-            File(ContextHolder.application.cacheDir, "/${paperHash}/image/${it}").absolutePath
+            File(ContextHolder.application.filesDir, "/${paperHash}/image/${it}").absolutePath
         }
         binding.imageList.let {
             if (imageList?.isNotEmpty() == true) {

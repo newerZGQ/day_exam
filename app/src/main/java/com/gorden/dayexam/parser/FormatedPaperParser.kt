@@ -433,7 +433,7 @@ object ParserContext {
 
     fun prepare(paperHash: String) {
         require(paperHash.isNotBlank()) { "paperHash must not be blank" }
-        val cachePaperFolder = File(ContextHolder.application.cacheDir, paperHash)
+        val cachePaperFolder = File(ContextHolder.application.filesDir, paperHash)
         if (!cachePaperFolder.exists()) {
             cachePaperFolder.mkdirs()
         } else {
@@ -444,16 +444,16 @@ object ParserContext {
     }
 
     private fun getImageFile(relativePath: String): File {
-        val cacheParentFolder = File(ContextHolder.application.cacheDir, paperHash)
+        val cacheParentFolder = File(ContextHolder.application.filesDir, paperHash)
         return File(cacheParentFolder, relativePath)
     }
 
     fun saveImage(hash: String, data: ByteArray) {
-        val imageFolder = File(ContextHolder.application.cacheDir, "$paperHash/$PARSED_IMAGE_FOLDER")
+        val imageFolder = File(ContextHolder.application.filesDir, "$paperHash/$PARSED_IMAGE_FOLDER")
         if (!imageFolder.exists()) {
             imageFolder.mkdirs()
         }
-        val imageFile = File(ContextHolder.application.cacheDir, "$paperHash/$PARSED_IMAGE_FOLDER/$hash")
+        val imageFile = File(ContextHolder.application.filesDir, "$paperHash/$PARSED_IMAGE_FOLDER/$hash")
         try {
             FileOutputStream(imageFile).use { it.write(data) }
         } catch (e: Exception) {
@@ -462,7 +462,7 @@ object ParserContext {
     }
 
     fun saveQuestions(data: String) {
-        val jsonFile = File(ContextHolder.application.cacheDir, "$paperHash/$PARSED_QUESTIONS_JSON_FILE")
+        val jsonFile = File(ContextHolder.application.filesDir, "$paperHash/$PARSED_QUESTIONS_JSON_FILE")
         try {
             FileOutputStream(jsonFile).use { it.write(data.toByteArray()) }
         } catch (e: Exception) {

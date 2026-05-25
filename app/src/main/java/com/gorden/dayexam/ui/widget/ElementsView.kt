@@ -52,7 +52,7 @@ class ElementsView: LinearLayout {
                     listener.onImageClick(index, elements)
                 }
                 imageView.setBackgroundColor(context.getColor(R.color.colorTransparent))
-                val imageFile = File(ContextHolder.application.cacheDir, "/${paperInfo.hash}/image/${contentElement.content}")
+                val imageFile = File(ContextHolder.application.filesDir, "/${paperInfo.hash}/image/${contentElement.content}")
                 val requestBuilder = Glide.with(context).asBitmap().load(imageFile)
                 requestBuilder
                     .into(object : CustomTarget<Bitmap>(){

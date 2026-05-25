@@ -322,7 +322,7 @@ class PaperListFragment : Fragment() {
                 withContext(Dispatchers.IO) {
                     val context = requireContext()
                     val fileName = resolveImportFileName(uri)
-                    val destDir = File(context.cacheDir, "imported_papers")
+                    val destDir = File(context.filesDir, "imported_papers")
                     if (!destDir.exists()) {
                         destDir.mkdirs()
                     }
@@ -401,7 +401,7 @@ class PaperListFragment : Fragment() {
                 withContext(Dispatchers.IO) {
                     val context = requireContext()
                     val fileName = resolveImportFileName(uri)
-                    val destDir = File(context.cacheDir, "imported_papers")
+                    val destDir = File(context.filesDir, "imported_papers")
                     if (!destDir.exists()) {
                         destDir.mkdirs()
                     }

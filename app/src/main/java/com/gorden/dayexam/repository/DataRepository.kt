@@ -143,7 +143,7 @@ object DataRepository {
 
     private fun getQuestionsFromCache(paperHash: String): List<QuestionDetail> {
         return try {
-            val jsonFile = File(ContextHolder.application.cacheDir, "$paperHash/questions.json")
+            val jsonFile = File(ContextHolder.application.filesDir, "$paperHash/questions.json")
             if (!jsonFile.exists()) {
                 emptyList()
             } else {
